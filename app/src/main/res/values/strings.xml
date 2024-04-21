@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">Steam</string>
+    <string name="app_name">Steam DB</string>
+    <string name="title_login">Login</string>
+    <string name="title_home">Home</string>
+    <string name="fav_button">Fav</string>
+    <string name="steam_button">Home</string>
+    <string name="theme_button">Theme</string>
+    <string name="login_button">Sign in with Google</string>
+    <string name="title_activity_login">Login</string>
 </resources>
