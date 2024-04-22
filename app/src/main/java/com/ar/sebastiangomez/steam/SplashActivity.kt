@@ -29,7 +29,7 @@ class SplashActivity : AppCompatActivity() {
         prefs.edit().putString("user", userName).apply()
 
         Handler(Looper.getMainLooper()).postDelayed({
-            var intent = Intent(this, LoginActivity::class.java)
+            var intent = Intent(this, HomeActivity::class.java)
             intent.putExtra("ID", selectID)
             startActivity(intent)
             finish()
