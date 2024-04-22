@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="seed">#01EBFB</color>
+    <color name="title_games_light_background">#735471</color>
     <color name="title_light_background">#2b122b</color>
     <color name="title_light_text">#b3c5ff</color>
     <color name="md_theme_light_primary">#006970</color>
@@ -20,7 +20,7 @@
     <color name="md_theme_light_errorContainer">#FFDAD6</color>
     <color name="md_theme_light_onErrorContainer">#410002</color>
     <color name="md_theme_light_outline">#6F797A</color>
-    <color name="md_theme_light_background">#FAFDFD</color>
+    <color name="md_theme_light_background">#cccbc9</color>
     <color name="md_theme_light_onBackground">#191C1D</color>
     <color name="md_theme_light_surface">#F8FAFA</color>
     <color name="md_theme_light_onSurface">#191C1D</color>
@@ -33,6 +33,8 @@
     <color name="md_theme_light_surfaceTint">#006970</color>
     <color name="md_theme_light_outlineVariant">#BEC8C9</color>
     <color name="md_theme_light_scrim">#000000</color>
+
+    <color name="title_games_dark_background">#735471</color>
     <color name="title_dark_background">#2b122b</color>
     <color name="title_dark_text">#b3c5ff</color>
     <color name="md_theme_dark_primary">#00DBEA</color>

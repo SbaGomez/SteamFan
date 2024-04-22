@@ -1,14 +1,16 @@
 package com.ar.sebastiangomez.steam
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.widget.ArrayAdapter
-import android.widget.ListView
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,9 +23,12 @@ class Game(val id: String, val name: String)
 
 class HomeActivity : AppCompatActivity() {
 
-    lateinit var listView: ListView
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var themeManager: ThemeManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        themeManager = ThemeManager(this)
+        themeManager.applyTheme()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_home)
@@ -33,26 +38,35 @@ class HomeActivity : AppCompatActivity() {
             insets
         }
 
-        listView = findViewById(R.id.listView)
+        recyclerView = findViewById(R.id.recyclerView)
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        val spaceHeight = resources.getDimensionPixelSize(R.dimen.item_space) // Altura del espacio entre elementos
+        val paddingHorizontal = resources.getDimensionPixelSize(R.dimen.item_padding_horizontal) // Padding horizontal
+        recyclerView.addItemDecoration(SpaceItemDecoration(spaceHeight, paddingHorizontal))
 
         lifecycleScope.launch {
             try {
                 val gamesList = fetchGames()
-                val namesList = gamesList.map { it.name }
-                val adapter = ArrayAdapter(this@HomeActivity, android.R.layout.simple_list_item_1, namesList)
-                listView.adapter = adapter
-
-                listView.setOnItemClickListener { _, _, position, _ ->
+                val adapter = GameAdapter(gamesList) { position ->
                     val gameId = gamesList[position].id
                     val gameName = gamesList[position].name
                     // Aquí puedes enviar el ID a otra pantalla
                     Log.d("Game ID:", gameId)
                     Log.d("Game Name:", gameName)
                 }
+                recyclerView.adapter = adapter
             } catch (e: IOException) {
                 e.printStackTrace()
             }
         }
+    }
+
+    fun onChangeThemeButtonClick(view: View) {
+        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
+        val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
+        themeManager.changeTheme(newTheme)
     }
 
     private suspend fun fetchGames(): List<Game> {
@@ -66,6 +80,7 @@ class HomeActivity : AppCompatActivity() {
             if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
             val responseData = response.body!!.string()
+            Log.d("List Game:", responseData)
             parseResponse(responseData)
         }
     }
@@ -83,7 +98,7 @@ class HomeActivity : AppCompatActivity() {
                 gamesList.add(Game(id, name))
             }
         }
-
         return gamesList
     }
 }
+

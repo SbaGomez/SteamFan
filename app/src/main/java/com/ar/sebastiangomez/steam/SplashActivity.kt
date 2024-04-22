@@ -10,8 +10,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
+
 class SplashActivity : AppCompatActivity() {
+
+    private lateinit var themeManager: ThemeManager
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        themeManager = ThemeManager(this)
+        themeManager.applyTheme()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_splash)
@@ -25,7 +31,8 @@ class SplashActivity : AppCompatActivity() {
         var selectID = 1234
 
         //global sharedpreferences
-        var prefs = getSharedPreferences("com.ar.sebastiangomez.SteamFan.sharedpref", Context.MODE_PRIVATE)
+        var prefs =
+            getSharedPreferences("com.ar.sebastiangomez.SteamFan.sharedpref", Context.MODE_PRIVATE)
         prefs.edit().putString("user", userName).apply()
 
         Handler(Looper.getMainLooper()).postDelayed({
@@ -33,6 +40,7 @@ class SplashActivity : AppCompatActivity() {
             intent.putExtra("ID", selectID)
             startActivity(intent)
             finish()
-        },4000)
+        }, 4000)
     }
+
 }
