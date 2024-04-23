@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--<style name="Base.Theme.Steam" parent="Theme.MaterialComponents.Light.NoActionBar"> -->
-    <style name="Base.Theme.Steam.Light" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Base.Theme.Steam.Light" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:textColorPrimary">@color/title_light_text</item>
         <item name="colorPrimary">@color/md_theme_light_primary</item>
         <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
@@ -32,7 +32,7 @@
     </style>
 
     <!--<style name="Base.Theme.Steam" parent="Theme.MaterialComponents.DayNight.NoActionBar"> -->
-    <style name="Base.Theme.Steam.Dark" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="Base.Theme.Steam.Dark" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:textColorPrimary">@color/title_dark_text</item>
         <item name="colorPrimary">@color/md_theme_dark_primary</item>
         <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>
