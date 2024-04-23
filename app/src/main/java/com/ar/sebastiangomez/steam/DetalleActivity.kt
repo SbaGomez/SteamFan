@@ -49,11 +49,15 @@ class DetalleActivity : AppCompatActivity() {
     }
 
     fun onBookmarkClick(view: View) {
-        Handler(Looper.getMainLooper()).postDelayed({
-            var intent = Intent(this, BookmarkActivity::class.java)
-            startActivity(intent)
-            finish()
-        }, 3000)
+        var intent = Intent(this, BookmarkActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    fun onHomeClick(view: View) {
+        var intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun fetchGameDetails(gameId: String) {
