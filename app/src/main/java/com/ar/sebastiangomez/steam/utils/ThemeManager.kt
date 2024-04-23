@@ -1,9 +1,10 @@
-package com.ar.sebastiangomez.steam
+package com.ar.sebastiangomez.steam.utils
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.ar.sebastiangomez.steam.R
 
 class ThemeManager(private val context: Context) {
     private val preferences: SharedPreferences = context.getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)

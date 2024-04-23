@@ -1,4 +1,4 @@
-package com.ar.sebastiangomez.steam
+package com.ar.sebastiangomez.steam.utils
 
 import android.graphics.Rect
 import android.view.View
