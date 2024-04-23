@@ -16,6 +16,12 @@
         android:theme="@style/Base.Theme.Steam.Light"
         tools:targetApi="31">
         <activity
+            android:name=".BookmarkActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DetalleActivity"
+            android:exported="false" />
+        <activity
             android:name=".HomeActivity"
             android:exported="false" />
         <activity
