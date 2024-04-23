@@ -33,6 +33,7 @@
     <color name="md_theme_light_surfaceTint">#006970</color>
     <color name="md_theme_light_outlineVariant">#BEC8C9</color>
     <color name="md_theme_light_scrim">#000000</color>
+    <color name="Games_Details_Light_background">#1e1f25</color>
 
     <color name="title_games_dark_background">#735471</color>
     <color name="title_dark_background">#2b122b</color>
@@ -67,4 +68,5 @@
     <color name="md_theme_dark_surfaceTint">#00DBEA</color>
     <color name="md_theme_dark_outlineVariant">#3F4849</color>
     <color name="md_theme_dark_scrim">#000000</color>
+    <color name="Games_Details_dark_background">#1e1f25</color>
 </resources>
