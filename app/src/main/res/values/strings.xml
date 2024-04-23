@@ -9,4 +9,5 @@
     <string name="theme_button">Theme</string>
     <string name="login_button">Sign in with Google</string>
     <string name="title_activity_login">Login</string>
+    <string name="error_detalles_empty">El juego no tiene detalles cargados.</string>
 </resources>
