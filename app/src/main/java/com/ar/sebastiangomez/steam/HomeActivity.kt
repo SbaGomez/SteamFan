@@ -3,8 +3,6 @@ package com.ar.sebastiangomez.steam
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
@@ -84,11 +82,9 @@ class HomeActivity : AppCompatActivity() {
     }
 
     fun onBookmarkClick(view: View) {
-        Handler(Looper.getMainLooper()).postDelayed({
-            var intent = Intent(this, BookmarkActivity::class.java)
-            startActivity(intent)
-            finish()
-        }, 3000)
+        var intent = Intent(this, BookmarkActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private suspend fun fetchGames(): List<Game> {
