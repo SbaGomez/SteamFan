@@ -1,6 +1,9 @@
 package com.ar.sebastiangomez.steam
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -20,5 +23,18 @@ class BookmarkActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    fun onChangeThemeButtonClick(view: View) {
+        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
+        val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
+        themeManager.changeTheme(newTheme)
+    }
+
+    fun onHomeClick(view: View) {
+        var intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

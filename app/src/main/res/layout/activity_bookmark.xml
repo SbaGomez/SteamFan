@@ -74,6 +74,7 @@
             android:layout_height="wrap_content"
             android:background="#00FFFFFF"
             android:contentDescription="@string/steam_button"
+            android:onClick="onHomeClick"
             android:padding="16dp"
             android:src="@drawable/hometab" />
 
