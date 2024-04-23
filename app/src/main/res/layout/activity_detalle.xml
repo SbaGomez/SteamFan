@@ -55,16 +55,121 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_margin="16dp"
-            android:textAlignment="center">
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="15dp"
+            android:textAlignment="center"
+            app:cardBackgroundColor="#1E1F25"
+            app:cardCornerRadius="16dp">
 
-            <ImageView
-                android:id="@+id/imageDetalle"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:baselineAlignBottom="false"
-                android:textAlignment="center"
-                app:srcCompat="@drawable/steamlogoblack" />
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/imageButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#00FFFFFF"
+                        android:contentDescription="@string/fav_button"
+                        android:paddingTop="20dp"
+                        android:paddingRight="20dp"
+                        app:srcCompat="@drawable/add_bookmark"
+                        tools:ignore="TouchTargetSizeCheck" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/titleGame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Steam Game Title"
+                    android:textAlignment="center"
+                    android:textColor="@color/title_dark_text"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/imageDetalle"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:padding="20dp"
+                    android:textAlignment="center"
+                    app:srcCompat="@drawable/steamdb" />
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:textAlignment="center"
+            app:cardBackgroundColor="#1E1F25"
+            app:cardCornerRadius="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:text="Steam Game Title"
+                    android:textAlignment="center"
+                    android:textColor="@color/title_dark_text"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="15dp"
+                    android:paddingRight="20dp"
+                    android:text="Supervivencia extrema: Los jugadores  deben enfrentarse a amenazas como   el hambre, la sed, el frío, la  radiación, la fauna hostil y otros   jugadores mientras luchan por  sobrevivir en un mundo implacable."
+                    android:textAlignment="center"
+                    android:textColor="@color/md_theme_dark_error"
+                    android:textSize="14sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:text="Steam Game Title"
+                    android:textAlignment="center"
+                    android:textColor="@color/title_dark_text"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="15dp"
+                    android:paddingRight="20dp"
+                    android:paddingBottom="20dp"
+                    android:text="Supervivencia extrema: Los jugadores  deben enfrentarse a amenazas como   el hambre, la sed, el frío, la  radiación, la fauna hostil y otros   jugadores mientras luchan por  sobrevivir en un mundo implacable."
+                    android:textAlignment="center"
+                    android:textColor="@color/md_theme_dark_error"
+                    android:textSize="14sp"
+                    android:textStyle="normal" />
+
+            </LinearLayout>
+
         </androidx.cardview.widget.CardView>
     </LinearLayout>
 
@@ -107,6 +212,7 @@
             android:layout_height="wrap_content"
             android:background="#00FFFFFF"
             android:contentDescription="@string/steam_button"
+            android:onClick="onHomeClick"
             android:padding="16dp"
             android:src="@drawable/hometab" />
 
