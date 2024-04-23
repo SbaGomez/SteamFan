@@ -9,9 +9,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/steamlogoblack"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/steamlogoblack"
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.Steam.Light"
         tools:targetApi="31">
@@ -38,7 +38,8 @@
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:exported="false" />
+            android:exported="true"
+            android:label="@string/app_name"></activity>
     </application>
 
 </manifest>
