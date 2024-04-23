@@ -1,9 +1,13 @@
 package com.ar.sebastiangomez.steam
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.ProgressBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -11,6 +15,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ar.sebastiangomez.steam.utils.SpaceItemDecoration
+import com.ar.sebastiangomez.steam.utils.ThemeManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -25,6 +31,7 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var themeManager: ThemeManager
+    private lateinit var progressBar : ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         themeManager = ThemeManager(this)
@@ -39,6 +46,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
         recyclerView = findViewById(R.id.recyclerView)
+        progressBar = findViewById(R.id.progressBar)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         val spaceHeight = resources.getDimensionPixelSize(R.dimen.item_space) // Altura del espacio entre elementos
@@ -47,17 +55,23 @@ class HomeActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
+                progressBar.visibility = View.VISIBLE
                 val gamesList = fetchGames()
-                val adapter = GameAdapter(gamesList) { position ->
-                    val gameId = gamesList[position].id
+                val adapter = GameAdapter(gamesList) { position, gameId ->
+                    // Acciones a realizar cuando se hace clic en un elemento de la lista
                     val gameName = gamesList[position].name
-                    // Aquí puedes enviar el ID a otra pantalla
                     Log.d("Game ID:", gameId)
                     Log.d("Game Name:", gameName)
+                    // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
                 }
                 recyclerView.adapter = adapter
             } catch (e: IOException) {
                 e.printStackTrace()
+                // En caso de error, ocultar el ProgressBar
+                progressBar.visibility = View.INVISIBLE
+            } finally {
+                // Asegurarse de ocultar el ProgressBar después de la carga, ya sea exitosa o no
+                progressBar.visibility = View.INVISIBLE
             }
         }
     }
@@ -67,6 +81,14 @@ class HomeActivity : AppCompatActivity() {
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
         val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
         themeManager.changeTheme(newTheme)
+    }
+
+    fun onBookmarkClick(view: View) {
+        Handler(Looper.getMainLooper()).postDelayed({
+            var intent = Intent(this, BookmarkActivity::class.java)
+            startActivity(intent)
+            finish()
+        }, 3000)
     }
 
     private suspend fun fetchGames(): List<Game> {
