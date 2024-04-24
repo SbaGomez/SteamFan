@@ -1,4 +1,4 @@
-package com.ar.sebastiangomez.steam
+package com.ar.sebastiangomez.steam.ui
 
 import android.content.Context
 import android.content.Intent
@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.ar.sebastiangomez.steam.GameDetail
+import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.utils.ThemeManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -94,7 +96,6 @@ class DetalleActivity : AppCompatActivity() {
                             // Cargar la imagen utilizando Glide
                             Glide.with(this@DetalleActivity)
                                 .load(gameDetail.header_image) // URL de la imagen
-                                .placeholder(R.drawable.steamdb) // Placeholder mientras se carga la imagen (opcional)
                                 .error(R.drawable.error) // Imagen de error en caso de falla de carga (opcional)
                                 .into(headerImg) // Establecer la imagen en el ImageView
                             LayoutDetalle.visibility = View.VISIBLE

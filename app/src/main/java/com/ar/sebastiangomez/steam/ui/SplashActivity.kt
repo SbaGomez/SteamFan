@@ -1,4 +1,4 @@
-package com.ar.sebastiangomez.steam
+package com.ar.sebastiangomez.steam.ui
 
 import android.content.Context
 import android.content.Intent
@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.utils.ThemeManager
 
 
@@ -37,7 +38,7 @@ class SplashActivity : AppCompatActivity() {
         prefs.edit().putString("user", userName).apply()
 
         Handler(Looper.getMainLooper()).postDelayed({
-            var intent = Intent(this, HomeActivity::class.java)
+            var intent = Intent(this, PruebaActivity::class.java)
             intent.putExtra("ID", selectID)
             startActivity(intent)
             finish()

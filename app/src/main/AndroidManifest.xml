@@ -16,19 +16,19 @@
         android:theme="@style/Base.Theme.Steam.Dark"
         tools:targetApi="31">
         <activity
-            android:name=".BookmarkActivity"
+            android:name=".ui.BookmarkActivity"
             android:exported="false" />
         <activity
-            android:name=".DetalleActivity"
+            android:name=".ui.DetalleActivity"
             android:exported="false" />
         <activity
-            android:name=".HomeActivity"
+            android:name=".ui.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".PruebaActivity"
+            android:name=".ui.PruebaActivity"
             android:exported="false" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".ui.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.LoginActivity"
             android:exported="true"
             android:label="@string/app_name"></activity>
     </application>

@@ -1,4 +1,4 @@
-package com.ar.sebastiangomez.steam
+package com.ar.sebastiangomez.steam.ui
 
 import android.content.Context
 import android.content.Intent
@@ -13,6 +13,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ar.sebastiangomez.steam.GameAdapter
+import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.utils.SpaceItemDecoration
 import com.ar.sebastiangomez.steam.utils.ThemeManager
 import kotlinx.coroutines.Dispatchers

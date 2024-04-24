@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/md_theme_dark_background"
-    tools:context=".LoginActivity">
+    android:hapticFeedbackEnabled="false"
+    tools:context=".ui.LoginActivity">
 
     <TextView
         android:id="@+id/textView"
@@ -27,12 +28,27 @@
         android:id="@+id/btnCalcular"
         android:layout_width="139dp"
         android:layout_height="49dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="48dp"
         android:backgroundTint="@color/title_dark_background"
         android:text="Calcular"
         android:textColor="@color/md_theme_dark_inverseSurface"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.198"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnRes"
+        android:layout_width="139dp"
+        android:layout_height="49dp"
+        android:layout_marginBottom="48dp"
+        android:backgroundTint="@color/title_dark_background"
+        android:enabled="true"
+        android:text="Reset"
+        android:textColor="@color/md_theme_dark_inverseSurface"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.801"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
@@ -43,6 +59,7 @@
         android:ems="10"
         android:hint="Importe"
         android:inputType="text"
+        android:minHeight="48dp"
         android:textColorHint="@color/md_theme_dark_inverseSurface"
         android:textColorLink="@color/md_theme_dark_inverseSurface"
         app:layout_constraintEnd_toEndOf="parent"
@@ -58,6 +75,7 @@
         android:ems="10"
         android:hint="Personas"
         android:inputType="text"
+        android:minHeight="48dp"
         android:textColor="@color/md_theme_dark_inverseSurface"
         android:textColorHint="@color/md_theme_dark_inverseSurface"
         app:layout_constraintBottom_toTopOf="@+id/txtResultado"
@@ -74,7 +92,7 @@
         android:fontFamily="monospace"
         android:text="Total: $12345.99"
         android:textColor="@color/md_theme_dark_inversePrimary"
-        android:textSize="24sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtCantidad" />
