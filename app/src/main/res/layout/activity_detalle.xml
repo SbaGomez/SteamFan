@@ -201,7 +201,7 @@
                             android:paddingTop="15dp"
                             android:paddingRight="20dp"
                             android:paddingBottom="20dp"
-                            android:text="Supervivencia extrema: Los jugadores  deben enfrentarse a amenazas como   el hambre, la sed, el frío, la  radiación, la fauna hostil y otros   jugadores mientras luchan por  sobrevivir en un mundo implacable."
+                            android:text="Proximamente..."
                             android:textAlignment="center"
                             android:textColor="@color/md_theme_dark_error"
                             android:textSize="14sp"
