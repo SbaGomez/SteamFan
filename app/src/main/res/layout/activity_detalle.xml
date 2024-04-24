@@ -128,6 +128,8 @@
                             android:id="@+id/titleGame"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:paddingLeft="20dp"
+                            android:paddingRight="20dp"
                             android:text="Titulo"
                             android:textAlignment="center"
                             android:textColor="@color/title_dark_text"
