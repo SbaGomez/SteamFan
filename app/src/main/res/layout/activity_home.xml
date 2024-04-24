@@ -146,7 +146,7 @@
             android:contentDescription="@string/steam_button"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/homesteamtab" />
+            android:src="@drawable/homesteamtabactive" />
 
         <!-- Espacio para separar los botones -->
         <View

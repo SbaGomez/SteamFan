@@ -55,12 +55,12 @@
             android:id="@+id/fabButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:background="#00FFFFFF"
             android:contentDescription="@string/fav_button"
-            android:layout_marginStart="16dp"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/tabbookmark" />
+            android:src="@drawable/tabbookmarkactive" />
 
         <!-- Espacio para separar los botones -->
         <View
