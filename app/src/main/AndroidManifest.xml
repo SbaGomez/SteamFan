@@ -13,7 +13,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/steamlogoblack"
         android:supportsRtl="true"
-        android:theme="@style/Base.Theme.Steam.Light"
+        android:theme="@style/Base.Theme.Steam.Dark"
         tools:targetApi="31">
         <activity
             android:name=".BookmarkActivity"

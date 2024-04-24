@@ -55,11 +55,12 @@
             android:id="@+id/fabButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:background="#00FFFFFF"
             android:contentDescription="@string/fav_button"
+            android:layout_marginStart="16dp"
             android:padding="16dp"
-            android:src="@drawable/bookmarktab" />
+            android:scaleType="centerInside"
+            android:src="@drawable/tabbookmark" />
 
         <!-- Espacio para separar los botones -->
         <View
@@ -76,7 +77,8 @@
             android:contentDescription="@string/steam_button"
             android:onClick="onHomeClick"
             android:padding="16dp"
-            android:src="@drawable/hometab" />
+            android:scaleType="centerInside"
+            android:src="@drawable/homesteamtab" />
 
         <!-- Espacio para separar los botones -->
         <View
@@ -89,11 +91,11 @@
             android:id="@+id/themeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:background="#00FFFFFF"
             android:contentDescription="@string/theme_button"
             android:onClick="onChangeThemeButtonClick"
             android:padding="16dp"
+            android:scaleType="centerInside"
             android:src="@drawable/themetab" />
 
     </LinearLayout>
