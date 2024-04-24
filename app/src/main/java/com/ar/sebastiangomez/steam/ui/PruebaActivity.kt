@@ -38,8 +38,6 @@ class PruebaActivity : AppCompatActivity() {
     fun bindViewModel() {
         viewModel = ViewModelProvider(this)[PruebaViewModel::class.java]
 
-        viewModel.TextoTotalPersonas
-
         ImporteEdt = findViewById(R.id.edtImporte)
         PersonasEdt = findViewById(R.id.edtCantidad)
         ResultadoTxt = findViewById(R.id.txtResultado)
