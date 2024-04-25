@@ -160,6 +160,7 @@
                             android:id="@+id/titleGame"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:layout_marginTop="15dp"
                             android:paddingLeft="20dp"
                             android:paddingRight="20dp"
                             android:text="Titulo"
@@ -172,6 +173,8 @@
                             android:id="@+id/imageDetalle"
                             android:layout_width="match_parent"
                             android:layout_height="150dp"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginBottom="20dp"
                             android:padding="10dp"
                             android:scaleType="fitCenter"
                             app:srcCompat="@drawable/steamdb" />
