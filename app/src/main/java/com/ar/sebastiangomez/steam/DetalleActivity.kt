@@ -3,8 +3,11 @@ package com.ar.sebastiangomez.steam
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -24,16 +27,18 @@ import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 import com.bumptech.glide.Glide
+import android.widget.ImageButton
 
 class DetalleActivity : AppCompatActivity() {
 
     private lateinit var themeManager: ThemeManager
     private lateinit var progressBar : ProgressBar
-    lateinit var TitleTxt : TextView
-    lateinit var DescripcionTxt : TextView
-    lateinit var LayoutDetalle : LinearLayout
-    lateinit var CardView : CardView
-    lateinit var headerImg : ImageView
+    private lateinit var TitleTxt : TextView
+    private lateinit var DescripcionTxt : TextView
+    private lateinit var LayoutDetalle : LinearLayout
+    private lateinit var CardView : CardView
+    private lateinit var headerImg : ImageView
+    private lateinit var themeButton : ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         themeManager = ThemeManager(this)
@@ -48,9 +53,6 @@ class DetalleActivity : AppCompatActivity() {
         }
 
         bindViewObject()
-        var ID = intent.extras!!.getInt("ID")
-        Log.d("ID GAME SELECCIONADO:", ID.toString())
-        fetchGameDetails(ID.toString())
     }
 
     fun bindViewObject() {
@@ -60,6 +62,21 @@ class DetalleActivity : AppCompatActivity() {
         CardView = findViewById(R.id.cardError)
         headerImg = findViewById(R.id.imageDetalle)
         progressBar = findViewById(R.id.progressBarDetail)
+        themeButton = findViewById(R.id.themeButton)
+
+        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
+        if(currentTheme.toString() == "dark")
+        {
+            themeButton.setImageResource(R.drawable.themedarktab)
+        }
+        else{
+            themeButton.setImageResource(R.drawable.themelighttab)
+        }
+
+        var ID = intent.extras!!.getInt("ID")
+        Log.d("ID GAME SELECCIONADO:", ID.toString())
+        fetchGameDetails(ID.toString())
     }
 
     private fun fetchGameDetails(gameId: String) {
@@ -75,7 +92,6 @@ class DetalleActivity : AppCompatActivity() {
                 val responseData = response.body?.string()
                 runOnUiThread {
                     Log.d("GAME DETAIL", responseData ?: "Empty response")
-                    progressBar.visibility = View.INVISIBLE
                     if (responseData != null) {
                         val gameDetailMap = Gson().fromJson<Map<String, GameDetail.GameDetailResponse>>(
                             responseData,
@@ -97,10 +113,15 @@ class DetalleActivity : AppCompatActivity() {
                                 .placeholder(R.drawable.steamdb) // Placeholder mientras se carga la imagen (opcional)
                                 .error(R.drawable.error) // Imagen de error en caso de falla de carga (opcional)
                                 .into(headerImg) // Establecer la imagen en el ImageView
-                            LayoutDetalle.visibility = View.VISIBLE
+
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                progressBar.visibility = View.INVISIBLE
+                                LayoutDetalle.visibility = View.VISIBLE
+                            }, 2000)
 
                         } else {
                             CardView.visibility = View.VISIBLE
+                            progressBar.visibility = View.INVISIBLE
                             Log.e("ERROR", "Game detail not found for ID: $gameId")
 
                         }

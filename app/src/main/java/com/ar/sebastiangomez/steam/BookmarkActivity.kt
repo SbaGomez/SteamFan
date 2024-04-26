@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -12,6 +13,7 @@ import com.ar.sebastiangomez.steam.utils.ThemeManager
 
 class BookmarkActivity : AppCompatActivity() {
     private lateinit var themeManager: ThemeManager
+    private lateinit var themeButton : ImageButton
     override fun onCreate(savedInstanceState: Bundle?) {
         themeManager = ThemeManager(this)
         themeManager.applyTheme()
@@ -22,6 +24,19 @@ class BookmarkActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        bindViewObject()
+    }
+    fun bindViewObject() {
+        themeButton = findViewById(R.id.themeButton)
+
+        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
+        if (currentTheme.toString() == "dark") {
+            themeButton.setImageResource(R.drawable.themedarktab)
+        } else {
+            themeButton.setImageResource(R.drawable.themelighttab)
         }
     }
 

@@ -55,7 +55,7 @@
             android:id="@+id/fabButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="30dp"
             android:background="#00FFFFFF"
             android:contentDescription="@string/fav_button"
             android:padding="16dp"
@@ -75,6 +75,7 @@
             android:layout_height="wrap_content"
             android:background="#00FFFFFF"
             android:contentDescription="@string/steam_button"
+            android:layout_marginStart="30dp"
             android:onClick="onHomeClick"
             android:padding="16dp"
             android:scaleType="centerInside"
@@ -96,7 +97,7 @@
             android:onClick="onChangeThemeButtonClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/themetab" />
+            android:src="@drawable/themedarktab" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

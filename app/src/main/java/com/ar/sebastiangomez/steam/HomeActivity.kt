@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -30,6 +31,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var themeManager: ThemeManager
     private lateinit var progressBar : ProgressBar
+    private lateinit var themeButton : ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         themeManager = ThemeManager(this)
@@ -43,8 +45,21 @@ class HomeActivity : AppCompatActivity() {
             insets
         }
 
+        bindViewObject()
+    }
+
+    fun bindViewObject() {
         recyclerView = findViewById(R.id.recyclerView)
         progressBar = findViewById(R.id.progressBar)
+        themeButton = findViewById(R.id.themeButton)
+
+        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
+        if (currentTheme.toString() == "dark") {
+            themeButton.setImageResource(R.drawable.themedarktab)
+        } else {
+            themeButton.setImageResource(R.drawable.themelighttab)
+        }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         val spaceHeight = resources.getDimensionPixelSize(R.dimen.item_space) // Altura del espacio entre elementos
