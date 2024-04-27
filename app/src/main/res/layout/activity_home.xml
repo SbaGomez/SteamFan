@@ -67,9 +67,9 @@
 
             <androidx.cardview.widget.CardView
                 android:layout_width="250dp"
-                android:layout_height="59dp"
+                android:layout_height="50dp"
                 android:layout_marginLeft="20dp"
-                android:layout_marginTop="70dp"
+                android:layout_marginTop="80dp"
                 android:layout_marginRight="10dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
@@ -79,7 +79,7 @@
                 <SearchView
                     android:id="@+id/searchInput"
                     android:layout_width="match_parent"
-                    android:layout_height="59dp"
+                    android:layout_height="50dp"
                     android:background="@android:color/transparent"
                     android:queryBackground="@null" />
 
@@ -89,11 +89,11 @@
                 android:id="@+id/buttonSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="75dp"
-                android:layout_marginRight="20dp"
-                android:backgroundTint="@color/Games_Details_dark_background"
+                android:layout_marginTop="80dp"
+                android:layout_marginRight="10dp"
+                android:backgroundTint="@color/md_theme_light_onTertiaryContainer"
                 android:onClick="onFilterGamesBySearchClick"
-                android:text="OK"
+                android:text="Buscar"
                 android:textColor="@color/md_theme_dark_inverseSurface" />
 
         </LinearLayout>
@@ -110,7 +110,7 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingTop="30dp"
+                android:paddingTop="0dp"
                 android:paddingBottom="0dp"
                 android:textColor="@android:color/white" />
 
