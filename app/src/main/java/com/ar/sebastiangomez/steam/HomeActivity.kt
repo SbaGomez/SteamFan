@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ProgressBar
+import android.widget.SearchView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -32,6 +33,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var themeManager: ThemeManager
     private lateinit var progressBar : ProgressBar
     private lateinit var themeButton : ImageButton
+    private lateinit var SearchView : SearchView
+    private val tag = "LOG-HOME"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         themeManager = ThemeManager(this)
@@ -52,9 +55,11 @@ class HomeActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
         progressBar = findViewById(R.id.progressBar)
         themeButton = findViewById(R.id.themeButton)
+        SearchView = findViewById(R.id.searchInput)
 
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
+        Log.d(tag, "Current Theme: " + currentTheme.toString())
         if (currentTheme.toString() == "dark") {
             themeButton.setImageResource(R.drawable.themedarktab)
         } else {
@@ -73,8 +78,7 @@ class HomeActivity : AppCompatActivity() {
                 val adapter = GameAdapter(gamesList) { position, gameId ->
                     // Acciones a realizar cuando se hace clic en un elemento de la lista
                     val gameName = gamesList[position].name
-                    Log.d("Game ID:", gameId)
-                    Log.d("Game Name:", gameName)
+                    Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
                     // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
                 }
                 recyclerView.adapter = adapter
@@ -87,19 +91,7 @@ class HomeActivity : AppCompatActivity() {
                 progressBar.visibility = View.INVISIBLE
             }
         }
-    }
 
-    fun onChangeThemeButtonClick(view: View) {
-        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
-        val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
-        themeManager.changeTheme(newTheme)
-    }
-
-    fun onBookmarkClick(view: View) {
-        var intent = Intent(this, BookmarkActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 
     private suspend fun fetchGames(): List<Game> {
@@ -113,8 +105,37 @@ class HomeActivity : AppCompatActivity() {
             if (!response.isSuccessful) throw IOException("Unexpected code $response")
 
             val responseData = response.body!!.string()
-            Log.d("List Game:", responseData)
+            Log.d(tag, "List Game: $responseData")
             parseResponse(responseData)
+        }
+    }
+
+    fun onFilterGamesBySearchClick(view: View) {
+        lifecycleScope.launch {
+            try {
+                recyclerView.visibility = View.INVISIBLE
+                progressBar.visibility = View.VISIBLE
+                val gamesList = fetchGames()
+                val searchTerm = SearchView.query.toString().toLowerCase() // Obtener el término de búsqueda del SearchView y convertirlo a minúsculas
+                val filteredGamesList = gamesList.filter { it.name.toLowerCase().contains(searchTerm) } // Filtrar los juegos basados en el término de búsqueda
+
+                val adapter = GameAdapter(filteredGamesList) { position, gameId ->
+                    // Acciones a realizar cuando se hace clic en un elemento de la lista
+                    val gameName = filteredGamesList[position].name
+                    Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
+                    // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
+                }
+
+                recyclerView.visibility = View.VISIBLE
+                recyclerView.adapter = adapter
+            } catch (e: IOException) {
+                e.printStackTrace()
+                // En caso de error, ocultar el ProgressBar
+                progressBar.visibility = View.INVISIBLE
+            } finally {
+                // Asegurarse de ocultar el ProgressBar después de la carga, ya sea exitosa o no
+                progressBar.visibility = View.INVISIBLE
+            }
         }
     }
 
@@ -132,6 +153,21 @@ class HomeActivity : AppCompatActivity() {
             }
         }
         return gamesList
+    }
+
+    fun onChangeThemeButtonClick(view: View) {
+        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
+        val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
+
+        Log.d(tag, "New Theme: $newTheme")
+        themeManager.changeTheme(newTheme)
+    }
+
+    fun onBookmarkClick(view: View) {
+        var intent = Intent(this, BookmarkActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
 
