@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.SearchView
@@ -111,6 +112,11 @@ class HomeActivity : AppCompatActivity() {
     }
 
     fun onFilterGamesBySearchClick(view: View) {
+
+        // Cerrar el teclado del dispositivo móvil
+        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+
         lifecycleScope.launch {
             try {
                 recyclerView.visibility = View.INVISIBLE

@@ -91,8 +91,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="75dp"
                 android:layout_marginRight="20dp"
+                android:backgroundTint="@color/Games_Details_dark_background"
                 android:onClick="onFilterGamesBySearchClick"
-                android:text="OK" />
+                android:text="OK"
+                android:textColor="@color/md_theme_dark_inverseSurface" />
 
         </LinearLayout>
 
