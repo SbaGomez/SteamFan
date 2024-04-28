@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -39,6 +38,7 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var CardView : CardView
     private lateinit var headerImg : ImageView
     private lateinit var themeButton : ImageButton
+    private val tag = "LOG-DETAIL"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         themeManager = ThemeManager(this)
@@ -75,7 +75,7 @@ class DetalleActivity : AppCompatActivity() {
         }
 
         var ID = intent.extras!!.getInt("ID")
-        Log.d("ID GAME SELECCIONADO:", ID.toString())
+        Log.d(tag, "ID Game: $ID")
         fetchGameDetails(ID.toString())
     }
 
@@ -91,7 +91,7 @@ class DetalleActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val responseData = response.body?.string()
                 runOnUiThread {
-                    Log.d("GAME DETAIL", responseData ?: "Empty response")
+                    Log.d(tag, ("GAME DETAIL: $responseData") ?: "Empty response")
                     if (responseData != null) {
                         val gameDetailMap = Gson().fromJson<Map<String, GameDetail.GameDetailResponse>>(
                             responseData,
@@ -100,10 +100,7 @@ class DetalleActivity : AppCompatActivity() {
                         val gameDetail = gameDetailMap[gameId]?.data
                         if (gameDetail != null) {
                             // Verifica si las propiedades son nulas antes de usarlas
-                            Log.d(
-                                "GAME DETAIL",
-                                "ID: ${gameDetail.steam_appid}, Name: ${gameDetail.name}, Type: ${gameDetail.type}, Short description: ${gameDetail.short_description}"
-                            )
+                            Log.d(tag,"GAME DETAIL - ID: ${gameDetail.steam_appid}, Name: ${gameDetail.name}, Type: ${gameDetail.type}, Short description: ${gameDetail.short_description}")
 
                             TitleTxt.text = gameDetail.name
                             DescripcionTxt.text = gameDetail.short_description.replace(Regex("<br />|&quot;"), "")
@@ -122,17 +119,17 @@ class DetalleActivity : AppCompatActivity() {
                         } else {
                             CardView.visibility = View.VISIBLE
                             progressBar.visibility = View.INVISIBLE
-                            Log.e("ERROR", "Game detail not found for ID: $gameId")
+                            Log.e(tag,"ERROR: Game detail not found for ID: $gameId")
 
                         }
                     } else {
-                        Log.e("ERROR", "Empty response body")
+                        Log.e(tag,"ERROR: Empty response body")
                     }
                 }
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("ERROR", "Failed to fetch game details: ${e.message}")
+                Log.e(tag, "ERROR: Failed to fetch game details: ${e.message}")
             }
         })
     }
