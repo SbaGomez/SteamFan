@@ -21,10 +21,6 @@ class GameAdapter(private val gamesList: List<Game>, private val onItemClick: (p
         val game = gamesList[position]
         holder.bind(game)
 
-        holder.textView.setBackgroundColor(holder.itemView.context.resources.getColor(R.color.title_games_dark_background))
-        holder.textView.setTextColor(holder.itemView.context.resources.getColor(R.color.md_theme_dark_background))
-        holder.textView.setTypeface(null, Typeface.BOLD)
-
         holder.itemView.setOnClickListener {
             onItemClick.invoke(position, game.id) // Pasar el ID del juego al onItemClick
             var selectID = game.id.toInt()

@@ -57,6 +57,7 @@ class HomeActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         themeButton = findViewById(R.id.themeButton)
         SearchView = findViewById(R.id.searchInput)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
@@ -66,11 +67,6 @@ class HomeActivity : AppCompatActivity() {
         } else {
             themeButton.setImageResource(R.drawable.themelighttab)
         }
-
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        val spaceHeight = resources.getDimensionPixelSize(R.dimen.item_space) // Altura del espacio entre elementos
-        val paddingHorizontal = resources.getDimensionPixelSize(R.dimen.item_padding_horizontal) // Padding horizontal
-        recyclerView.addItemDecoration(SpaceItemDecoration(spaceHeight, paddingHorizontal))
 
         lifecycleScope.launch {
             try {

@@ -1,39 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginTop="10dp">
 
-    <LinearLayout
-        android:id="@+id/layoutList"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        android:layout_weight="1"
 
-        <TextView
-            android:id="@+id/textList"
+        app:cardBackgroundColor="@color/title_games_dark_background"
+        app:cardCornerRadius="10dp">
+
+        <LinearLayout
+            android:id="@+id/layoutList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:gravity="center_vertical"
-            android:minHeight="?android:attr/listPreferredItemHeightSmall"
-            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-            android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+            android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/imageButtonList"
-            android:layout_width="50dp"
-            android:layout_height="48dp"
-            android:layout_marginRight="0dp"
-            android:background="@color/title_games_dark_background"
-            android:contentDescription="@string/fav_button"
-            android:padding="8dp"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/bookmarkdel" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/textList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#00735471"
+                android:gravity="center_vertical"
+                android:minHeight="?android:attr/listPreferredItemHeightSmall"
+                android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+                android:textAppearance="?android:attr/textAppearanceListItemSmall"
+                android:textColor="@color/Games_Details_dark_background"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/imageButtonList"
+                android:layout_width="50dp"
+                android:layout_height="48dp"
+                android:layout_marginRight="0dp"
+                android:background="#495d92"
+                android:contentDescription="@string/fav_button"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/bookmarkdel" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
