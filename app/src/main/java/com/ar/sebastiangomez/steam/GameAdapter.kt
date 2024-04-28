@@ -10,6 +10,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class GameAdapter(private val gamesList: List<Game>, private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<GameAdapter.GameViewHolder>() {
+
+    private val tag = "LOG-LIST"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
         //val view = LayoutInflater.from(parent.context).inflate(android.R.layout.simple_list_item_1, parent, false)
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_custom_item, parent, false)
@@ -23,8 +25,7 @@ class GameAdapter(private val gamesList: List<Game>, private val onItemClick: (p
         holder.itemView.setOnClickListener {
             onItemClick.invoke(position, game.id) // Pasar el ID del juego al onItemClick
             var selectID = game.id.toInt()
-            Log.d("ID POSICION:", game.id)
-            Log.d("SELECT ID:", selectID.toString())
+            Log.d(tag,"ID Position: ${game.id} Select ID: $selectID")
 
             val intent = Intent(holder.itemView.context, DetalleActivity::class.java)
             intent.putExtra("ID", selectID)
@@ -34,7 +35,7 @@ class GameAdapter(private val gamesList: List<Game>, private val onItemClick: (p
         holder.imageButton.setOnClickListener {
             // Aquí se ejecuta la acción cuando se hace clic en el ImageButton
             // Puedes llamar a una función o realizar cualquier acción necesaria
-            Log.d("ImageButton Clicked", "Position: $position, Game ID: ${game.id}")
+            Log.d(tag, "Log Button Add Bookmark - ID Position: $position, Game ID: ${game.id}")
         }
     }
 
