@@ -91,7 +91,7 @@ class DetalleActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val responseData = response.body?.string()
                 runOnUiThread {
-                    Log.d(tag, ("GAME DETAIL: $responseData") ?: "Empty response")
+                    Log.d(tag, ("GAME DETAIL COMPLETE: $responseData") ?: "Empty response")
                     if (responseData != null) {
                         val gameDetailMap = Gson().fromJson<Map<String, GameDetail.GameDetailResponse>>(
                             responseData,
