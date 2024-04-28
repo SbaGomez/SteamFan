@@ -81,7 +81,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@android:color/transparent"
-                    android:queryBackground="@null" />
+                    android:iconifiedByDefault="false"
+                    android:queryBackground="@null"
+                    android:queryHint="Buscar juegos" />
 
             </androidx.cardview.widget.CardView>
 
