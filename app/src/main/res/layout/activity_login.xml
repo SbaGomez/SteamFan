@@ -82,15 +82,39 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/logoSplash" />
 
-        <Button
+        <androidx.cardview.widget.CardView
             android:id="@+id/googleButton"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:background="@color/md_theme_dark_outlineVariant"
-            android:drawableStart="@drawable/google32"
-            android:paddingStart="16dp"
-            android:text="@string/login_button"
-            android:textColor="@color/md_theme_dark_inverseSurface" />
+            android:backgroundTint="@color/Games_Details_dark_background"
+            android:onClick="onLoginClick"
+            tools:ignore="OnClick">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#00FFFFFF"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/google32" />
+
+                <TextView
+                    android:id="@+id/textLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/login_button"
+                    android:textColor="@color/md_theme_light_tertiaryContainer" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

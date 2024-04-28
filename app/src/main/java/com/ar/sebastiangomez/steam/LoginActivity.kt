@@ -1,17 +1,21 @@
 package com.ar.sebastiangomez.steam
 
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import android.view.View
+import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.ar.sebastiangomez.steam.utils.ThemeManager
 
 class LoginActivity : AppCompatActivity() {
+
+    private lateinit var themeManager: ThemeManager
     override fun onCreate(savedInstanceState: Bundle?) {
+        themeManager = ThemeManager(this)
+        themeManager.applyTheme()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
@@ -20,15 +24,16 @@ class LoginActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        bindViewObject()
+    }
 
-        var prefs = getSharedPreferences("com.ar.sebastiangomez.SteamFan.sharedpref", Context.MODE_PRIVATE)
-        var userName = prefs.getString("user", "")
-        val tag = "LOG-USER"
-        Log.d(tag, userName.toString())
+    private fun bindViewObject()
+    {
+        OnLoginClick()
+    }
 
-        //Leer ID del Intent
-        var ID = intent.extras!!.getInt("ID")
-        Log.d(tag, ID.toString())
+    fun OnLoginClick()
+    {
 
     }
 }

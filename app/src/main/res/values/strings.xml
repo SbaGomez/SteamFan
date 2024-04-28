@@ -9,5 +9,15 @@
     <string name="theme_button">Theme</string>
     <string name="login_button">Sign in with Google</string>
     <string name="title_activity_login">Login</string>
+    <string name="title">Titulo</string>
+    <string name="title_descripcion">Descripcion</string>
+    <string name="title_requisitos_minimos">Requisitos Minimos</string>
+    <string name="title_requisitos_recomendados">Requisitos Recomendados</string>
+    <string name="proximamente">Proximamente…</string>
+    <string name="contenido">Contenido…</string>
+    <string name="SO">Sistema Operativo:</string>
+    <string name="Procesador">Procesador:</string>
+    <string name="Memoria">Memoria:</string>
+    <string name="Graphic">Graficos:</string>
     <string name="error_detalles_empty">El juego no tiene detalles cargados.</string>
 </resources>
