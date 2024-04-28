@@ -40,6 +40,50 @@
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginRight="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            app:cardBackgroundColor="@color/md_theme_light_inverseSurface"
+            app:cardCornerRadius="16dp">
+
+            <SearchView
+                android:id="@+id/searchInputBookmark"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@android:color/transparent"
+                android:forceDarkAllowed="false"
+                android:iconifiedByDefault="false"
+                android:queryBackground="@null"
+                android:queryHint="Buscar juegos"
+                android:theme="@style/Base.Theme.Steam.Dark" />
+
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/buttonSearchBookmark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:layout_marginRight="10dp"
+            android:backgroundTint="@color/md_theme_light_onTertiaryContainer"
+            android:text="Buscar"
+            android:textColor="@color/md_theme_dark_inverseSurface" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="70dp"
