@@ -1,7 +1,6 @@
 package com.ar.sebastiangomez.steam
 
 import android.content.Intent
-import android.graphics.Typeface
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
