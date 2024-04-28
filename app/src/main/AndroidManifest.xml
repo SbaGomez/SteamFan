@@ -25,9 +25,6 @@
             android:name=".HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".PruebaActivity"
-            android:exported="false" />
-        <activity
             android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>

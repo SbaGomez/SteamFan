@@ -1,9 +1,8 @@
 package com.ar.sebastiangomez.steam
 
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.ImageButton
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -29,11 +28,13 @@ class LoginActivity : AppCompatActivity() {
 
     private fun bindViewObject()
     {
-        OnLoginClick()
+
     }
 
-    fun OnLoginClick()
+    fun onLoginClick(view: View)
     {
-
+        var intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

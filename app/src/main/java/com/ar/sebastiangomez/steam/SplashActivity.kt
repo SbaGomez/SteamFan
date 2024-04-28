@@ -1,6 +1,5 @@
 package com.ar.sebastiangomez.steam
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -28,17 +27,13 @@ class SplashActivity : AppCompatActivity() {
             insets
         }
 
-        var userName = "sgomez"
-        var selectID = 1234
+        bindViewObject()
+    }
 
-        //global sharedpreferences
-        var prefs =
-            getSharedPreferences("com.ar.sebastiangomez.SteamFan.sharedpref", Context.MODE_PRIVATE)
-        prefs.edit().putString("user", userName).apply()
-
+    private fun bindViewObject()
+    {
         Handler(Looper.getMainLooper()).postDelayed({
-            var intent = Intent(this, HomeActivity::class.java)
-            intent.putExtra("ID", selectID)
+            var intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }, 4000)
