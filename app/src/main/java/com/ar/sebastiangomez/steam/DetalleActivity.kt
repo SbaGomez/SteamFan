@@ -42,7 +42,6 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var textProcesador : TextView
     private lateinit var textMemoria : TextView
     private lateinit var textGraficos : TextView
-    private lateinit var textAlmacenamiento : TextView
     private val tag = "LOG-DETAIL"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +71,6 @@ class DetalleActivity : AppCompatActivity() {
         textProcesador = findViewById(R.id.textProcesador)
         textMemoria = findViewById(R.id.textMemoria)
         textGraficos = findViewById(R.id.textGraficos)
-        textAlmacenamiento = findViewById(R.id.textAlmacenamiento)
 
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
@@ -116,7 +114,6 @@ class DetalleActivity : AppCompatActivity() {
                             textProcesador.text = pcRequirements?.minimum?.processor ?: "N/A"
                             textMemoria.text = pcRequirements?.minimum?.memory ?: "N/A"
                             textGraficos.text = pcRequirements?.minimum?.graphics ?: "N/A"
-                            textAlmacenamiento.text = pcRequirements?.minimum?.storage ?: "N/A"
                             TitleTxt.text = gameDetail.name
                             DescripcionTxt.text = gameDetail.short_description.replace(Regex("<br />|&quot;"), "")
                             // Cargar la imagen utilizando Glide
