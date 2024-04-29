@@ -5,6 +5,8 @@
     <string name="title_detail">Detalle</string>
     <string name="title_fav">Favoritos</string>
     <string name="fav_button">Fav</string>
+    <string name="search_button">Buscar</string>
+    <string name="placeholder_search_button">Buscar juegos...</string>
     <string name="steam_button">Home</string>
     <string name="theme_button">Theme</string>
     <string name="login_button">Sign in with Google</string>

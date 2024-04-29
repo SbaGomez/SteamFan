@@ -15,6 +15,7 @@
         android:layout_marginEnd="114dp"
         android:layout_marginBottom="74dp"
         android:background="#00FFFFFF"
+        android:contentDescription="@string/app_name"
         android:src="@drawable/steamdb"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

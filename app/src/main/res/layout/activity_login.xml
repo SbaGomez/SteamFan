@@ -63,6 +63,7 @@
             android:layout_marginTop="46dp"
             android:layout_marginBottom="20dp"
             android:background="#00FFFFFF"
+            android:contentDescription="@string/app_name"
             android:src="@drawable/steamdb" />
 
         <TextView
@@ -102,6 +103,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:layout_weight="1"
+                    android:contentDescription="@string/app_name"
                     android:scaleType="centerInside"
                     app:srcCompat="@drawable/google32" />
 

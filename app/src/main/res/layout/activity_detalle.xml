@@ -77,7 +77,8 @@
                 android:adjustViewBounds="true"
                 android:padding="16dp"
                 android:scaleType="centerInside"
-                android:src="@drawable/error" />
+                android:src="@drawable/error"
+                android:contentDescription="@string/app_name" />
 
             <TextView
                 android:id="@+id/textView2"
@@ -109,7 +110,8 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="@string/title_detail">
+            android:contentDescription="@string/title_detail"
+            tools:ignore="UselessParent">
 
             <LinearLayout
                 android:id="@+id/layoutDetalle"
@@ -146,13 +148,13 @@
                                 android:layout_width="40dp"
                                 android:layout_height="40dp"
                                 android:layout_marginTop="10dp"
-                                android:layout_marginRight="10dp"
+                                android:layout_marginEnd="10dp"
                                 android:backgroundTint="#00FFFFFF"
-                                android:contentDescription="@string/fav_button"
+                                android:contentDescription="@string/app_name"
                                 android:padding="8dp"
                                 android:scaleType="fitCenter"
                                 app:srcCompat="@drawable/bookmarkdetail"
-                                tools:ignore="TouchTargetSizeCheck" />
+                                tools:ignore="TouchTargetSizeCheck,DuplicateSpeakableTextCheck" />
 
                         </LinearLayout>
 
@@ -175,6 +177,7 @@
                             android:layout_height="150dp"
                             android:layout_marginTop="15dp"
                             android:layout_marginBottom="20dp"
+                            android:contentDescription="@string/app_name"
                             android:padding="10dp"
                             android:scaleType="fitCenter"
                             app:srcCompat="@drawable/steamdb" />
@@ -240,9 +243,9 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingLeft="50dp"
+                                android:paddingStart="50dp"
                                 android:paddingTop="5dp"
-                                android:paddingRight="5dp"
+                                android:paddingEnd="5dp"
                                 android:paddingBottom="5dp"
                                 android:text="@string/SO"
                                 android:textAlignment="center"
@@ -255,13 +258,14 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:paddingTop="5dp"
-                                android:paddingRight="20dp"
+                                android:paddingEnd="20dp"
                                 android:paddingBottom="5dp"
                                 android:text="@string/proximamente"
                                 android:textAlignment="textStart"
                                 android:textColor="@color/md_theme_dark_error"
                                 android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textStyle="normal"
+                                tools:ignore="RtlSymmetry" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -272,9 +276,9 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingLeft="50dp"
+                                android:paddingStart="50dp"
                                 android:paddingTop="5dp"
-                                android:paddingRight="5dp"
+                                android:paddingEnd="5dp"
                                 android:paddingBottom="5dp"
                                 android:text="@string/Procesador"
                                 android:textAlignment="center"
@@ -287,13 +291,14 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:paddingTop="5dp"
-                                android:paddingRight="20dp"
+                                android:paddingEnd="20dp"
                                 android:paddingBottom="5dp"
                                 android:text="@string/proximamente"
                                 android:textAlignment="textStart"
                                 android:textColor="@color/md_theme_dark_error"
                                 android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textStyle="normal"
+                                tools:ignore="RtlSymmetry" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -304,9 +309,9 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingLeft="50dp"
+                                android:paddingStart="50dp"
                                 android:paddingTop="5dp"
-                                android:paddingRight="5dp"
+                                android:paddingEnd="5dp"
                                 android:paddingBottom="5dp"
                                 android:text="@string/Memoria"
                                 android:textAlignment="center"
@@ -319,13 +324,14 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:paddingTop="5dp"
-                                android:paddingRight="20dp"
+                                android:paddingEnd="20dp"
                                 android:paddingBottom="5dp"
                                 android:text="@string/proximamente"
                                 android:textAlignment="textStart"
                                 android:textColor="@color/md_theme_dark_error"
                                 android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textStyle="normal"
+                                tools:ignore="RtlSymmetry" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -336,9 +342,9 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingLeft="50dp"
+                                android:paddingStart="50dp"
                                 android:paddingTop="5dp"
-                                android:paddingRight="5dp"
+                                android:paddingEnd="5dp"
                                 android:paddingBottom="5dp"
                                 android:text="@string/Graphic"
                                 android:textAlignment="center"
@@ -351,13 +357,14 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:paddingTop="5dp"
-                                android:paddingRight="20dp"
+                                android:paddingEnd="20dp"
                                 android:paddingBottom="5dp"
                                 android:text="@string/proximamente"
                                 android:textAlignment="textStart"
                                 android:textColor="@color/md_theme_dark_error"
                                 android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textStyle="normal"
+                                tools:ignore="RtlSymmetry" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -429,7 +436,8 @@
             android:onClick="onChangeThemeButtonClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/themelighttab" />
+            android:src="@drawable/themelighttab"
+            tools:ignore="VisualLintBounds" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
