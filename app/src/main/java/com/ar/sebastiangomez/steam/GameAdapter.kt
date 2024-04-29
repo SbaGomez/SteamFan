@@ -24,7 +24,7 @@ class GameAdapter(private val gamesList: List<Game>, private val onItemClick: (p
 
         holder.itemView.setOnClickListener {
             onItemClick.invoke(position, game.id) // Pasar el ID del juego al onItemClick
-            var selectID = game.id.toInt()
+            val selectID = game.id.toInt()
             Log.d(tag,"ID Position: ${game.id} Select ID: $selectID")
 
             val intent = Intent(holder.itemView.context, DetalleActivity::class.java)
@@ -45,7 +45,7 @@ class GameAdapter(private val gamesList: List<Game>, private val onItemClick: (p
 
     class GameViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         //val textView: TextView = itemView.findViewById(android.R.id.text1)
-        val textView: TextView = itemView.findViewById(R.id.textList)
+        private val textView: TextView = itemView.findViewById(R.id.textList)
         val imageButton: ImageButton = itemView.findViewById(R.id.imageButtonList)
         fun bind(game: Game) {
             textView.text = game.name

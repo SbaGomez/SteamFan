@@ -28,7 +28,7 @@ class BookmarkActivity : AppCompatActivity() {
 
         bindViewObject()
     }
-    fun bindViewObject() {
+    private fun bindViewObject() {
         themeButton = findViewById(R.id.themeButton)
 
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
@@ -40,6 +40,7 @@ class BookmarkActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onChangeThemeButtonClick(view: View) {
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
@@ -47,8 +48,9 @@ class BookmarkActivity : AppCompatActivity() {
         themeManager.changeTheme(newTheme)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onHomeClick(view: View) {
-        var intent = Intent(this, HomeActivity::class.java)
+        val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
         finish()
     }
