@@ -21,5 +21,6 @@
     <string name="Procesador">Procesador:</string>
     <string name="Memoria">Memoria:</string>
     <string name="Graphic">Graficos:</string>
+    <string name="Almacenamiento">Almacenamiento:</string>
     <string name="error_detalles_empty">El juego no tiene detalles cargados.</string>
 </resources>
