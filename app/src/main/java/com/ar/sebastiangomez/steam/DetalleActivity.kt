@@ -42,6 +42,7 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var textProcesador : TextView
     private lateinit var textMemoria : TextView
     private lateinit var textGraficos : TextView
+    private lateinit var textAlmacenamiento : TextView
     private val tag = "LOG-DETAIL"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +72,7 @@ class DetalleActivity : AppCompatActivity() {
         textProcesador = findViewById(R.id.textProcesador)
         textMemoria = findViewById(R.id.textMemoria)
         textGraficos = findViewById(R.id.textGraficos)
+        textAlmacenamiento = findViewById(R.id.textAlmacenamiento)
 
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
@@ -110,10 +112,11 @@ class DetalleActivity : AppCompatActivity() {
                             // Verifica si las propiedades son nulas antes de usarlas
                             val pcRequirements = parsePcRequirements(gameDetail.pc_requirements.toString())
                             Log.d(tag,"GAME DETAIL - ID: ${gameDetail.steam_appid}, Name: ${gameDetail.name}, Type: ${gameDetail.type}, Short description: ${gameDetail.short_description}, Pc requirements: $pcRequirements")
-                            textSO.text = pcRequirements?.minimum?.os ?: "N/A"
-                            textProcesador.text = pcRequirements?.minimum?.processor ?: "N/A"
-                            textMemoria.text = pcRequirements?.minimum?.memory ?: "N/A"
-                            textGraficos.text = pcRequirements?.minimum?.graphics ?: "N/A"
+                            textSO.text = pcRequirements?.minimum?.os?.takeIf { it.isNotEmpty() } ?: "N/A"
+                            textProcesador.text = pcRequirements?.minimum?.processor?.takeIf { it.isNotEmpty() } ?: "N/A"
+                            textMemoria.text = pcRequirements?.minimum?.memory?.takeIf { it.isNotEmpty() } ?: "N/A"
+                            textGraficos.text = pcRequirements?.minimum?.graphics?.takeIf { it.isNotEmpty() } ?: "N/A"
+                            textAlmacenamiento.text = pcRequirements?.recommended?.storage?.takeIf { it.isNotEmpty() } ?: "N/A"
                             TitleTxt.text = gameDetail.name
                             DescripcionTxt.text = gameDetail.short_description.replace(Regex("<br />|&quot;"), "")
                             // Cargar la imagen utilizando Glide
@@ -149,6 +152,7 @@ class DetalleActivity : AppCompatActivity() {
     fun parsePcRequirements(pcRequirementsString: String): GameDetail.PcRequirements? {
         // Elimina las etiquetas HTML y caracteres innecesarios
         val cleanString = pcRequirementsString
+            .replace("<strong>", " ")
             .replace(Regex("<.*?>"), "") // Elimina etiquetas HTML
             .replace("Minimum:", "") // Elimina el texto "Minimum:"
             .replace("Recommended:", "") // Elimina el texto "Recommended:"
@@ -158,47 +162,56 @@ class DetalleActivity : AppCompatActivity() {
         // Divide la cadena en requisitos mínimos y recomendados
         val requirementParts = cleanString.split("Recommended:")
 
-        // Obtén los requisitos mínimos si están presentes
-        val minimumRequirement = requirementParts.getOrNull(0)?.let { minimum ->
-            val minimumParts = minimum.split("OS:", "Processor:", "Memory:", "Graphics:", "DirectX:", "Sound Card:", "Network:", "Storage:")
-            if (minimumParts.size >= 9) {
+        // Función auxiliar para extraer un requisito específico de acuerdo a su etiqueta
+        fun extractRequirement(requirementString: String, label: String): String {
+            val regex = Regex("$label\\s*:?\\s*((?:(?!$label\\s*:?)[^:])*)", RegexOption.IGNORE_CASE)
+            val matchResult = regex.find(requirementString)
+            val content = matchResult?.groupValues?.getOrNull(1)?.trim() ?: ""
+
+            // Eliminar la última palabra del contenido
+            val words = content.split(" ")
+            val trimmedContent = if (words.size > 1) words.dropLast(1).joinToString(" ") else content
+
+            return trimmedContent
+        }
+
+        // Función auxiliar para crear un objeto PcRequirement a partir de una cadena de requisito
+        fun createPcRequirement(requirementString: String): GameDetail.PcRequirement? {
+            val os = extractRequirement(requirementString, "OS:")
+            val processor = extractRequirement(requirementString, "Processor:")
+            val memory = extractRequirement(requirementString, "Memory:")
+            val graphics = extractRequirement(requirementString, "Graphics:")
+            val directx = extractRequirement(requirementString, "DirectX:")
+            val soundcard = extractRequirement(requirementString, "Sound Card:")
+            val network = extractRequirement(requirementString, "Network:")
+            val storage = extractRequirement(requirementString, "Storage:")
+
+            return if (os.isNotEmpty() || processor.isNotEmpty() || memory.isNotEmpty() || graphics.isNotEmpty() ||
+                directx.isNotEmpty() || soundcard.isNotEmpty() || network.isNotEmpty() || storage.isNotEmpty()) {
                 GameDetail.PcRequirement(
-                    os = minimumParts.getOrElse(1) { "" }.trim(),
-                    processor = minimumParts.getOrElse(2) { "" }.trim(),
-                    memory = minimumParts.getOrElse(3) { "" }.trim(),
-                    graphics = minimumParts.getOrElse(4) { "" }.trim(),
-                    directx = minimumParts.getOrElse(5) { "" }.trim(),
-                    soundcard = minimumParts.getOrElse(6) { "" }.trim(),
-                    network = minimumParts.getOrElse(7) { "" }.trim(),
-                    storage = minimumParts.getOrElse(8) { "" }.trim(),
+                    os = os,
+                    processor = processor,
+                    memory = memory,
+                    graphics = graphics,
+                    directx = directx,
+                    soundcard = soundcard,
+                    network = network,
+                    storage = storage
                 )
             } else {
                 null
             }
         }
 
-        minimumRequirement?.let {
-            Log.d(tag, "OS: ${it.os}")
+        // Obtén los requisitos mínimos si están presentes
+        val minimumRequirement = requirementParts.getOrNull(0)?.let { minimum ->
+            createPcRequirement(minimum)
         }
 
         // Obtén los requisitos recomendados si están presentes
         val recommendedRequirement = if (requirementParts.size > 1) {
             requirementParts.getOrNull(1)?.let { recommended ->
-                val recommendedParts = recommended.split("OS:", "Processor:", "Memory:", "Graphics:", "DirectX:", "Sound Card:", "Network:", "Storage:")
-                if (recommendedParts.size >= 7) {
-                    GameDetail.PcRequirement(
-                        os = recommendedParts.getOrElse(1) { "" }.trim(),
-                        processor = recommendedParts.getOrElse(2) { "" }.trim(),
-                        memory = recommendedParts.getOrElse(3) { "" }.trim(),
-                        graphics = recommendedParts.getOrElse(4) { "" }.trim(),
-                        directx = recommendedParts.getOrElse(5) { "" }.trim(),
-                        soundcard = recommendedParts.getOrElse(6) { "" }.trim(),
-                        network = recommendedParts.getOrElse(7) { "" }.trim(),
-                        storage = recommendedParts.getOrElse(8) { "" }.trim()
-                    )
-                } else {
-                    null
-                }
+                createPcRequirement(recommended)
             }
         } else {
             // Si no hay requisitos recomendados, utiliza los mismos requisitos mínimos
