@@ -1,5 +1,6 @@
 package com.ar.sebastiangomez.steam
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -11,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.ar.sebastiangomez.steam.utils.ThemeManager
 
 
+@SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
 
     private lateinit var themeManager: ThemeManager
@@ -33,7 +35,7 @@ class SplashActivity : AppCompatActivity() {
     private fun bindViewObject()
     {
         Handler(Looper.getMainLooper()).postDelayed({
-            var intent = Intent(this, LoginActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }, 4000)

@@ -24,6 +24,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import java.io.IOException
+import java.util.Locale
 
 class Game(val id: String, val name: String)
 
@@ -33,7 +34,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var themeManager: ThemeManager
     private lateinit var progressBar : ProgressBar
     private lateinit var themeButton : ImageButton
-    private lateinit var SearchView : SearchView
+    private lateinit var searchView : SearchView
     private val tag = "LOG-HOME"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,11 +52,11 @@ class HomeActivity : AppCompatActivity() {
         bindViewObject()
     }
 
-    fun bindViewObject() {
+    private fun bindViewObject() {
         recyclerView = findViewById(R.id.recyclerView)
         progressBar = findViewById(R.id.progressBar)
         themeButton = findViewById(R.id.themeButton)
-        SearchView = findViewById(R.id.searchInput)
+        searchView = findViewById(R.id.searchInput)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
@@ -117,8 +118,9 @@ class HomeActivity : AppCompatActivity() {
                 recyclerView.visibility = View.INVISIBLE
                 progressBar.visibility = View.VISIBLE
                 val gamesList = fetchGames()
-                val searchTerm = SearchView.query.toString().toLowerCase() // Obtener el término de búsqueda del SearchView y convertirlo a minúsculas
-                val filteredGamesList = gamesList.filter { it.name.toLowerCase().contains(searchTerm) } // Filtrar los juegos basados en el término de búsqueda
+                val searchTerm =
+                    searchView.query.toString().lowercase(Locale.getDefault()) // Obtener el término de búsqueda del SearchView y convertirlo a minúsculas
+                val filteredGamesList = gamesList.filter { it.name.lowercase(Locale.getDefault()).contains(searchTerm) } // Filtrar los juegos basados en el término de búsqueda
 
                 val adapter = GameAdapter(filteredGamesList) { position, gameId ->
                     // Acciones a realizar cuando se hace clic en un elemento de la lista
@@ -156,6 +158,7 @@ class HomeActivity : AppCompatActivity() {
         return gamesList
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onChangeThemeButtonClick(view: View) {
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
@@ -165,8 +168,9 @@ class HomeActivity : AppCompatActivity() {
         themeManager.changeTheme(newTheme)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onBookmarkClick(view: View) {
-        var intent = Intent(this, BookmarkActivity::class.java)
+        val intent = Intent(this, BookmarkActivity::class.java)
         startActivity(intent)
         finish()
     }

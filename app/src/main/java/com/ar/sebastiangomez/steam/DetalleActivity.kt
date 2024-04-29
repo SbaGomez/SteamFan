@@ -32,10 +32,10 @@ class DetalleActivity : AppCompatActivity() {
 
     private lateinit var themeManager: ThemeManager
     private lateinit var progressBar : ProgressBar
-    private lateinit var TitleTxt : TextView
-    private lateinit var DescripcionTxt : TextView
-    private lateinit var LayoutDetalle : LinearLayout
-    private lateinit var CardView : CardView
+    private lateinit var titleTxt : TextView
+    private lateinit var descripcionTxt : TextView
+    private lateinit var layoutDetalle : LinearLayout
+    private lateinit var cardView : CardView
     private lateinit var headerImg : ImageView
     private lateinit var themeButton : ImageButton
     private lateinit var textSO : TextView
@@ -60,11 +60,11 @@ class DetalleActivity : AppCompatActivity() {
         bindViewObject()
     }
 
-    fun bindViewObject() {
-        TitleTxt = findViewById(R.id.titleGame)
-        DescripcionTxt = findViewById(R.id.shortDescription)
-        LayoutDetalle = findViewById(R.id.layoutDetalle)
-        CardView = findViewById(R.id.cardError)
+    private fun bindViewObject() {
+        titleTxt = findViewById(R.id.titleGame)
+        descripcionTxt = findViewById(R.id.shortDescription)
+        layoutDetalle = findViewById(R.id.layoutDetalle)
+        cardView = findViewById(R.id.cardError)
         headerImg = findViewById(R.id.imageDetalle)
         progressBar = findViewById(R.id.progressBarDetail)
         themeButton = findViewById(R.id.themeButton)
@@ -84,9 +84,9 @@ class DetalleActivity : AppCompatActivity() {
             themeButton.setImageResource(R.drawable.themelighttab)
         }
 
-        var ID = intent.extras!!.getInt("ID")
-        Log.d(tag, "ID Game: $ID")
-        fetchGameDetails(ID.toString())
+        val id = intent.extras!!.getInt("ID")
+        Log.d(tag, "ID Game: $id")
+        fetchGameDetails(id.toString())
     }
 
     private fun fetchGameDetails(gameId: String) {
@@ -101,7 +101,7 @@ class DetalleActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val responseData = response.body?.string()
                 runOnUiThread {
-                    Log.d(tag, ("GAME DETAIL COMPLETE: $responseData") ?: "Empty response")
+                    Log.d(tag, ("GAME DETAIL COMPLETE: $responseData"))
                     if (responseData != null) {
                         val gameDetailMap = Gson().fromJson<Map<String, GameDetail.GameDetailResponse>>(
                             responseData,
@@ -117,8 +117,8 @@ class DetalleActivity : AppCompatActivity() {
                             textMemoria.text = pcRequirements?.minimum?.memory?.takeIf { it.isNotEmpty() } ?: "N/A"
                             textGraficos.text = pcRequirements?.minimum?.graphics?.takeIf { it.isNotEmpty() } ?: "N/A"
                             textAlmacenamiento.text = pcRequirements?.recommended?.storage?.takeIf { it.isNotEmpty() } ?: "N/A"
-                            TitleTxt.text = gameDetail.name
-                            DescripcionTxt.text = gameDetail.short_description.replace(Regex("<br />|&quot;"), "")
+                            titleTxt.text = gameDetail.name
+                            descripcionTxt.text = gameDetail.short_description.replace(Regex("<br />|&quot;"), "")
                             // Cargar la imagen utilizando Glide
                             Glide.with(this@DetalleActivity)
                                 .load(gameDetail.header_image) // URL de la imagen
@@ -128,11 +128,11 @@ class DetalleActivity : AppCompatActivity() {
 
                             Handler(Looper.getMainLooper()).postDelayed({
                                 progressBar.visibility = View.INVISIBLE
-                                LayoutDetalle.visibility = View.VISIBLE
+                                layoutDetalle.visibility = View.VISIBLE
                             }, 2000)
 
                         } else {
-                            CardView.visibility = View.VISIBLE
+                            cardView.visibility = View.VISIBLE
                             progressBar.visibility = View.INVISIBLE
                             Log.e(tag,"ERROR: Game detail not found for ID: $gameId")
 
@@ -164,15 +164,15 @@ class DetalleActivity : AppCompatActivity() {
 
         // Función auxiliar para extraer un requisito específico de acuerdo a su etiqueta
         fun extractRequirement(requirementString: String, label: String): String {
-            val regex = Regex("$label\\s*:?\\s*((?:(?!$label\\s*:?)[^:])*)", RegexOption.IGNORE_CASE)
+            val regex =
+                Regex("$label\\s*:?\\s*((?:(?!$label\\s*:?)[^:])*)", RegexOption.IGNORE_CASE)
             val matchResult = regex.find(requirementString)
             val content = matchResult?.groupValues?.getOrNull(1)?.trim() ?: ""
 
             // Eliminar la última palabra del contenido
             val words = content.split(" ")
-            val trimmedContent = if (words.size > 1) words.dropLast(1).joinToString(" ") else content
 
-            return trimmedContent
+            return if (words.size > 1) words.dropLast(1).joinToString(" ") else content
         }
 
         // Función auxiliar para crear un objeto PcRequirement a partir de una cadena de requisito
@@ -225,22 +225,22 @@ class DetalleActivity : AppCompatActivity() {
 
         return null
     }
-
+    @Suppress("UNUSED_PARAMETER")
     fun onChangeThemeButtonClick(view: View) {
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
         val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
         themeManager.changeTheme(newTheme)
     }
-
+    @Suppress("UNUSED_PARAMETER")
     fun onBookmarkClick(view: View) {
-        var intent = Intent(this, BookmarkActivity::class.java)
+        val intent = Intent(this, BookmarkActivity::class.java)
         startActivity(intent)
         finish()
     }
-
+    @Suppress("UNUSED_PARAMETER")
     fun onHomeClick(view: View) {
-        var intent = Intent(this, HomeActivity::class.java)
+        val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
         finish()
     }
