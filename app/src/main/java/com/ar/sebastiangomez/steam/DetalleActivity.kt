@@ -209,7 +209,8 @@ class DetalleActivity : AppCompatActivity() {
         }
 
         // Obtén los requisitos recomendados si están presentes
-        val recommendedRequirement = if (requirementParts.size > 1) {
+        val recommendedRequirement = if (requirementParts.size > 1)
+        {
             requirementParts.getOrNull(1)?.let { recommended ->
                 createPcRequirement(recommended)
             }
@@ -222,9 +223,9 @@ class DetalleActivity : AppCompatActivity() {
             // Crea el objeto PcRequirements con los requisitos mínimos y recomendados
             return GameDetail.PcRequirements(minimumRequirement, recommendedRequirement)
         }
-
         return null
     }
+
     @Suppress("UNUSED_PARAMETER")
     fun onChangeThemeButtonClick(view: View) {
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
@@ -232,12 +233,14 @@ class DetalleActivity : AppCompatActivity() {
         val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
         themeManager.changeTheme(newTheme)
     }
+
     @Suppress("UNUSED_PARAMETER")
     fun onBookmarkClick(view: View) {
         val intent = Intent(this, BookmarkActivity::class.java)
         startActivity(intent)
         finish()
     }
+
     @Suppress("UNUSED_PARAMETER")
     fun onHomeClick(view: View) {
         val intent = Intent(this, HomeActivity::class.java)

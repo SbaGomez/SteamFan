@@ -59,14 +59,7 @@ class HomeActivity : AppCompatActivity() {
         searchView = findViewById(R.id.searchInput)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
-        Log.d(tag, "Current Theme: " + currentTheme.toString())
-        if (currentTheme.toString() == "dark") {
-            themeButton.setImageResource(R.drawable.themedarktab)
-        } else {
-            themeButton.setImageResource(R.drawable.themelighttab)
-        }
+        getImageTheme()
 
         lifecycleScope.launch {
             try {
@@ -88,7 +81,18 @@ class HomeActivity : AppCompatActivity() {
                 progressBar.visibility = View.INVISIBLE
             }
         }
+    }
 
+    private fun getImageTheme() {
+        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
+        Log.d(tag, "Current Theme: " + currentTheme.toString())
+        if (currentTheme.toString() == "dark") {
+            themeButton.setImageResource(R.drawable.themedarktab)
+        } else {
+            themeButton.setImageResource(R.drawable.themelighttab)
+        }
+        return
     }
 
     private suspend fun fetchGames(): List<Game> {
@@ -107,8 +111,23 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    fun onFilterGamesBySearchClick(view: View) {
+    private fun parseResponse(response: String): List<Game> {
+        val gamesList = mutableListOf<Game>()
+        val jsonObject = JSONObject(response)
+        val appsArray = jsonObject.getJSONObject("applist").getJSONArray("apps")
 
+        for (i in 0 until appsArray.length()) {
+            val appObject = appsArray.getJSONObject(i)
+            val id = appObject.getString("appid")
+            val name = appObject.getString("name")
+            if (name.isNotEmpty()) {
+                gamesList.add(Game(id, name))
+            }
+        }
+        return gamesList
+    }
+
+    fun onFilterGamesBySearchClick(view: View) {
         // Cerrar el teclado del dispositivo móvil
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
@@ -140,22 +159,6 @@ class HomeActivity : AppCompatActivity() {
                 progressBar.visibility = View.INVISIBLE
             }
         }
-    }
-
-    private fun parseResponse(response: String): List<Game> {
-        val gamesList = mutableListOf<Game>()
-        val jsonObject = JSONObject(response)
-        val appsArray = jsonObject.getJSONObject("applist").getJSONArray("apps")
-
-        for (i in 0 until appsArray.length()) {
-            val appObject = appsArray.getJSONObject(i)
-            val id = appObject.getString("appid")
-            val name = appObject.getString("name")
-            if (name.isNotEmpty()) {
-                gamesList.add(Game(id, name))
-            }
-        }
-        return gamesList
     }
 
     @Suppress("UNUSED_PARAMETER")
