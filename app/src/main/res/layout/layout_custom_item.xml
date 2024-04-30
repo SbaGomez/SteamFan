@@ -42,7 +42,6 @@
                 android:layout_height="48dp"
                 android:layout_marginEnd="0dp"
                 android:background="#495d92"
-                android:contentDescription="@string/fav_button"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/bookmarkdel"

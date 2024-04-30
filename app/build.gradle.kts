@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ar.sebastiangomez.steam"
-        minSdk = 30
+        minSdk = 31
         targetSdk = 34
         versionCode = 4
         versionName = "4.0"
