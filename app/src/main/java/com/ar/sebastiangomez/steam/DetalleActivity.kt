@@ -173,6 +173,7 @@ class DetalleActivity : AppCompatActivity() {
             .replace("<strong>", " ")
             .replace(Regex("<.*?>"), "") // Elimina etiquetas HTML
             .replace(Regex("Sound Card:"), "Sound:") // Elimina etiquetas HTML
+            .replace(Regex(" space,"), "") // Elimina etiquetas HTML
             .replace("\n", "") // Elimina saltos de línea
 
         // Divide la cadena en requisitos mínimos y recomendados
