@@ -22,6 +22,18 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
+            <ImageButton
+                android:id="@+id/imageLogoList"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="0dp"
+                android:background="#00495D92"
+                android:contentDescription="@string/app_name"
+                android:padding="4dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/logov5"
+                tools:ignore="ImageContrastCheck" />
+
             <TextView
                 android:id="@+id/textList"
                 android:layout_width="0dp"
@@ -42,10 +54,12 @@
                 android:layout_height="48dp"
                 android:layout_marginEnd="0dp"
                 android:background="#495d92"
+                android:contentDescription="@string/fav_button"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/bookmarkdel"
                 tools:ignore="ImageContrastCheck" />
+
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

@@ -40,15 +40,15 @@ class SplashActivity : AppCompatActivity() {
 
         // Array con los IDs de las imágenes en drawable
         val imagenes = arrayOf(
-            R.drawable.logov2,
+            /*R.drawable.logov2,
             R.drawable.logov3,
             R.drawable.logov4,
             R.drawable.logov5,
-            R.drawable.logov6,
+            R.drawable.logov6,*/
             R.drawable.logov7,
-            R.drawable.logov8,
+            /*R.drawable.logov8,
             R.drawable.logov9,
-            R.drawable.logov10,
+            R.drawable.logov10,*/
         )
 
         // Generar un índice aleatorio
@@ -56,6 +56,7 @@ class SplashActivity : AppCompatActivity() {
 
         // Asignar la imagen aleatoria al logoSplash
         logoSplash.setImageResource(imagenes[randomIndex])
+
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
