@@ -43,6 +43,11 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var textMemoria : TextView
     private lateinit var textGraficos : TextView
     private lateinit var textAlmacenamiento : TextView
+    private lateinit var textSORec : TextView
+    private lateinit var textProcesadorRec : TextView
+    private lateinit var textMemoriaRec : TextView
+    private lateinit var textGraficosRec : TextView
+    private lateinit var textAlmacenamientoRec : TextView
     private val tag = "LOG-DETAIL"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +78,11 @@ class DetalleActivity : AppCompatActivity() {
         textMemoria = findViewById(R.id.textMemoria)
         textGraficos = findViewById(R.id.textGraficos)
         textAlmacenamiento = findViewById(R.id.textAlmacenamiento)
+        textSORec = findViewById(R.id.textSORec)
+        textProcesadorRec = findViewById(R.id.textProcesadorRec)
+        textMemoriaRec = findViewById(R.id.textMemoriaRec)
+        textGraficosRec = findViewById(R.id.textGraficosRec)
+        textAlmacenamientoRec = findViewById(R.id.textAlmacenamientoRec)
 
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
@@ -112,11 +122,19 @@ class DetalleActivity : AppCompatActivity() {
                             // Verifica si las propiedades son nulas antes de usarlas
                             val pcRequirements = parsePcRequirements(gameDetail.pc_requirements.toString())
                             Log.d(tag,"GAME DETAIL - ID: ${gameDetail.steam_appid}, Name: ${gameDetail.name}, Type: ${gameDetail.type}, Short description: ${gameDetail.short_description}, Pc requirements: $pcRequirements")
+                            Log.d(tag, "PC Requirements: ${gameDetail.pc_requirements}")
+                            // Requerimientos Minimos
                             textSO.text = pcRequirements?.minimum?.os?.takeIf { it.isNotEmpty() } ?: "N/A"
                             textProcesador.text = pcRequirements?.minimum?.processor?.takeIf { it.isNotEmpty() } ?: "N/A"
                             textMemoria.text = pcRequirements?.minimum?.memory?.takeIf { it.isNotEmpty() } ?: "N/A"
                             textGraficos.text = pcRequirements?.minimum?.graphics?.takeIf { it.isNotEmpty() } ?: "N/A"
-                            textAlmacenamiento.text = pcRequirements?.recommended?.storage?.takeIf { it.isNotEmpty() } ?: "N/A"
+                            textAlmacenamiento.text = pcRequirements?.minimum?.storage?.takeIf { it.isNotEmpty() } ?: "N/A"
+                            // Requerimientos Recomendados
+                            textSORec.text = pcRequirements?.recommended?.os?.takeIf { it.isNotEmpty() } ?: "N/A"
+                            textProcesadorRec.text = pcRequirements?.recommended?.processor?.takeIf { it.isNotEmpty() } ?: "N/A"
+                            textMemoriaRec.text = pcRequirements?.recommended?.memory?.takeIf { it.isNotEmpty() } ?: "N/A"
+                            textGraficosRec.text = pcRequirements?.recommended?.graphics?.takeIf { it.isNotEmpty() } ?: "N/A"
+                            textAlmacenamientoRec.text = pcRequirements?.recommended?.storage?.takeIf { it.isNotEmpty() } ?: "N/A"
                             titleTxt.text = gameDetail.name
                             descripcionTxt.text = gameDetail.short_description.replace(Regex("<br />|&quot;"), "")
                             // Cargar la imagen utilizando Glide
@@ -154,9 +172,7 @@ class DetalleActivity : AppCompatActivity() {
         val cleanString = pcRequirementsString
             .replace("<strong>", " ")
             .replace(Regex("<.*?>"), "") // Elimina etiquetas HTML
-            .replace("Minimum:", "") // Elimina el texto "Minimum:"
-            .replace("Recommended:", "") // Elimina el texto "Recommended:"
-            .replace(", recommended=", "") // Elimina el texto ", recommended="
+            .replace(Regex("Sound Card:"), "Sound:") // Elimina etiquetas HTML
             .replace("\n", "") // Elimina saltos de línea
 
         // Divide la cadena en requisitos mínimos y recomendados
@@ -182,7 +198,7 @@ class DetalleActivity : AppCompatActivity() {
             val memory = extractRequirement(requirementString, "Memory:")
             val graphics = extractRequirement(requirementString, "Graphics:")
             val directx = extractRequirement(requirementString, "DirectX:")
-            val soundcard = extractRequirement(requirementString, "Sound Card:")
+            val soundcard = extractRequirement(requirementString, "Sound:")
             val network = extractRequirement(requirementString, "Network:")
             val storage = extractRequirement(requirementString, "Storage:")
 

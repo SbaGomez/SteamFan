@@ -118,7 +118,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="invisible">
+                android:visibility="visible">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
@@ -150,6 +150,7 @@
                                 android:layout_marginTop="10dp"
                                 android:layout_marginEnd="10dp"
                                 android:backgroundTint="#00FFFFFF"
+                                android:contentDescription="@string/fav_button"
                                 android:padding="8dp"
                                 android:scaleType="fitCenter"
                                 app:srcCompat="@drawable/bookmarkdetail"
@@ -201,183 +202,353 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingTop="15dp"
-                            android:text="@string/title_descripcion"
-                            android:textAlignment="center"
-                            android:textColor="@color/title_dark_text"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/shortDescription"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="20dp"
-                            android:paddingTop="15dp"
-                            android:paddingRight="20dp"
-                            android:text="@string/contenido"
-                            android:textAlignment="center"
-                            android:textColor="@color/md_theme_dark_error"
-                            android:textSize="14sp"
-                            android:textStyle="normal" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingTop="15dp"
-                            android:paddingBottom="10dp"
-                            android:text="@string/title_requisitos_minimos"
-                            android:textAlignment="center"
-                            android:textColor="@color/title_dark_text"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:orientation="horizontal">
+                            android:orientation="vertical">
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
-                                android:paddingEnd="5dp"
-                                android:text="@string/SO"
+                                android:paddingTop="15dp"
+                                android:text="@string/title_descripcion"
+                                android:textAlignment="center"
+                                android:textColor="@color/title_dark_text"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/shortDescription"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingLeft="20dp"
+                                android:paddingTop="15dp"
+                                android:paddingRight="20dp"
+                                android:text="@string/contenido"
                                 android:textAlignment="center"
                                 android:textColor="@color/md_theme_dark_error"
                                 android:textSize="14sp"
                                 android:textStyle="normal" />
 
                             <TextView
-                                android:id="@+id/textSO"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:paddingEnd="20dp"
-                                android:text="@string/proximamente"
-                                android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
-                                android:textSize="14sp"
-                                android:textStyle="normal"
-                                tools:ignore="RtlSymmetry" />
+                                android:paddingTop="15dp"
+                                android:paddingBottom="10dp"
+                                android:text="@string/title_requisitos_minimos"
+                                android:textAlignment="center"
+                                android:textColor="@color/title_dark_text"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingStart="40dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="@string/SO"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:id="@+id/textSO"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingEnd="20dp"
+                                    android:text="@string/proximamente"
+                                    android:textAlignment="textStart"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal"
+                                    tools:ignore="RtlSymmetry" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingStart="40dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="@string/Procesador"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:id="@+id/textProcesador"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingEnd="20dp"
+                                    android:text="@string/proximamente"
+                                    android:textAlignment="textStart"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal"
+                                    tools:ignore="RtlSymmetry" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingStart="40dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="@string/Memoria"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:id="@+id/textMemoria"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingEnd="20dp"
+                                    android:text="@string/proximamente"
+                                    android:textAlignment="textStart"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal"
+                                    tools:ignore="RtlSymmetry" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingStart="40dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="@string/Graphic"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:id="@+id/textGraficos"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingEnd="20dp"
+                                    android:text="@string/proximamente"
+                                    android:textAlignment="textStart"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal"
+                                    tools:ignore="RtlSymmetry" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingStart="40dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="@string/Almacenamiento"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:id="@+id/textAlmacenamiento"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingEnd="20dp"
+                                    android:text="@string/proximamente"
+                                    android:textAlignment="textStart"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal"
+                                    tools:ignore="RtlSymmetry" />
+                            </LinearLayout>
+
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:orientation="horizontal">
+                            android:orientation="vertical">
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
-                                android:paddingEnd="5dp"
-                                android:text="@string/Procesador"
-                                android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
-                                android:textSize="14sp"
-                                android:textStyle="normal" />
-
-                            <TextView
-                                android:id="@+id/textProcesador"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:paddingEnd="20dp"
-                                android:text="@string/proximamente"
-                                android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
-                                android:textSize="14sp"
-                                android:textStyle="normal"
-                                tools:ignore="RtlSymmetry" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
-                                android:paddingEnd="5dp"
-                                android:text="@string/Memoria"
+                                android:paddingTop="15dp"
+                                android:paddingBottom="10dp"
+                                android:text="@string/title_requisitos_recomendados"
                                 android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
-                                android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textColor="@color/title_dark_text"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
 
-                            <TextView
-                                android:id="@+id/textMemoria"
+                            <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:paddingEnd="20dp"
-                                android:text="@string/proximamente"
-                                android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
-                                android:textSize="14sp"
-                                android:textStyle="normal"
-                                tools:ignore="RtlSymmetry" />
-                        </LinearLayout>
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingStart="40dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="@string/SO"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
-                                android:paddingEnd="5dp"
-                                android:text="@string/Graphic"
-                                android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
-                                android:textSize="14sp"
-                                android:textStyle="normal" />
+                                <TextView
+                                    android:id="@+id/textSORec"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingEnd="20dp"
+                                    android:text="@string/proximamente"
+                                    android:textAlignment="textStart"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal"
+                                    tools:ignore="RtlSymmetry" />
+                            </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/textGraficos"
+                            <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:paddingEnd="20dp"
-                                android:text="@string/proximamente"
-                                android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
-                                android:textSize="14sp"
-                                android:textStyle="normal"
-                                tools:ignore="RtlSymmetry" />
-                        </LinearLayout>
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingStart="40dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="@string/Procesador"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
-                                android:paddingEnd="5dp"
-                                android:text="@string/Almacenamiento"
-                                android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
-                                android:textSize="14sp"
-                                android:textStyle="normal" />
+                                <TextView
+                                    android:id="@+id/textProcesadorRec"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingEnd="20dp"
+                                    android:text="@string/proximamente"
+                                    android:textAlignment="textStart"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal"
+                                    tools:ignore="RtlSymmetry" />
+                            </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/textAlmacenamiento"
+                            <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:paddingEnd="20dp"
-                                android:text="@string/proximamente"
-                                android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
-                                android:textSize="14sp"
-                                android:textStyle="normal"
-                                tools:ignore="RtlSymmetry" />
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingStart="40dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="@string/Memoria"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:id="@+id/textMemoriaRec"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingEnd="20dp"
+                                    android:text="@string/proximamente"
+                                    android:textAlignment="textStart"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal"
+                                    tools:ignore="RtlSymmetry" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingStart="40dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="@string/Graphic"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:id="@+id/textGraficosRec"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingEnd="20dp"
+                                    android:text="@string/proximamente"
+                                    android:textAlignment="textStart"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal"
+                                    tools:ignore="RtlSymmetry" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingStart="40dp"
+                                    android:paddingEnd="5dp"
+                                    android:text="@string/Almacenamiento"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:id="@+id/textAlmacenamientoRec"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:paddingEnd="20dp"
+                                    android:text="@string/proximamente"
+                                    android:textAlignment="textStart"
+                                    android:textColor="@color/md_theme_dark_error"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal"
+                                    tools:ignore="RtlSymmetry" />
+                            </LinearLayout>
+
                         </LinearLayout>
 
                     </LinearLayout>
