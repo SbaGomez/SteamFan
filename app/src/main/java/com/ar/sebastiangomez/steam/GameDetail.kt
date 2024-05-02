@@ -30,8 +30,8 @@ class GameDetail {
     )
 
     data class PcRequirements(
-        val minimum: PcRequirement,
-        val recommended: PcRequirement
+        val minimum: PcRequirement?,
+        val recommended: PcRequirement?
     )
 
     data class PcRequirement(

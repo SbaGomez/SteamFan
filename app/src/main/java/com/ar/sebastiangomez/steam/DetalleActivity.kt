@@ -27,6 +27,7 @@ import okhttp3.Response
 import java.io.IOException
 import com.bumptech.glide.Glide
 import android.widget.ImageButton
+import kotlin.math.log
 
 class DetalleActivity : AppCompatActivity() {
 
@@ -121,8 +122,9 @@ class DetalleActivity : AppCompatActivity() {
                         if (gameDetail != null) {
                             // Verifica si las propiedades son nulas antes de usarlas
                             val pcRequirements = parsePcRequirements(gameDetail.pc_requirements.toString())
-                            Log.d(tag,"GAME DETAIL - ID: ${gameDetail.steam_appid}, Name: ${gameDetail.name}, Type: ${gameDetail.type}, Short description: ${gameDetail.short_description}, Pc requirements: $pcRequirements")
+                            Log.d(tag,"GAME DETAIL - ID: ${gameDetail.steam_appid}, Name: ${gameDetail.name}, Type: ${gameDetail.type}, Short description: ${gameDetail.short_description}")
                             Log.d(tag, "PC Requirements: ${gameDetail.pc_requirements}")
+                            Log.d(tag, "PC Requirements Filter: $pcRequirements")
                             // Requerimientos Minimos
                             textSO.text = pcRequirements?.minimum?.os?.takeIf { it.isNotEmpty() } ?: "N/A"
                             textProcesador.text = pcRequirements?.minimum?.processor?.takeIf { it.isNotEmpty() } ?: "N/A"
@@ -171,13 +173,22 @@ class DetalleActivity : AppCompatActivity() {
         // Elimina las etiquetas HTML y caracteres innecesarios
         val cleanString = pcRequirementsString
             .replace("<strong>", " ")
+            .replace("<br><ul class=\"bb_ul\"><li>Requires a 64-bit processor and operating system<br></li><li>", " ")
+            .replace("OS *:", "OS:")
+            .replace("minimum=", "")
+            .replace("recommended=", "")
             .replace(Regex("<.*?>"), "") // Elimina etiquetas HTML
+            .replace(",  Recommended:Requires a 64-bit processor and operating system", " Recommended: OS: Requires a 64-bit processor and operating system")
             .replace(Regex("Sound Card:"), "Sound:") // Elimina etiquetas HTML
             .replace(Regex(" space,"), "") // Elimina etiquetas HTML
             .replace("\n", "") // Elimina saltos de línea
 
+        Log.d(tag, "PC Parseado: $cleanString")
+
         // Divide la cadena en requisitos mínimos y recomendados
         val requirementParts = cleanString.split("Recommended:")
+
+        Log.d(tag, "Parte mínima de los requisitos: ${requirementParts[0]}")
 
         // Función auxiliar para extraer un requisito específico de acuerdo a su etiqueta
         fun extractRequirement(requirementString: String, label: String): String {
@@ -225,6 +236,8 @@ class DetalleActivity : AppCompatActivity() {
             createPcRequirement(minimum)
         }
 
+        Log.d(tag, "Minimos: $minimumRequirement")
+
         // Obtén los requisitos recomendados si están presentes
         val recommendedRequirement = if (requirementParts.size > 1)
         {
@@ -236,7 +249,9 @@ class DetalleActivity : AppCompatActivity() {
             minimumRequirement
         }
 
-        if (minimumRequirement != null && recommendedRequirement != null) {
+        Log.d(tag, "Recomendados: $recommendedRequirement")
+
+        if (minimumRequirement != null || recommendedRequirement != null) {
             // Crea el objeto PcRequirements con los requisitos mínimos y recomendados
             return GameDetail.PcRequirements(minimumRequirement, recommendedRequirement)
         }
