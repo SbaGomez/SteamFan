@@ -183,12 +183,8 @@ class DetalleActivity : AppCompatActivity() {
             .replace(Regex(" space,"), "") // Elimina etiquetas HTML
             .replace("\n", "") // Elimina saltos de línea
 
-        Log.d(tag, "PC Parseado: $cleanString")
-
         // Divide la cadena en requisitos mínimos y recomendados
         val requirementParts = cleanString.split("Recommended:")
-
-        Log.d(tag, "Parte mínima de los requisitos: ${requirementParts[0]}")
 
         // Función auxiliar para extraer un requisito específico de acuerdo a su etiqueta
         fun extractRequirement(requirementString: String, label: String): String {
@@ -236,8 +232,6 @@ class DetalleActivity : AppCompatActivity() {
             createPcRequirement(minimum)
         }
 
-        Log.d(tag, "Minimos: $minimumRequirement")
-
         // Obtén los requisitos recomendados si están presentes
         val recommendedRequirement = if (requirementParts.size > 1)
         {
@@ -248,8 +242,6 @@ class DetalleActivity : AppCompatActivity() {
             // Si no hay requisitos recomendados, utiliza los mismos requisitos mínimos
             minimumRequirement
         }
-
-        Log.d(tag, "Recomendados: $recommendedRequirement")
 
         if (minimumRequirement != null || recommendedRequirement != null) {
             // Crea el objeto PcRequirements con los requisitos mínimos y recomendados
