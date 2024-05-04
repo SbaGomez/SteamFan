@@ -27,7 +27,6 @@ import okhttp3.Response
 import java.io.IOException
 import com.bumptech.glide.Glide
 import android.widget.ImageButton
-import kotlin.math.log
 
 class DetalleActivity : AppCompatActivity() {
 
@@ -37,6 +36,9 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var descripcionTxt : TextView
     private lateinit var layoutDetalle : LinearLayout
     private lateinit var cardView : CardView
+    private lateinit var cardDescription : CardView
+    private lateinit var cardMin : CardView
+    private lateinit var cardRec : CardView
     private lateinit var headerImg : ImageView
     private lateinit var themeButton : ImageButton
     private lateinit var textSO : TextView
@@ -49,6 +51,19 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var textMemoriaRec : TextView
     private lateinit var textGraficosRec : TextView
     private lateinit var textAlmacenamientoRec : TextView
+    private lateinit var imageType : ImageView
+    private lateinit var layoutSOMin : LinearLayout
+    private lateinit var layoutProMin : LinearLayout
+    private lateinit var layoutMemMin : LinearLayout
+    private lateinit var layoutGrafMin : LinearLayout
+    private lateinit var layoutAlmMin : LinearLayout
+    private lateinit var layoutSORec : LinearLayout
+    private lateinit var layoutProRec : LinearLayout
+    private lateinit var layoutMemRec : LinearLayout
+    private lateinit var layoutGrafRec : LinearLayout
+    private lateinit var layoutAlmRec : LinearLayout
+    private lateinit var layoutMin : LinearLayout
+    private lateinit var layoutRec : LinearLayout
     private val tag = "LOG-DETAIL"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,6 +99,24 @@ class DetalleActivity : AppCompatActivity() {
         textMemoriaRec = findViewById(R.id.textMemoriaRec)
         textGraficosRec = findViewById(R.id.textGraficosRec)
         textAlmacenamientoRec = findViewById(R.id.textAlmacenamientoRec)
+        imageType = findViewById(R.id.imageType)
+        cardDescription = findViewById(R.id.cardDescription)
+        cardMin = findViewById(R.id.cardMin)
+        cardRec = findViewById(R.id.cardRec)
+
+        layoutMin = findViewById(R.id.layoutMin)
+        layoutRec = findViewById(R.id.layoutRec)
+
+        layoutSOMin = findViewById(R.id.layoutSOMin)
+        layoutProMin = findViewById(R.id.layoutProMin)
+        layoutMemMin = findViewById(R.id.layoutMemMin)
+        layoutGrafMin = findViewById(R.id.layoutGrafMin)
+        layoutAlmMin = findViewById(R.id.layoutAlmMin)
+        layoutSORec = findViewById(R.id.layoutSORec)
+        layoutProRec = findViewById(R.id.layoutProRec)
+        layoutMemRec = findViewById(R.id.layoutMemRec)
+        layoutGrafRec = findViewById(R.id.layoutGrafRec)
+        layoutAlmRec = findViewById(R.id.layoutAlmRec)
 
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
@@ -126,18 +159,51 @@ class DetalleActivity : AppCompatActivity() {
                             Log.d(tag, "PC Requirements: ${gameDetail.pc_requirements}")
                             Log.d(tag, "PC Requirements Filter: $pcRequirements")
                             // Requerimientos Minimos
-                            textSO.text = pcRequirements?.minimum?.os?.takeIf { it.isNotEmpty() } ?: "N/A"
-                            textProcesador.text = pcRequirements?.minimum?.processor?.takeIf { it.isNotEmpty() } ?: "N/A"
-                            textMemoria.text = pcRequirements?.minimum?.memory?.takeIf { it.isNotEmpty() } ?: "N/A"
-                            textGraficos.text = pcRequirements?.minimum?.graphics?.takeIf { it.isNotEmpty() } ?: "N/A"
-                            textAlmacenamiento.text = pcRequirements?.minimum?.storage?.takeIf { it.isNotEmpty() } ?: "N/A"
+                            if(pcRequirements?.minimum != null)
+                            {
+                                pcRequirements.minimum.os.takeIf { it.isNotEmpty() }?.let { textSO.text = it } ?: layoutMin.removeView(layoutSOMin)
+                                pcRequirements.minimum.processor.takeIf { it.isNotEmpty() }?.let { textProcesador.text = it } ?: layoutMin.removeView(layoutProMin)
+                                pcRequirements.minimum.memory.takeIf { it.isNotEmpty() }?.let { textMemoria.text = it } ?: layoutMin.removeView(layoutMemMin)
+                                pcRequirements.minimum.graphics.takeIf { it.isNotEmpty() }?.let { textGraficos.text = it } ?: layoutMin.removeView(layoutGrafMin)
+                                pcRequirements.minimum.storage.takeIf { it.isNotEmpty() }?.let { textAlmacenamiento.text = it } ?: layoutMin.removeView(layoutAlmMin)
+                            }
+                            else{
+                                layoutDetalle.removeView(cardMin)
+                            }
                             // Requerimientos Recomendados
-                            textSORec.text = pcRequirements?.recommended?.os?.takeIf { it.isNotEmpty() } ?: "N/A"
-                            textProcesadorRec.text = pcRequirements?.recommended?.processor?.takeIf { it.isNotEmpty() } ?: "N/A"
-                            textMemoriaRec.text = pcRequirements?.recommended?.memory?.takeIf { it.isNotEmpty() } ?: "N/A"
-                            textGraficosRec.text = pcRequirements?.recommended?.graphics?.takeIf { it.isNotEmpty() } ?: "N/A"
-                            textAlmacenamientoRec.text = pcRequirements?.recommended?.storage?.takeIf { it.isNotEmpty() } ?: "N/A"
+                            if(pcRequirements?.recommended != null)
+                            {
+                                pcRequirements.recommended.os.takeIf { it.isNotEmpty() }?.let { textSORec.text = it } ?: layoutRec.removeView(layoutSORec)
+                                pcRequirements.recommended.processor.takeIf { it.isNotEmpty() }?.let { textProcesadorRec.text = it } ?: layoutRec.removeView(layoutProRec)
+                                pcRequirements.recommended.memory.takeIf { it.isNotEmpty() }?.let { textMemoriaRec.text = it } ?: layoutRec.removeView(layoutMemRec)
+                                pcRequirements.recommended.graphics.takeIf { it.isNotEmpty() }?.let { textGraficosRec.text = it } ?: layoutRec.removeView(layoutGrafRec)
+                                pcRequirements.recommended.storage.takeIf { it.isNotEmpty() }?.let { textAlmacenamientoRec.text = it } ?: layoutRec.removeView(layoutAlmRec)
+                            }
+                            else{
+                                layoutDetalle.removeView(cardRec)
+                            }
+
+                            //Type Game/Dlc/Demo
+                            if(gameDetail.type == "dlc")
+                            {
+                                imageType.setImageResource(R.drawable.tagdlc)
+                            }
+                            else if(gameDetail.type == "demo")
+                            {
+                                imageType.setImageResource(R.drawable.tagdemo)
+                            }
+                            else if(gameDetail.type == "game")
+                            {
+                                imageType.setImageResource(R.drawable.taggame)
+                            }
+
                             titleTxt.text = gameDetail.name
+
+                            if(gameDetail.short_description.isEmpty())
+                            {
+                                cardDescription.removeView(cardDescription)
+                                cardDescription.visibility = View.INVISIBLE
+                            }
                             descripcionTxt.text = gameDetail.short_description.replace(Regex("<br />|&quot;"), "")
                             // Cargar la imagen utilizando Glide
                             Glide.with(this@DetalleActivity)
@@ -267,9 +333,7 @@ class DetalleActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onHomeClick(view: View) {
-        val intent = Intent(this, HomeActivity::class.java)
-        startActivity(intent)
-        finish()
+        super.onBackPressed()
     }
 
 }
