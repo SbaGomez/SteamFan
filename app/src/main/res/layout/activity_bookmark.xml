@@ -50,9 +50,9 @@
         <androidx.cardview.widget.CardView
             android:layout_width="250dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="80dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             app:cardBackgroundColor="@color/md_theme_light_inverseSurface"
@@ -66,7 +66,7 @@
                 android:forceDarkAllowed="false"
                 android:iconifiedByDefault="false"
                 android:queryBackground="@null"
-                android:queryHint="Buscar juegos"
+                android:queryHint="@string/placeholder_search_button"
                 android:theme="@style/Base.Theme.Steam.Dark" />
 
         </androidx.cardview.widget.CardView>
@@ -76,9 +76,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="80dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:backgroundTint="@color/md_theme_light_onTertiaryContainer"
-            android:text="Buscar"
+            android:text="@string/search_button"
             android:textColor="@color/md_theme_dark_inverseSurface" />
 
     </LinearLayout>
@@ -99,7 +99,7 @@
             android:id="@+id/fabButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="20dp"
             android:background="#00FFFFFF"
             android:contentDescription="@string/fav_button"
             android:padding="16dp"
@@ -141,7 +141,8 @@
             android:onClick="onChangeThemeButtonClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/themedarktab" />
+            android:src="@drawable/themedarktab"
+            tools:ignore="VisualLintBounds" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

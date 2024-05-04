@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
 
-        app:cardBackgroundColor="@color/Games_Details_dark_background"
+        app:cardBackgroundColor="#2b2d38"
         app:cardCornerRadius="10dp">
 
         <LinearLayout
@@ -46,8 +46,9 @@
                 android:paddingTop="5dp"
                 android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
                 android:paddingBottom="5dp"
+                android:text="Title Game steam db fan"
                 android:textAppearance="?android:attr/textAppearanceListItemSmall"
-                android:textColor="@color/md_theme_dark_inverseSurface"
+                android:textColor="@color/md_theme_dark_onSurface"
                 android:textStyle="bold" />
 
             <ImageButton

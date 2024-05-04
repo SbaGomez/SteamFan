@@ -35,7 +35,7 @@
         <!-- TextView para el título -->
         <TextView
             android:id="@+id/toolbar_title"
-            style="@style/Base.Theme.Steam.Dark"
+            android:textColor="@color/title_dark_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -178,13 +178,13 @@
                             android:id="@+id/titleGame"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginTop="15dp"
+                            android:layout_marginTop="20dp"
                             android:paddingLeft="20dp"
                             android:paddingRight="20dp"
                             android:text="@string/title"
                             android:textAlignment="center"
-                            android:textColor="@color/title_dark_text"
-                            android:textSize="18sp"
+                            android:textColor="@color/md_theme_dark_onSurface"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <ImageView
@@ -642,7 +642,7 @@
             android:id="@+id/fabButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="20dp"
             android:background="#00FFFFFF"
             android:contentDescription="@string/fav_button"
             android:onClick="onBookmarkClick"
