@@ -208,7 +208,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="40dp"
-                    android:layout_marginBottom="20dp"
+                    android:layout_marginBottom="10dp"
                     android:textAlignment="center"
                     app:cardBackgroundColor="#1E1F25"
                     app:cardCornerRadius="16dp"
@@ -243,7 +243,7 @@
                                 android:paddingRight="20dp"
                                 android:text="@string/contenido"
                                 android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_inverseSurface"
                                 android:textSize="14sp"
                                 android:textStyle="normal" />
 
@@ -259,7 +259,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="40dp"
-                    android:layout_marginBottom="20dp"
+                    android:layout_marginBottom="10dp"
                     android:textAlignment="center"
                     app:cardBackgroundColor="#1E1F25"
                     app:cardCornerRadius="16dp"
@@ -291,13 +291,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
+                                android:paddingStart="20dp"
                                 android:paddingEnd="5dp"
                                 android:text="@string/SO"
                                 android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_outline"
                                 android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/textSO"
@@ -306,7 +306,7 @@
                                 android:paddingEnd="20dp"
                                 android:text="@string/proximamente"
                                 android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_inverseSurface"
                                 android:textSize="14sp"
                                 android:textStyle="normal"
                                 tools:ignore="RtlSymmetry" />
@@ -321,13 +321,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
+                                android:paddingStart="20dp"
                                 android:paddingEnd="5dp"
                                 android:text="@string/Procesador"
                                 android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_outline"
                                 android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/textProcesador"
@@ -336,7 +336,7 @@
                                 android:paddingEnd="20dp"
                                 android:text="@string/proximamente"
                                 android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_inverseSurface"
                                 android:textSize="14sp"
                                 android:textStyle="normal"
                                 tools:ignore="RtlSymmetry" />
@@ -351,13 +351,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
+                                android:paddingStart="20dp"
                                 android:paddingEnd="5dp"
                                 android:text="@string/Memoria"
                                 android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_outline"
                                 android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/textMemoria"
@@ -366,7 +366,7 @@
                                 android:paddingEnd="20dp"
                                 android:text="@string/proximamente"
                                 android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_inverseSurface"
                                 android:textSize="14sp"
                                 android:textStyle="normal"
                                 tools:ignore="RtlSymmetry" />
@@ -381,13 +381,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
+                                android:paddingStart="20dp"
                                 android:paddingEnd="5dp"
                                 android:text="@string/Graphic"
                                 android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_outline"
                                 android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/textGraficos"
@@ -396,7 +396,7 @@
                                 android:paddingEnd="20dp"
                                 android:text="@string/proximamente"
                                 android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_inverseSurface"
                                 android:textSize="14sp"
                                 android:textStyle="normal"
                                 tools:ignore="RtlSymmetry" />
@@ -411,13 +411,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
+                                android:paddingStart="20dp"
                                 android:paddingEnd="5dp"
                                 android:text="@string/Almacenamiento"
                                 android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_outline"
                                 android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/textAlmacenamiento"
@@ -426,7 +426,7 @@
                                 android:paddingEnd="20dp"
                                 android:text="@string/proximamente"
                                 android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_inverseSurface"
                                 android:textSize="14sp"
                                 android:textStyle="normal"
                                 tools:ignore="RtlSymmetry" />
@@ -475,13 +475,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
+                                android:paddingStart="20dp"
                                 android:paddingEnd="5dp"
                                 android:text="@string/SO"
                                 android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_outline"
                                 android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/textSORec"
@@ -490,7 +490,7 @@
                                 android:paddingEnd="20dp"
                                 android:text="@string/proximamente"
                                 android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_inverseSurface"
                                 android:textSize="14sp"
                                 android:textStyle="normal"
                                 tools:ignore="RtlSymmetry" />
@@ -505,13 +505,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
+                                android:paddingStart="20dp"
                                 android:paddingEnd="5dp"
                                 android:text="@string/Procesador"
                                 android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_outline"
                                 android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/textProcesadorRec"
@@ -520,7 +520,7 @@
                                 android:paddingEnd="20dp"
                                 android:text="@string/proximamente"
                                 android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_inverseSurface"
                                 android:textSize="14sp"
                                 android:textStyle="normal"
                                 tools:ignore="RtlSymmetry" />
@@ -535,13 +535,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
+                                android:paddingStart="20dp"
                                 android:paddingEnd="5dp"
                                 android:text="@string/Memoria"
                                 android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_outline"
                                 android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/textMemoriaRec"
@@ -550,7 +550,7 @@
                                 android:paddingEnd="20dp"
                                 android:text="@string/proximamente"
                                 android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_inverseSurface"
                                 android:textSize="14sp"
                                 android:textStyle="normal"
                                 tools:ignore="RtlSymmetry" />
@@ -565,13 +565,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
+                                android:paddingStart="20dp"
                                 android:paddingEnd="5dp"
                                 android:text="@string/Graphic"
                                 android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_outline"
                                 android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/textGraficosRec"
@@ -580,7 +580,7 @@
                                 android:paddingEnd="20dp"
                                 android:text="@string/proximamente"
                                 android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_inverseSurface"
                                 android:textSize="14sp"
                                 android:textStyle="normal"
                                 tools:ignore="RtlSymmetry" />
@@ -595,13 +595,13 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingStart="40dp"
+                                android:paddingStart="20dp"
                                 android:paddingEnd="5dp"
                                 android:text="@string/Almacenamiento"
                                 android:textAlignment="center"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_outline"
                                 android:textSize="14sp"
-                                android:textStyle="normal" />
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/textAlmacenamientoRec"
@@ -610,7 +610,7 @@
                                 android:paddingEnd="20dp"
                                 android:text="@string/proximamente"
                                 android:textAlignment="textStart"
-                                android:textColor="@color/md_theme_dark_error"
+                                android:textColor="@color/md_theme_dark_inverseSurface"
                                 android:textSize="14sp"
                                 android:textStyle="normal"
                                 tools:ignore="RtlSymmetry" />
