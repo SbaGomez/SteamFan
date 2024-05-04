@@ -1,7 +1,6 @@
 package com.ar.sebastiangomez.steam
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
@@ -50,8 +49,6 @@ class BookmarkActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onHomeClick(view: View) {
-        val intent = Intent(this, HomeActivity::class.java)
-        startActivity(intent)
-        finish()
+        super.onBackPressed()
     }
 }
