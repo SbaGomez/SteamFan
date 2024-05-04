@@ -118,6 +118,7 @@ class DetalleActivity : AppCompatActivity() {
         layoutGrafRec = findViewById(R.id.layoutGrafRec)
         layoutAlmRec = findViewById(R.id.layoutAlmRec)
 
+        //Obtener valor del theme y cambiar el icono.
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
         if(currentTheme.toString() == "dark")
@@ -128,6 +129,7 @@ class DetalleActivity : AppCompatActivity() {
             themeButton.setImageResource(R.drawable.themelighttab)
         }
 
+        //Obtener ID de HomeActivity por intent y hacer fetch de detalles.
         val id = intent.extras!!.getInt("ID")
         Log.d(tag, "ID Game: $id")
         fetchGameDetails(id.toString())
@@ -158,30 +160,9 @@ class DetalleActivity : AppCompatActivity() {
                             Log.d(tag,"GAME DETAIL - ID: ${gameDetail.steam_appid}, Name: ${gameDetail.name}, Type: ${gameDetail.type}, Short description: ${gameDetail.short_description}")
                             Log.d(tag, "PC Requirements: ${gameDetail.pc_requirements}")
                             Log.d(tag, "PC Requirements Filter: $pcRequirements")
-                            // Requerimientos Minimos
-                            if(pcRequirements?.minimum != null)
-                            {
-                                pcRequirements.minimum.os.takeIf { it.isNotEmpty() }?.let { textSO.text = it } ?: layoutMin.removeView(layoutSOMin)
-                                pcRequirements.minimum.processor.takeIf { it.isNotEmpty() }?.let { textProcesador.text = it } ?: layoutMin.removeView(layoutProMin)
-                                pcRequirements.minimum.memory.takeIf { it.isNotEmpty() }?.let { textMemoria.text = it } ?: layoutMin.removeView(layoutMemMin)
-                                pcRequirements.minimum.graphics.takeIf { it.isNotEmpty() }?.let { textGraficos.text = it } ?: layoutMin.removeView(layoutGrafMin)
-                                pcRequirements.minimum.storage.takeIf { it.isNotEmpty() }?.let { textAlmacenamiento.text = it } ?: layoutMin.removeView(layoutAlmMin)
-                            }
-                            else{
-                                layoutDetalle.removeView(cardMin)
-                            }
-                            // Requerimientos Recomendados
-                            if(pcRequirements?.recommended != null)
-                            {
-                                pcRequirements.recommended.os.takeIf { it.isNotEmpty() }?.let { textSORec.text = it } ?: layoutRec.removeView(layoutSORec)
-                                pcRequirements.recommended.processor.takeIf { it.isNotEmpty() }?.let { textProcesadorRec.text = it } ?: layoutRec.removeView(layoutProRec)
-                                pcRequirements.recommended.memory.takeIf { it.isNotEmpty() }?.let { textMemoriaRec.text = it } ?: layoutRec.removeView(layoutMemRec)
-                                pcRequirements.recommended.graphics.takeIf { it.isNotEmpty() }?.let { textGraficosRec.text = it } ?: layoutRec.removeView(layoutGrafRec)
-                                pcRequirements.recommended.storage.takeIf { it.isNotEmpty() }?.let { textAlmacenamientoRec.text = it } ?: layoutRec.removeView(layoutAlmRec)
-                            }
-                            else{
-                                layoutDetalle.removeView(cardRec)
-                            }
+
+                            // Titulo del juego
+                            titleTxt.text = gameDetail.name
 
                             //Type Game/Dlc/Demo
                             if(gameDetail.type == "dlc")
@@ -197,14 +178,6 @@ class DetalleActivity : AppCompatActivity() {
                                 imageType.setImageResource(R.drawable.taggame)
                             }
 
-                            titleTxt.text = gameDetail.name
-
-                            if(gameDetail.short_description.isEmpty())
-                            {
-                                cardDescription.removeView(cardDescription)
-                                cardDescription.visibility = View.INVISIBLE
-                            }
-                            descripcionTxt.text = gameDetail.short_description.replace(Regex("<br />|&quot;"), "")
                             // Cargar la imagen utilizando Glide
                             Glide.with(this@DetalleActivity)
                                 .load(gameDetail.header_image) // URL de la imagen
@@ -212,6 +185,45 @@ class DetalleActivity : AppCompatActivity() {
                                 .error(R.drawable.error) // Imagen de error en caso de falla de carga (opcional)
                                 .into(headerImg) // Establecer la imagen en el ImageView
 
+                            // Descripcion
+                            if(gameDetail.short_description.isEmpty())
+                            {
+                                layoutDetalle.removeView(cardDescription)
+                            }
+                            descripcionTxt.text = gameDetail.short_description.replace(Regex("<br />|&quot;"), "")
+
+                            // Requerimientos Minimos
+                            if(pcRequirements?.minimum != null)
+                            {
+                                pcRequirements.minimum.os.takeIf { it.isNotEmpty() }?.let { textSO.text = it } ?: layoutMin.removeView(layoutSOMin)
+                                pcRequirements.minimum.processor.takeIf { it.isNotEmpty() }?.let { textProcesador.text = it } ?: layoutMin.removeView(layoutProMin)
+                                pcRequirements.minimum.memory.takeIf { it.isNotEmpty() }?.let { textMemoria.text = it } ?: layoutMin.removeView(layoutMemMin)
+                                pcRequirements.minimum.graphics.takeIf { it.isNotEmpty() }?.let { textGraficos.text = it } ?: layoutMin.removeView(layoutGrafMin)
+                                pcRequirements.minimum.storage.takeIf { it.isNotEmpty() }?.let { textAlmacenamiento.text = it } ?: layoutMin.removeView(layoutAlmMin)
+                            }
+                            else{
+                                layoutDetalle.removeView(cardMin)
+                            }
+                            // Requerimientos Recomendados
+                            if(pcRequirements?.recommended != null)
+                            {
+                                if(pcRequirements?.recommended != pcRequirements?.minimum)
+                                {
+                                    pcRequirements.recommended.os.takeIf { it.isNotEmpty() }?.let { textSORec.text = it } ?: layoutRec.removeView(layoutSORec)
+                                    pcRequirements.recommended.processor.takeIf { it.isNotEmpty() }?.let { textProcesadorRec.text = it }?: layoutRec.removeView(layoutProRec)
+                                    pcRequirements.recommended.memory.takeIf { it.isNotEmpty() }?.let { textMemoriaRec.text = it } ?: layoutRec.removeView(layoutMemRec)
+                                    pcRequirements.recommended.graphics.takeIf { it.isNotEmpty() }?.let { textGraficosRec.text = it } ?: layoutRec.removeView(layoutGrafRec)
+                                    pcRequirements.recommended.storage.takeIf { it.isNotEmpty() }?.let { textAlmacenamientoRec.text = it }?: layoutRec.removeView(layoutAlmRec)
+                                }
+                                else{
+                                    layoutDetalle.removeView(cardRec)
+                                }
+                            }
+                            else{
+                                layoutDetalle.removeView(cardRec)
+                            }
+
+                            //Handler para ocultar progressBar y mostrar el layoutDetalle
                             Handler(Looper.getMainLooper()).postDelayed({
                                 progressBar.visibility = View.INVISIBLE
                                 layoutDetalle.visibility = View.VISIBLE
@@ -333,7 +345,13 @@ class DetalleActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onHomeClick(view: View) {
-        super.onBackPressed()
+        val intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
+    @Suppress("UNUSED_PARAMETER")
+    fun onBackClick(view: View) {
+        super.onBackPressed()
+    }
 }

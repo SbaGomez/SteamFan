@@ -54,4 +54,9 @@ class BookmarkActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun onBackClick(view: View) {
+        super.onBackPressed()
+    }
 }

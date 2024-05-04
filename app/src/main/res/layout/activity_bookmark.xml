@@ -23,7 +23,20 @@
         app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium"
         app:titleTextColor="@color/md_theme_dark_onErrorContainer">
 
-        <!-- TextView para el título -->
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="start"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/steam_button"
+            android:onClick="onBackClick"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/back"
+            tools:ignore="ContentDescription,DuplicateSpeakableTextCheck"
+            tools:layout_editor_absoluteX="16dp" />
+
         <TextView
             android:id="@+id/toolbar_title"
             android:layout_width="wrap_content"
@@ -36,7 +49,6 @@
             android:textStyle="bold"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="18dp" />
-
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
@@ -104,7 +116,8 @@
             android:contentDescription="@string/fav_button"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/tabbookmarkactive" />
+            android:src="@drawable/tabbookmarkactive"
+            tools:ignore="VisualLintBounds" />
 
         <!-- Espacio para separar los botones -->
         <View

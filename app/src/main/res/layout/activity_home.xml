@@ -30,9 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:subtitleTextColor="@color/md_theme_dark_inverseSurface"
-        app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:titleTextColor="@color/md_theme_dark_onErrorContainer">
+        app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium">
 
         <!-- TextView para el título -->
         <TextView
@@ -62,15 +60,15 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:orientation="horizontal">
+            android:layout_height="200dp"
+            android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
-                android:layout_width="250dp"
+                android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="80dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginTop="65dp"
+                android:layout_marginEnd="20dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 app:cardBackgroundColor="@color/md_theme_light_inverseSurface"
@@ -79,7 +77,7 @@
                 <SearchView
                     android:id="@+id/searchInput"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="match_parent"
                     android:background="@android:color/transparent"
                     android:forceDarkAllowed="false"
                     android:iconifiedByDefault="false"
@@ -91,10 +89,11 @@
 
             <Button
                 android:id="@+id/buttonSearch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="80dp"
-                android:layout_marginEnd="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_marginStart="80dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="80dp"
                 android:backgroundTint="@color/md_theme_light_onTertiaryContainer"
                 android:onClick="onFilterGamesBySearchClick"
                 android:text="@string/search_button"

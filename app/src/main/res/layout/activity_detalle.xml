@@ -30,22 +30,37 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium">
+        app:subtitleTextColor="@color/md_theme_dark_inverseSurface"
+        app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:titleTextColor="@color/md_theme_dark_onErrorContainer">
+
+        <!-- ImageButton para el botón de retroceso -->
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/steam_button"
+            android:onClick="onBackClick"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back"
+            tools:ignore="ContentDescription,DuplicateSpeakableTextCheck"
+            tools:layout_editor_absoluteX="16dp" />
 
         <!-- TextView para el título -->
         <TextView
             android:id="@+id/toolbar_title"
-            android:textColor="@color/title_dark_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/title_detail"
+            android:textColor="@color/title_dark_text"
             android:textSize="20sp"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="18dp" />
-
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.cardview.widget.CardView
@@ -118,7 +133,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="invisible">
+                android:visibility="visible">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
@@ -648,7 +663,8 @@
             android:onClick="onBookmarkClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/tabbookmark" />
+            android:src="@drawable/tabbookmark"
+            tools:ignore="VisualLintBounds" />
 
         <!-- Espacio para separar los botones -->
         <View
