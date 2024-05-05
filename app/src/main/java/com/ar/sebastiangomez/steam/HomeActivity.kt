@@ -6,11 +6,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.SearchView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
@@ -35,6 +38,10 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var progressBar : ProgressBar
     private lateinit var themeButton : ImageButton
     private lateinit var searchView : SearchView
+    private lateinit var linearSearch : LinearLayout
+    private lateinit var cardSearch : CardView
+    private lateinit var buttonSearch : Button
+    private lateinit var linearSearchButton : LinearLayout
     private val tag = "LOG-HOME"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +64,12 @@ class HomeActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         themeButton = findViewById(R.id.themeButton)
         searchView = findViewById(R.id.searchInput)
+        linearSearch = findViewById(R.id.linearSearch)
+        cardSearch = findViewById(R.id.cardSearch)
+        buttonSearch = findViewById(R.id.buttonSearch)
+        linearSearchButton = findViewById(R.id.linearSearchButton)
         recyclerView.layoutManager = LinearLayoutManager(this)
+        linearSearch.removeView(linearSearchButton) //Remove search buttons
 
         getImageTheme()
 
@@ -79,6 +91,13 @@ class HomeActivity : AppCompatActivity() {
             } finally {
                 // Asegurarse de ocultar el ProgressBar después de la carga, ya sea exitosa o no
                 progressBar.visibility = View.INVISIBLE
+            }
+        }
+
+        // Mostrar el boton buscar al abrir el search
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                linearSearch.addView(linearSearchButton)
             }
         }
     }
@@ -177,5 +196,12 @@ class HomeActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun onSearchCloseClick(view: View) {
+        linearSearch.removeView(linearSearchButton) //Remove search buttons
+        searchView.clearFocus() // Quita el foco del SearchView
+    }
+
 }
 
