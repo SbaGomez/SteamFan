@@ -160,6 +160,7 @@ class HomeActivity : AppCompatActivity() {
 
     fun onFilterGamesBySearchClick(view: View) {
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
+        linearSearch.removeView(linearReloadHome) //Remove Reload Home Button
         // Cerrar el teclado del dispositivo móvil
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
@@ -176,7 +177,7 @@ class HomeActivity : AppCompatActivity() {
 
                     if (filteredGamesList.isEmpty()) {
                         linearSearch.addView(linearErrorSearchButton)
-                        textErrorSearch.text = getString(R.string.error2)
+                        textErrorSearch.text = getString(R.string.error1)
                         linearSearch.addView(linearReloadHome)
                     } else {
                         val adapter = GameAdapter(filteredGamesList) { position, gameId ->
@@ -201,7 +202,7 @@ class HomeActivity : AppCompatActivity() {
         }
         else{
             linearSearch.addView(linearErrorSearchButton)
-            textErrorSearch.text = getString(R.string.error1)
+            textErrorSearch.text = getString(R.string.error2)
         }
     }
 
