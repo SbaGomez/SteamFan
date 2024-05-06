@@ -177,6 +177,10 @@ class DetalleActivity : AppCompatActivity() {
                             {
                                 imageType.setImageResource(R.drawable.taggame)
                             }
+                            else if(gameDetail.type == "music")
+                            {
+                                imageType.setImageResource(R.drawable.tagmusic)
+                            }
 
                             // Cargar la imagen utilizando Glide
                             Glide.with(this@DetalleActivity)
