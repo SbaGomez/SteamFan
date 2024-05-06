@@ -157,7 +157,7 @@ class DetalleActivity : AppCompatActivity() {
                         if (gameDetail != null) {
                             // Verifica si las propiedades son nulas antes de usarlas
                             val pcRequirements = parsePcRequirements(gameDetail.pc_requirements.toString())
-                            Log.d(tag,"GAME DETAIL - ID: ${gameDetail.steam_appid}, Name: ${gameDetail.name}, Type: ${gameDetail.type}, Short description: ${gameDetail.short_description}")
+                            Log.d(tag,"GAME DETAIL - ID: ${gameDetail.steam_appid}, Name: ${gameDetail.name}, Type: ${gameDetail.type}, ${gameDetail.header_image},Short description: ${gameDetail.short_description}")
                             Log.d(tag, "PC Requirements: ${gameDetail.pc_requirements}")
                             Log.d(tag, "PC Requirements Filter: $pcRequirements")
 
