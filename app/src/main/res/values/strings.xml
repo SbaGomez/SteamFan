@@ -26,4 +26,8 @@
     <string name="Almacenamiento">Almacenamiento:</string>
     <string name="error_detalles_empty">El juego no tiene detalles cargados.</string>
     <string name="boton_add_bookmark_detail">Boton AddBookmark</string>
+    <string name="text_error">Texto de error.</string>
+    <!-- Errores del buscador -->
+    <string name="error1">No se encontro ningun juego.</string>
+    <string name="error2">El campo de busqueda esta vacio.</string>
 </resources>

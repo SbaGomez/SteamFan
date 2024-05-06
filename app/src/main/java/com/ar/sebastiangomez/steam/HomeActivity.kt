@@ -176,7 +176,7 @@ class HomeActivity : AppCompatActivity() {
 
                     if (filteredGamesList.isEmpty()) {
                         linearSearch.addView(linearErrorSearchButton)
-                        textErrorSearch.text = "No se encontro ningun juego."
+                        textErrorSearch.text = getString(R.string.error2)
                         linearSearch.addView(linearReloadHome)
                     } else {
                         val adapter = GameAdapter(filteredGamesList) { position, gameId ->
@@ -201,7 +201,7 @@ class HomeActivity : AppCompatActivity() {
         }
         else{
             linearSearch.addView(linearErrorSearchButton)
-            textErrorSearch.text = "El campo de busqueda esta vacio."
+            textErrorSearch.text = getString(R.string.error1)
         }
     }
 
