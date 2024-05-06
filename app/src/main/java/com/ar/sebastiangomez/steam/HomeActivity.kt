@@ -45,6 +45,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var linearSearchButton : LinearLayout
     private lateinit var linearErrorSearchButton : LinearLayout
     private lateinit var textErrorSearch : TextView
+    private lateinit var linearReloadHome : LinearLayout
+    private lateinit var buttonReloadHome : Button
     private val tag = "LOG-HOME"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,11 +74,14 @@ class HomeActivity : AppCompatActivity() {
         buttonSearch = findViewById(R.id.buttonSearch)
         linearSearchButton = findViewById(R.id.linearSearchButton)
         linearErrorSearchButton = findViewById(R.id.linearErrorSearchButton)
+        linearReloadHome = findViewById(R.id.linearReloadHome)
         textErrorSearch = findViewById(R.id.textErrorSearch)
         recyclerView.layoutManager = LinearLayoutManager(this)
+        buttonReloadHome = findViewById(R.id.buttonReloadHome)
 
         linearSearch.removeView(linearSearchButton) //Remove search buttons
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
+        linearSearch.removeView(linearReloadHome) //Remove Reload Home Button
 
         getImageTheme()
 
@@ -167,22 +172,23 @@ class HomeActivity : AppCompatActivity() {
                     recyclerView.visibility = View.INVISIBLE
                     progressBar.visibility = View.VISIBLE
                     val gamesList = fetchGames()
-                    val searchTerm =
-                        searchView.query.toString()
-                            .lowercase(Locale.getDefault()) // Obtener el término de búsqueda del SearchView y convertirlo a minúsculas
-                    val filteredGamesList = gamesList.filter {
-                        it.name.lowercase(Locale.getDefault()).contains(searchTerm)
-                    } // Filtrar los juegos basados en el término de búsqueda
+                    val filteredGamesList = gamesList.filter { it.name.lowercase(Locale.getDefault()).contains(searchTerm.lowercase(Locale.getDefault())) } // Filtrar los juegos basados en el término de búsqueda
 
-                    val adapter = GameAdapter(filteredGamesList) { position, gameId ->
-                        // Acciones a realizar cuando se hace clic en un elemento de la lista
-                        val gameName = filteredGamesList[position].name
-                        Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
-                        // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
+                    if (filteredGamesList.isEmpty()) {
+                        linearSearch.addView(linearErrorSearchButton)
+                        textErrorSearch.text = "No se encontro ningun juego."
+                        linearSearch.addView(linearReloadHome)
+                    } else {
+                        val adapter = GameAdapter(filteredGamesList) { position, gameId ->
+                            // Acciones a realizar cuando se hace clic en un elemento de la lista
+                            val gameName = filteredGamesList[position].name
+                            Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
+                            // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
+                        }
+
+                        recyclerView.visibility = View.VISIBLE
+                        recyclerView.adapter = adapter
                     }
-
-                    recyclerView.visibility = View.VISIBLE
-                    recyclerView.adapter = adapter
                 } catch (e: IOException) {
                     e.printStackTrace()
                     // En caso de error, ocultar el ProgressBar
@@ -221,6 +227,13 @@ class HomeActivity : AppCompatActivity() {
         linearSearch.removeView(linearSearchButton) //Remove search buttons
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
         searchView.clearFocus() // Quita el foco del SearchView
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun onReloadHomeClick(view: View) {
+        val intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
 }

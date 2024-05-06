@@ -109,6 +109,26 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/linearReloadHome"
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:paddingTop="8dp">
+
+                <Button
+                    android:id="@+id/buttonReloadHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:backgroundTint="@color/md_theme_light_onTertiaryContainer"
+                    android:onClick="onReloadHomeClick"
+                    android:text="@string/reload_home_button"
+                    android:textColor="@color/md_theme_dark_inverseSurface"
+                    tools:ignore="ButtonStyle" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/linearSearchButton"
                 style="?android:attr/buttonBarStyle"
                 android:layout_width="match_parent"
@@ -118,7 +138,7 @@
 
                 <Button
                     android:id="@+id/buttonSearchClose"
-                    android:layout_width="110dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="48dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
@@ -130,7 +150,7 @@
 
                 <Button
                     android:id="@+id/buttonSearch"
-                    android:layout_width="140dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="48dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
