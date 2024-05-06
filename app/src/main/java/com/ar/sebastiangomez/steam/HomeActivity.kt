@@ -219,6 +219,7 @@ class HomeActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun onSearchCloseClick(view: View) {
         linearSearch.removeView(linearSearchButton) //Remove search buttons
+        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
         searchView.clearFocus() // Quita el foco del SearchView
     }
 
