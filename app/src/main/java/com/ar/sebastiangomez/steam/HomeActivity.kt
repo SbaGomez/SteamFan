@@ -11,6 +11,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.SearchView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -42,6 +43,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var cardSearch : CardView
     private lateinit var buttonSearch : Button
     private lateinit var linearSearchButton : LinearLayout
+    private lateinit var linearErrorSearchButton : LinearLayout
+    private lateinit var textErrorSearch : TextView
     private val tag = "LOG-HOME"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,8 +71,12 @@ class HomeActivity : AppCompatActivity() {
         cardSearch = findViewById(R.id.cardSearch)
         buttonSearch = findViewById(R.id.buttonSearch)
         linearSearchButton = findViewById(R.id.linearSearchButton)
+        linearErrorSearchButton = findViewById(R.id.linearErrorSearchButton)
+        textErrorSearch = findViewById(R.id.textErrorSearch)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
         linearSearch.removeView(linearSearchButton) //Remove search buttons
+        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
 
         getImageTheme()
 
@@ -147,36 +154,48 @@ class HomeActivity : AppCompatActivity() {
     }
 
     fun onFilterGamesBySearchClick(view: View) {
+        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
         // Cerrar el teclado del dispositivo móvil
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
-        lifecycleScope.launch {
-            try {
-                recyclerView.visibility = View.INVISIBLE
-                progressBar.visibility = View.VISIBLE
-                val gamesList = fetchGames()
-                val searchTerm =
-                    searchView.query.toString().lowercase(Locale.getDefault()) // Obtener el término de búsqueda del SearchView y convertirlo a minúsculas
-                val filteredGamesList = gamesList.filter { it.name.lowercase(Locale.getDefault()).contains(searchTerm) } // Filtrar los juegos basados en el término de búsqueda
+        val searchTerm = searchView.query.toString().trim()
 
-                val adapter = GameAdapter(filteredGamesList) { position, gameId ->
-                    // Acciones a realizar cuando se hace clic en un elemento de la lista
-                    val gameName = filteredGamesList[position].name
-                    Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
-                    // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
+        if (searchTerm.isNotEmpty()) {
+            lifecycleScope.launch {
+                try {
+                    recyclerView.visibility = View.INVISIBLE
+                    progressBar.visibility = View.VISIBLE
+                    val gamesList = fetchGames()
+                    val searchTerm =
+                        searchView.query.toString()
+                            .lowercase(Locale.getDefault()) // Obtener el término de búsqueda del SearchView y convertirlo a minúsculas
+                    val filteredGamesList = gamesList.filter {
+                        it.name.lowercase(Locale.getDefault()).contains(searchTerm)
+                    } // Filtrar los juegos basados en el término de búsqueda
+
+                    val adapter = GameAdapter(filteredGamesList) { position, gameId ->
+                        // Acciones a realizar cuando se hace clic en un elemento de la lista
+                        val gameName = filteredGamesList[position].name
+                        Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
+                        // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
+                    }
+
+                    recyclerView.visibility = View.VISIBLE
+                    recyclerView.adapter = adapter
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    // En caso de error, ocultar el ProgressBar
+                    progressBar.visibility = View.INVISIBLE
+                } finally {
+                    // Asegurarse de ocultar el ProgressBar después de la carga, ya sea exitosa o no
+                    progressBar.visibility = View.INVISIBLE
                 }
-
-                recyclerView.visibility = View.VISIBLE
-                recyclerView.adapter = adapter
-            } catch (e: IOException) {
-                e.printStackTrace()
-                // En caso de error, ocultar el ProgressBar
-                progressBar.visibility = View.INVISIBLE
-            } finally {
-                // Asegurarse de ocultar el ProgressBar después de la carga, ya sea exitosa o no
-                progressBar.visibility = View.INVISIBLE
             }
+        }
+        else{
+            linearSearch.addView(linearErrorSearchButton)
+            textErrorSearch.text = "El campo de busqueda esta vacio."
         }
     }
 
