@@ -164,22 +164,20 @@ class DetalleActivity : AppCompatActivity() {
                             // Titulo del juego
                             titleTxt.text = gameDetail.name
 
-                            //Type Game/Dlc/Demo
-                            if(gameDetail.type == "dlc")
-                            {
-                                imageType.setImageResource(R.drawable.tagdlc)
-                            }
-                            else if(gameDetail.type == "demo")
-                            {
-                                imageType.setImageResource(R.drawable.tagdemo)
-                            }
-                            else if(gameDetail.type == "game")
-                            {
-                                imageType.setImageResource(R.drawable.taggame)
-                            }
-                            else if(gameDetail.type == "music")
-                            {
-                                imageType.setImageResource(R.drawable.tagmusic)
+                            //Type Game/Dlc/Demo/Music
+                            when (gameDetail.type) {
+                                "dlc" -> {
+                                    imageType.setImageResource(R.drawable.tagdlc)
+                                }
+                                "demo" -> {
+                                    imageType.setImageResource(R.drawable.tagdemo)
+                                }
+                                "game" -> {
+                                    imageType.setImageResource(R.drawable.taggame)
+                                }
+                                "music" -> {
+                                    imageType.setImageResource(R.drawable.tagmusic)
+                                }
                             }
 
                             // Cargar la imagen utilizando Glide
@@ -211,7 +209,7 @@ class DetalleActivity : AppCompatActivity() {
                             // Requerimientos Recomendados
                             if(pcRequirements?.recommended != null)
                             {
-                                if(pcRequirements?.recommended != pcRequirements?.minimum)
+                                if(pcRequirements.recommended != pcRequirements.minimum)
                                 {
                                     pcRequirements.recommended.os.takeIf { it.isNotEmpty() }?.let { textSORec.text = it } ?: layoutRec.removeView(layoutSORec)
                                     pcRequirements.recommended.processor.takeIf { it.isNotEmpty() }?.let { textProcesadorRec.text = it }?: layoutRec.removeView(layoutProRec)
