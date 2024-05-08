@@ -3,7 +3,6 @@
     <!--<style name="Base.Theme.Steam" parent="Theme.MaterialComponents.Light.NoActionBar"> -->
     <style name="Base.Theme.Steam.Light" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowSplashscreenContent">@layout/activity_splash</item>
         <item name="android:textColorPrimary">@color/title_light_text</item>
         <item name="colorPrimary">@color/md_theme_light_primary</item>
         <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
@@ -36,7 +35,6 @@
     <!--<style name="Base.Theme.Steam" parent="Theme.MaterialComponents.DayNight.NoActionBar"> -->
     <style name="Base.Theme.Steam.Dark" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowSplashscreenContent">@layout/activity_splash</item>
         <item name="android:textColorPrimary">@color/title_dark_text</item>
         <item name="colorPrimary">@color/md_theme_dark_primary</item>
         <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>
