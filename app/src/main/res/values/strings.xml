@@ -8,7 +8,8 @@
     <string name="search_button">Buscar juego</string>
     <string name="reload_home_button">Recargar juegos.</string>
     <string name="search_close_button">Cerrar</string>
-    <string name="placeholder_search_button">Buscar juegos...</string>
+    <string name="placeholder_search_input">Buscar juegos...</string>
+    <string name="placeholder_searchFav_input">Buscar juegos favoritos...</string>
     <string name="steam_button">Home</string>
     <string name="theme_button">Theme</string>
     <string name="login_button">Sign in with Google</string>
