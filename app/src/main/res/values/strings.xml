@@ -30,4 +30,5 @@
     <!-- Errores del buscador -->
     <string name="error1">No se encontro ningun juego.</string>
     <string name="error2">El campo de busqueda esta vacio.</string>
+    <string name="error3">Error de conexión. Por favor, verifica tu conexión a internet e intenta nuevamente.</string>
 </resources>
