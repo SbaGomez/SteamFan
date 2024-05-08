@@ -3,6 +3,7 @@ package com.ar.sebastiangomez.steam
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.JsonReader
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -26,8 +27,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.json.JSONObject
 import java.io.IOException
+import java.io.StringReader
 import java.util.Locale
 
 class Game(val id: String, val name: String)
@@ -144,19 +145,55 @@ class HomeActivity : AppCompatActivity() {
 
     private fun parseResponse(response: String): List<Game> {
         val gamesList = mutableListOf<Game>()
-        val jsonObject = JSONObject(response)
-        val appsArray = jsonObject.getJSONObject("applist").getJSONArray("apps")
 
-        for (i in 0 until appsArray.length()) {
-            val appObject = appsArray.getJSONObject(i)
-            val id = appObject.getString("appid")
-            val name = appObject.getString("name")
-            if (name.isNotEmpty()) {
-                gamesList.add(Game(id, name))
+        // Use streaming JSON parsing
+        val jsonReader = JsonReader(StringReader(response))
+
+        jsonReader.use { reader ->
+            reader.beginObject() // Start reading the JSON object
+            while (reader.hasNext()) {
+                val name = reader.nextName()
+                if (name == "applist") {
+                    reader.beginObject() // Start reading the "applist" JSON object
+                    while (reader.hasNext()) {
+                        val name2 = reader.nextName()
+                        if (name2 == "apps") {
+                            reader.beginArray() // Start reading the "apps" JSON array
+                            while (reader.hasNext()) {
+                                reader.beginObject() // Start reading each JSON object in the array
+                                var id = ""
+                                var gameName = ""
+                                while (reader.hasNext()) {
+                                    val fieldName = reader.nextName()
+                                    if (fieldName == "appid") {
+                                        id = reader.nextString()
+                                    } else if (fieldName == "name") {
+                                        gameName = reader.nextString()
+                                    } else {
+                                        reader.skipValue() // Skip values of other fields
+                                    }
+                                }
+                                if (gameName.isNotEmpty()) {
+                                    gamesList.add(Game(id, gameName))
+                                }
+                                reader.endObject() // End reading the JSON object
+                            }
+                            reader.endArray() // End reading the "apps" JSON array
+                        } else {
+                            reader.skipValue() // Skip values of other fields
+                        }
+                    }
+                    reader.endObject() // End reading the "applist" JSON object
+                } else {
+                    reader.skipValue() // Skip values of other fields
+                }
             }
+            reader.endObject() // End reading the JSON object
         }
+
         return gamesList
     }
+
 
     fun onFilterGamesBySearchClick(view: View) {
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
