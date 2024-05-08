@@ -40,16 +40,10 @@ class SplashActivity : AppCompatActivity() {
 
         // Array con los IDs de las imágenes en drawable
         val imagenes = arrayOf(
-            /*R.drawable.logov2,
-            R.drawable.logov3,
-            R.drawable.logov4,
-            R.drawable.logov5,
-            R.drawable.logov6,
-            R.drawable.logov7,
-            R.drawable.logov8,
-            R.drawable.logov9,
-            R.drawable.logov10,*/
             R.drawable.logov11,
+            R.drawable.logov12,
+            R.drawable.logov13,
+            R.drawable.logov14,
         )
 
         // Generar un índice aleatorio
