@@ -65,8 +65,8 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var buttonSearch : Button
     private lateinit var linearSearchButton : LinearLayout
     private lateinit var linearErrorSearchButton : LinearLayout
-    private lateinit var textErrorSearch : TextView
     private lateinit var linearReloadHome : LinearLayout
+    private lateinit var textErrorSearch : TextView
     private lateinit var buttonReloadHome : Button
     private val tag = "LOG-HOME"
 
@@ -97,8 +97,9 @@ class HomeActivity : AppCompatActivity() {
         linearErrorSearchButton = findViewById(R.id.linearErrorSearchButton)
         linearReloadHome = findViewById(R.id.linearReloadHome)
         textErrorSearch = findViewById(R.id.textErrorSearch)
-        recyclerView.layoutManager = LinearLayoutManager(this)
         buttonReloadHome = findViewById(R.id.buttonReloadHome)
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         linearSearch.removeView(linearSearchButton) //Remove search buttons
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
@@ -190,7 +191,7 @@ class HomeActivity : AppCompatActivity() {
                     recyclerView.visibility = View.INVISIBLE
                     progressBar.visibility = View.VISIBLE
                     val gamesList = fetchGames()
-                    val filteredGamesList = gamesList.filter { it.name.lowercase(Locale.getDefault()).contains(searchTerm.lowercase(Locale.getDefault())) } // Filtrar los juegos basados en el término de búsqueda
+                    val filteredGamesList = gamesList.filter { Regex("\\b${searchTerm.lowercase(Locale.getDefault())}\\b").find(it.name.lowercase(Locale.getDefault())) != null }// Filtrar los juegos basados en el término de búsqueda
 
                     if (filteredGamesList.isEmpty()) {
                         linearSearch.addView(linearErrorSearchButton)
@@ -240,7 +241,6 @@ class HomeActivity : AppCompatActivity() {
     fun onBookmarkClick(view: View) {
         val intent = Intent(this, BookmarkActivity::class.java)
         startActivity(intent)
-        finish()
     }
 
     @Suppress("UNUSED_PARAMETER")
