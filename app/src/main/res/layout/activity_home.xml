@@ -121,7 +121,7 @@
                     android:id="@+id/buttonReloadHome"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
-                    android:backgroundTint="@color/md_theme_light_onTertiaryContainer"
+                    android:backgroundTint="@color/md_theme_dark_tertiaryContainer"
                     android:onClick="onReloadHomeClick"
                     android:text="@string/reload_home_button"
                     android:textColor="@color/md_theme_dark_inverseSurface"
