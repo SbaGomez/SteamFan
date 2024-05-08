@@ -181,11 +181,16 @@ class DetalleActivity : AppCompatActivity() {
                             }
 
                             // Cargar la imagen utilizando Glide
-                            Glide.with(this@DetalleActivity)
-                                .load(gameDetail.header_image) // URL de la imagen
-                                .placeholder(R.drawable.steamdb) // Placeholder mientras se carga la imagen (opcional)
-                                .error(R.drawable.error) // Imagen de error en caso de falla de carga (opcional)
-                                .into(headerImg) // Establecer la imagen en el ImageView
+                            runOnUiThread {
+                                // Verifica si la actividad aún es válida antes de cargar la imagen
+                                if (!isDestroyed && !isFinishing) {
+                                    Glide.with(this@DetalleActivity)
+                                        .load(gameDetail.header_image) // URL de la imagen
+                                        .placeholder(R.drawable.steamdb) // Placeholder mientras se carga la imagen (opcional)
+                                        .error(R.drawable.error) // Imagen de error en caso de falla de carga (opcional)
+                                        .into(headerImg) // Establecer la imagen en el ImageView
+                                }
+                            }
 
                             // Descripcion
                             if(gameDetail.short_description.isEmpty())
