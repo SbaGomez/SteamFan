@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
         )
 
         // Generar un índice aleatorio
-        val randomIndex = (0 until imagenes.size).random()
+        val randomIndex = imagenes.indices.random()
 
         // Asignar la imagen aleatoria al logoSplash
         logoSplash.setImageResource(imagenes[randomIndex])
