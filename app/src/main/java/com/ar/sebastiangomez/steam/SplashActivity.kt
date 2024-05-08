@@ -44,11 +44,12 @@ class SplashActivity : AppCompatActivity() {
             R.drawable.logov3,
             R.drawable.logov4,
             R.drawable.logov5,
-            R.drawable.logov6,*/
+            R.drawable.logov6,
             R.drawable.logov7,
-            /*R.drawable.logov8,
+            R.drawable.logov8,
             R.drawable.logov9,
             R.drawable.logov10,*/
+            R.drawable.logov11,
         )
 
         // Generar un índice aleatorio
