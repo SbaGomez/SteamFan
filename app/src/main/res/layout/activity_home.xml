@@ -69,14 +69,14 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardSearch"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="60dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="65dp"
                 android:layout_marginEnd="20dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 app:cardBackgroundColor="@color/md_theme_light_inverseSurface"
-                app:cardCornerRadius="16dp">
+                app:cardCornerRadius="12dp">
 
                 <SearchView
                     android:id="@+id/searchInput"
@@ -86,7 +86,7 @@
                     android:forceDarkAllowed="false"
                     android:iconifiedByDefault="false"
                     android:queryBackground="@null"
-                    android:queryHint="@string/placeholder_search_button"
+                    android:queryHint="@string/placeholder_search_input"
                     android:theme="@style/Base.Theme.Steam.Dark" />
 
             </androidx.cardview.widget.CardView>
