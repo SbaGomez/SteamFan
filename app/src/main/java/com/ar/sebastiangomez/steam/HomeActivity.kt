@@ -3,7 +3,6 @@ package com.ar.sebastiangomez.steam
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.JsonReader
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -22,14 +21,35 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.utils.ThemeManager
+import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
 import java.io.IOException
-import java.io.StringReader
 import java.util.Locale
+
+// Define el modelo para la respuesta JSON
+data class SteamAppListResponse(
+    @SerializedName("applist") val appList: AppList
+)
+
+data class AppList(
+    @SerializedName("apps") val apps: List<SteamApp>
+)
+
+data class SteamApp(
+    @SerializedName("appid") val id: String,
+    @SerializedName("name") val name: String
+)
+
+// Define la interfaz Retrofit para el servicio web
+interface SteamApiService {
+    @GET("ISteamApps/GetAppList/v2/")
+    suspend fun getAppList(): SteamAppListResponse
+}
 
 class Game(val id: String, val name: String)
 
@@ -89,23 +109,32 @@ class HomeActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 progressBar.visibility = View.VISIBLE
-                val gamesList = fetchGames()
+
+                val gamesList = withContext(Dispatchers.IO) {
+                    fetchGames()
+                }
+
                 val adapter = GameAdapter(gamesList) { position, gameId ->
                     // Acciones a realizar cuando se hace clic en un elemento de la lista
                     val gameName = gamesList[position].name
                     Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
                     // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
                 }
+
                 recyclerView.adapter = adapter
+
             } catch (e: IOException) {
                 e.printStackTrace()
-                // En caso de error, ocultar el ProgressBar
-                progressBar.visibility = View.INVISIBLE
+                // En caso de error, mostrar el mensaje de error adecuado
+                linearSearch.addView(linearErrorSearchButton)
+                textErrorSearch.text = getString(R.string.error3)
+                linearSearch.addView(linearReloadHome)
             } finally {
                 // Asegurarse de ocultar el ProgressBar después de la carga, ya sea exitosa o no
                 progressBar.visibility = View.INVISIBLE
             }
         }
+
 
         // Mostrar el boton buscar al abrir el search
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
@@ -127,77 +156,24 @@ class HomeActivity : AppCompatActivity() {
         return
     }
 
+    // Función para crear el servicio Retrofit
+    private fun createSteamApiService(): SteamApiService {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.steampowered.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        return retrofit.create(SteamApiService::class.java)
+    }
+
+    // Método optimizado para obtener la lista de juegos utilizando Retrofit y Gson
     private suspend fun fetchGames(): List<Game> {
-        return withContext(Dispatchers.IO) {
-            val client = OkHttpClient()
-            val url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/"
-            val request = Request.Builder()
-                .url(url)
-                .build()
-            val response = client.newCall(request).execute()
-            if (!response.isSuccessful) throw IOException("Unexpected code $response")
-
-            val responseData = response.body!!.string()
-            Log.d(tag, "List Game: $responseData")
-            parseResponse(responseData)
-        }
+        val service = createSteamApiService()
+        val response = service.getAppList()
+        return response.appList.apps
+            .map { steamApp -> Game(steamApp.id, steamApp.name) }
+            .filter { game -> game.name.isNotEmpty() }
     }
-
-    private fun parseResponse(response: String): List<Game> {
-        val gamesList = mutableListOf<Game>()
-
-        // Use streaming JSON parsing
-        val jsonReader = JsonReader(StringReader(response))
-
-        jsonReader.use { reader ->
-            reader.beginObject() // Start reading the JSON object
-            while (reader.hasNext()) {
-                val name = reader.nextName()
-                if (name == "applist") {
-                    reader.beginObject() // Start reading the "applist" JSON object
-                    while (reader.hasNext()) {
-                        val name2 = reader.nextName()
-                        if (name2 == "apps") {
-                            reader.beginArray() // Start reading the "apps" JSON array
-                            while (reader.hasNext()) {
-                                reader.beginObject() // Start reading each JSON object in the array
-                                var id = ""
-                                var gameName = ""
-                                while (reader.hasNext()) {
-                                    val fieldName = reader.nextName()
-                                    when (fieldName) {
-                                        "appid" -> {
-                                            id = reader.nextString()
-                                        }
-                                        "name" -> {
-                                            gameName = reader.nextString()
-                                        }
-                                        else -> {
-                                            reader.skipValue() // Skip values of other fields
-                                        }
-                                    }
-                                }
-                                if (gameName.isNotEmpty()) {
-                                    gamesList.add(Game(id, gameName))
-                                }
-                                reader.endObject() // End reading the JSON object
-                            }
-                            reader.endArray() // End reading the "apps" JSON array
-                        } else {
-                            reader.skipValue() // Skip values of other fields
-                        }
-                    }
-                    reader.endObject() // End reading the "applist" JSON object
-                } else {
-                    reader.skipValue() // Skip values of other fields
-                }
-            }
-            reader.endObject() // End reading the JSON object
-        }
-
-        return gamesList
-    }
-
 
     fun onFilterGamesBySearchClick(view: View) {
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
@@ -234,7 +210,10 @@ class HomeActivity : AppCompatActivity() {
                 } catch (e: IOException) {
                     e.printStackTrace()
                     // En caso de error, ocultar el ProgressBar
-                    progressBar.visibility = View.INVISIBLE
+
+                    linearSearch.addView(linearErrorSearchButton)
+                    textErrorSearch.text = getString(R.string.error3)
+                    linearSearch.addView(linearReloadHome)
                 } finally {
                     // Asegurarse de ocultar el ProgressBar después de la carga, ya sea exitosa o no
                     progressBar.visibility = View.INVISIBLE
