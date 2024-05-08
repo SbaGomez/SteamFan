@@ -165,12 +165,16 @@ class HomeActivity : AppCompatActivity() {
                                 var gameName = ""
                                 while (reader.hasNext()) {
                                     val fieldName = reader.nextName()
-                                    if (fieldName == "appid") {
-                                        id = reader.nextString()
-                                    } else if (fieldName == "name") {
-                                        gameName = reader.nextString()
-                                    } else {
-                                        reader.skipValue() // Skip values of other fields
+                                    when (fieldName) {
+                                        "appid" -> {
+                                            id = reader.nextString()
+                                        }
+                                        "name" -> {
+                                            gameName = reader.nextString()
+                                        }
+                                        else -> {
+                                            reader.skipValue() // Skip values of other fields
+                                        }
                                     }
                                 }
                                 if (gameName.isNotEmpty()) {
