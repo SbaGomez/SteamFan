@@ -136,8 +136,11 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
+        showButtonSearch() // Mostrar el boton buscar al abrir el search
+    }
 
-        // Mostrar el boton buscar al abrir el search
+    private fun showButtonSearch()
+    {
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 linearSearch.addView(linearSearchButton)
@@ -177,53 +180,103 @@ class HomeActivity : AppCompatActivity() {
     }
 
     fun onFilterGamesBySearchClick(view: View) {
-        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
-        linearSearch.removeView(linearReloadHome) //Remove Reload Home Button
-        // Cerrar el teclado del dispositivo móvil
-        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+        hideKeyboard(view)
+        hideLinear()
 
         val searchTerm = searchView.query.toString().trim()
 
         if (searchTerm.isNotEmpty()) {
             lifecycleScope.launch {
                 try {
-                    recyclerView.visibility = View.INVISIBLE
-                    progressBar.visibility = View.VISIBLE
+                    showProgressBar()
+
                     val gamesList = fetchGames()
-                    val filteredGamesList = gamesList.filter { Regex("\\b${searchTerm.lowercase(Locale.getDefault())}\\b").find(it.name.lowercase(Locale.getDefault())) != null }// Filtrar los juegos basados en el término de búsqueda
+                    val filteredGamesList = filterGamesBySearchTerm(gamesList, searchTerm)
 
                     if (filteredGamesList.isEmpty()) {
-                        linearSearch.addView(linearErrorSearchButton)
-                        textErrorSearch.text = getString(R.string.error1)
+                        showError(getString(R.string.error1))
                         linearSearch.addView(linearReloadHome)
                     } else {
-                        val adapter = GameAdapter(filteredGamesList) { position, gameId ->
-                            // Acciones a realizar cuando se hace clic en un elemento de la lista
-                            val gameName = filteredGamesList[position].name
-                            Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
-                            // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
-                        }
-
-                        recyclerView.visibility = View.VISIBLE
-                        recyclerView.adapter = adapter
+                        val sortedList = sortFilteredGamesList(filteredGamesList, searchTerm)
+                        showFilteredGames(sortedList)
                     }
                 } catch (e: IOException) {
                     e.printStackTrace()
-                    // En caso de error, ocultar el ProgressBar
-
-                    linearSearch.addView(linearErrorSearchButton)
-                    textErrorSearch.text = getString(R.string.error3)
+                    showError(getString(R.string.error3))
                     linearSearch.addView(linearReloadHome)
                 } finally {
-                    // Asegurarse de ocultar el ProgressBar después de la carga, ya sea exitosa o no
-                    progressBar.visibility = View.INVISIBLE
+                    hideProgressBar()
+                }
+            }
+        } else {
+            showError(getString(R.string.error2))
+        }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun showProgressBar() {
+        recyclerView.visibility = View.INVISIBLE
+        progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgressBar() {
+        progressBar.visibility = View.INVISIBLE
+    }
+
+    private fun hideLinear()
+    {
+        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
+        linearSearch.removeView(linearReloadHome) //Remove Reload Home Button
+    }
+
+    private fun showError(errorMessage: String) {
+        runOnUiThread {
+            linearSearch.addView(linearErrorSearchButton)
+            textErrorSearch.text = errorMessage
+        }
+    }
+
+    private suspend fun filterGamesBySearchTerm(gamesList: List<Game>, searchTerm: String): List<Game> {
+        return withContext(Dispatchers.Default) {
+            gamesList.filter { game ->
+                Regex("\\b${searchTerm.lowercase(Locale.getDefault())}\\b").find(game.name.lowercase(Locale.getDefault())) != null
+            }
+        }
+    }
+
+    private fun sortFilteredGamesList(filteredGamesList: List<Game>, searchTerm: String): List<Game> {
+        val exactMatch = mutableListOf<Game>()
+        val partialMatchWithoutExact = mutableListOf<Game>()
+
+        // Verificar si searchTerm no es nulo antes de usarlo
+        searchTerm?.let { term ->
+            for (game in filteredGamesList) {
+                val lowerCaseName = game.name.lowercase(Locale.getDefault())
+                if (lowerCaseName == term.lowercase(Locale.getDefault())) {
+                    exactMatch.add(game)
+                } else if (lowerCaseName.contains(term.lowercase(Locale.getDefault()))) {
+                    partialMatchWithoutExact.add(game)
                 }
             }
         }
-        else{
-            linearSearch.addView(linearErrorSearchButton)
-            textErrorSearch.text = getString(R.string.error2)
+
+        return exactMatch + partialMatchWithoutExact
+    }
+
+    private fun showFilteredGames(filteredGamesList: List<Game>) {
+        runOnUiThread {
+            val adapter = GameAdapter(filteredGamesList) { position, gameId ->
+                val gameName = filteredGamesList[position].name
+                Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
+                // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
+            }
+
+            recyclerView.visibility = View.VISIBLE
+            recyclerView.adapter = adapter
         }
     }
 
@@ -252,9 +305,8 @@ class HomeActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onReloadHomeClick(view: View) {
-        val intent = Intent(this, HomeActivity::class.java)
-        startActivity(intent)
-        finish()
+        searchView.setQuery("", false)
+        recreate()
     }
 
 }
