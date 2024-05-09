@@ -83,7 +83,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
-                    android:forceDarkAllowed="false"
                     android:iconifiedByDefault="false"
                     android:queryBackground="@null"
                     android:queryHint="@string/placeholder_search_input"
@@ -127,6 +126,12 @@
                     android:onClick="onReloadHomeClick"
                     android:text="@string/reload_home_button"
                     android:textColor="@color/md_theme_dark_inverseSurface"
+                    app:cornerRadius="10dp"
+                    app:icon="@android:drawable/ic_popup_sync"
+                    app:iconGravity="start"
+                    app:iconPadding="10dp"
+                    app:iconSize="25dp"
+                    app:iconTint="#E6E5E5"
                     tools:ignore="ButtonStyle" />
             </LinearLayout>
 
@@ -148,6 +153,7 @@
                     android:onClick="onSearchCloseClick"
                     android:text="@string/search_close_button"
                     android:textColor="@color/md_theme_dark_inverseSurface"
+                    app:cornerRadius="10dp"
                     tools:ignore="ButtonStyle" />
 
                 <Button
@@ -160,6 +166,12 @@
                     android:onClick="onFilterGamesBySearchClick"
                     android:text="@string/search_button"
                     android:textColor="@color/md_theme_dark_inverseSurface"
+                    app:cornerRadius="10dp"
+                    app:icon="@drawable/lupa"
+                    app:iconGravity="start"
+                    app:iconPadding="15dp"
+                    app:iconSize="15dp"
+                    app:iconTint="#FFFFFF"
                     tools:ignore="ButtonStyle" />
 
             </LinearLayout>
@@ -174,6 +186,12 @@
             android:layout_marginBottom="70dp"
             android:orientation="vertical">
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                android:backgroundTint="#302F2F" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
@@ -181,7 +199,9 @@
                 android:contentDescription="@string/app_name"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white" >
+
+            </androidx.recyclerview.widget.RecyclerView>
 
         </LinearLayout>
 
