@@ -6,9 +6,11 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -25,6 +27,8 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.util.Locale
 
 class BookmarkActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -39,6 +43,7 @@ class BookmarkActivity : AppCompatActivity() {
     private lateinit var linearReloadHome : LinearLayout
     private lateinit var textErrorSearch : TextView
     private lateinit var buttonReloadHome : Button
+    private lateinit var progressBar : ProgressBar
     private val tag = "LOG-BOOKMARK"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,6 +62,7 @@ class BookmarkActivity : AppCompatActivity() {
     }
 
     private fun bindViewObject() {
+        progressBar = findViewById(R.id.progressBar)
         recyclerView = findViewById(R.id.recyclerView)
         themeButton = findViewById(R.id.themeButton)
         searchView = findViewById(R.id.searchInput)
@@ -93,6 +99,8 @@ class BookmarkActivity : AppCompatActivity() {
         // Obtener el ID del Intent
         val gameId = intent.getStringExtra("game_id")
         val gameName = intent.getStringExtra("game_name")
+        // Log para verificar si los extras se reciben correctamente
+        Log.d(tag, "Intent Llegados de Detail - Game ID: $gameId, Game Name: $gameName")
         // Almacenar el juego en caché
         if (gameId != null && gameName != null) {
             // Crear un objeto CachedGame con el id y el nombre del juego
@@ -103,7 +111,7 @@ class BookmarkActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-
+                progressBar.visibility = View.VISIBLE
                 val gamesList = withContext(Dispatchers.IO) {
                     getGamesFromCache(applicationContext) // Obtener la lista de juegos desde la caché
                 }
@@ -124,6 +132,7 @@ class BookmarkActivity : AppCompatActivity() {
                 linearSearch.addView(linearReloadHome)
             } finally {
                 // Asegurarse de ocultar el ProgressBar después de la carga, ya sea exitosa o no
+                progressBar.visibility = View.INVISIBLE
             }
         }
     }
@@ -153,6 +162,108 @@ class BookmarkActivity : AppCompatActivity() {
         val json = Gson().toJson(games)
         editor.putString("games", json)
         editor.apply()
+    }
+
+    fun onFilterGamesBySearchClick(view: View) {
+        hideKeyboard(view)
+        hideLinear()
+
+        val searchTerm = searchView.query.toString().trim()
+
+        if (searchTerm.isNotEmpty()) {
+            lifecycleScope.launch {
+                try {
+                    showProgressBar()
+
+                    val gamesList = getGamesFromCache(this@BookmarkActivity)
+                    val filteredGamesList = filterGamesBySearchTerm(gamesList, searchTerm)
+
+                    if (filteredGamesList.isEmpty()) {
+                        showError(getString(R.string.error1))
+                        linearSearch.addView(linearReloadHome)
+                    } else {
+                        val sortedList = sortFilteredGamesList(filteredGamesList, searchTerm)
+                        showFilteredGames(sortedList)
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    showError(getString(R.string.error3))
+                    linearSearch.addView(linearReloadHome)
+                } finally {
+                    hideProgressBar()
+                }
+            }
+        } else {
+            showError(getString(R.string.error2))
+        }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun showProgressBar() {
+        recyclerView.visibility = View.INVISIBLE
+        progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgressBar() {
+        progressBar.visibility = View.INVISIBLE
+    }
+
+    private fun hideLinear()
+    {
+        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
+        linearSearch.removeView(linearReloadHome) //Remove Reload Home Button
+    }
+
+    private fun showError(errorMessage: String) {
+        runOnUiThread {
+            linearSearch.addView(linearErrorSearchButton)
+            textErrorSearch.text = errorMessage
+        }
+    }
+
+    private suspend fun filterGamesBySearchTerm(gamesList: List<Game>, searchTerm: String): List<Game> {
+        return withContext(Dispatchers.Default) {
+            gamesList.filter { game ->
+                Regex("\\b${searchTerm.lowercase(Locale.getDefault())}\\b").find(game.name.lowercase(
+                    Locale.getDefault())) != null
+            }
+        }
+    }
+
+    private fun sortFilteredGamesList(filteredGamesList: List<Game>, searchTerm: String): List<Game> {
+        val exactMatch = mutableListOf<Game>()
+        val partialMatchWithoutExact = mutableListOf<Game>()
+
+        // Verificar si searchTerm no es nulo antes de usarlo
+        searchTerm.let { term ->
+            for (game in filteredGamesList) {
+                val lowerCaseName = game.name.lowercase(Locale.getDefault())
+                if (lowerCaseName == term.lowercase(Locale.getDefault())) {
+                    exactMatch.add(game)
+                } else if (lowerCaseName.contains(term.lowercase(Locale.getDefault()))) {
+                    partialMatchWithoutExact.add(game)
+                }
+            }
+        }
+
+        return exactMatch + partialMatchWithoutExact
+    }
+
+    private fun showFilteredGames(filteredGamesList: List<Game>) {
+        runOnUiThread {
+            val adapter = GameAdapter(filteredGamesList) { position, gameId ->
+                val gameName = filteredGamesList[position].name
+                Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
+                // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
+            }
+
+            recyclerView.visibility = View.VISIBLE
+            recyclerView.adapter = adapter
+        }
     }
 
     @Suppress("UNUSED_PARAMETER")
