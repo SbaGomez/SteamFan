@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -17,6 +18,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ar.sebastiangomez.steam.utils.ThemeManager
+import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.Call
@@ -25,8 +27,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
-import com.bumptech.glide.Glide
-import android.widget.ImageButton
 
 class DetalleActivity : AppCompatActivity() {
 
@@ -64,6 +64,7 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var layoutAlmRec : LinearLayout
     private lateinit var layoutMin : LinearLayout
     private lateinit var layoutRec : LinearLayout
+    private lateinit var imageButtonBookmark : ImageButton
     private val tag = "LOG-DETAIL"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,6 +83,7 @@ class DetalleActivity : AppCompatActivity() {
     }
 
     private fun bindViewObject() {
+        imageButtonBookmark = findViewById(R.id.imageButtonBookmark)
         titleTxt = findViewById(R.id.titleGame)
         descripcionTxt = findViewById(R.id.shortDescription)
         layoutDetalle = findViewById(R.id.layoutDetalle)
@@ -160,6 +162,16 @@ class DetalleActivity : AppCompatActivity() {
                             Log.d(tag,"GAME DETAIL - ID: ${gameDetail.steam_appid}, Name: ${gameDetail.name}, Type: ${gameDetail.type}, ${gameDetail.header_image},Short description: ${gameDetail.short_description}")
                             Log.d(tag, "PC Requirements: ${gameDetail.pc_requirements}")
                             Log.d(tag, "PC Requirements Filter: $pcRequirements")
+
+                            imageButtonBookmark.setOnClickListener { // Crear un Intent para abrir BookmarkActivity
+                                Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
+                                val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
+                                // Pasar los datos del juego al BookmarkActivity
+                                intent.putExtra("game_id", gameDetail.steam_appid.toString())
+                                intent.putExtra("game_name", gameDetail.name)
+                                // Iniciar la actividad
+                                startActivity(intent)
+                            }
 
                             // Titulo del juego
                             titleTxt.text = gameDetail.name
