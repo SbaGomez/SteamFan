@@ -31,7 +31,7 @@
                 android:contentDescription="@string/app_name"
                 android:padding="4dp"
                 android:scaleType="fitCenter"
-                app:srcCompat="@drawable/logov9"
+                app:srcCompat="@drawable/logov4"
                 tools:ignore="ImageContrastCheck" />
 
             <TextView
@@ -40,16 +40,17 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#00735471"
+                android:fontFamily="@font/montserrat_bold"
                 android:gravity="center_vertical"
                 android:minHeight="?android:attr/listPreferredItemHeightSmall"
-                android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                android:paddingStart="5dp"
                 android:paddingTop="5dp"
-                android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
                 android:paddingBottom="5dp"
-                android:text="Title Game steam db fan"
+                android:text="@string/app_name"
                 android:textAppearance="?android:attr/textAppearanceListItemSmall"
                 android:textColor="@color/md_theme_dark_onSurface"
-                android:textStyle="bold" />
+                android:textSize="14sp"
+                tools:ignore="RtlSymmetry" />
 
             <ImageButton
                 android:id="@+id/imageButtonList"
@@ -61,7 +62,7 @@
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/bookmarkdel"
-                tools:ignore="ImageContrastCheck" />
+                tools:ignore="ImageContrastCheck,TouchTargetSizeCheck" />
 
         </LinearLayout>
 
