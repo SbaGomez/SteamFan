@@ -2,7 +2,9 @@ package com.ar.sebastiangomez.steam
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -15,8 +17,17 @@ import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ar.sebastiangomez.steam.utils.ThemeManager
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class BookmarkActivity : AppCompatActivity() {
+    private lateinit var recyclerView: RecyclerView
     private lateinit var themeManager: ThemeManager
     private lateinit var themeButton : ImageButton
     private lateinit var searchView : SearchView
@@ -28,6 +39,7 @@ class BookmarkActivity : AppCompatActivity() {
     private lateinit var linearReloadHome : LinearLayout
     private lateinit var textErrorSearch : TextView
     private lateinit var buttonReloadHome : Button
+    private val tag = "LOG-BOOKMARK"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         themeManager = ThemeManager(this)
@@ -45,6 +57,7 @@ class BookmarkActivity : AppCompatActivity() {
     }
 
     private fun bindViewObject() {
+        recyclerView = findViewById(R.id.recyclerView)
         themeButton = findViewById(R.id.themeButton)
         searchView = findViewById(R.id.searchInput)
         linearSearch = findViewById(R.id.linearSearch)
@@ -55,6 +68,8 @@ class BookmarkActivity : AppCompatActivity() {
         linearReloadHome = findViewById(R.id.linearReloadHome)
         textErrorSearch = findViewById(R.id.textErrorSearch)
         buttonReloadHome = findViewById(R.id.buttonReloadHome)
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         linearSearch.removeView(linearSearchButton) //Remove search buttons
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
@@ -74,6 +89,70 @@ class BookmarkActivity : AppCompatActivity() {
                 linearSearch.addView(linearSearchButton)
             }
         }
+
+        // Obtener el ID del Intent
+        val gameId = intent.getStringExtra("game_id")
+        val gameName = intent.getStringExtra("game_name")
+        // Almacenar el juego en caché
+        if (gameId != null && gameName != null) {
+            // Crear un objeto CachedGame con el id y el nombre del juego
+            val cachedGame = Game(gameId, gameName)
+            // Agregar el juego a la lista en caché
+            addGameToCache(this, cachedGame)
+        }
+
+        lifecycleScope.launch {
+            try {
+
+                val gamesList = withContext(Dispatchers.IO) {
+                    getGamesFromCache(applicationContext) // Obtener la lista de juegos desde la caché
+                }
+
+                val adapter = BookmarkAdapter(this@BookmarkActivity, gamesList) { position, gameId ->
+                // Acciones a realizar cuando se hace clic en un elemento de la lista
+                    val gameName = gamesList[position].name
+                    Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
+                }
+
+                recyclerView.adapter = adapter
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // En caso de error, mostrar el mensaje de error adecuado
+                linearSearch.addView(linearErrorSearchButton)
+                textErrorSearch.text = getString(R.string.error3)
+                linearSearch.addView(linearReloadHome)
+            } finally {
+                // Asegurarse de ocultar el ProgressBar después de la carga, ya sea exitosa o no
+            }
+        }
+    }
+
+    // Función para agregar un ID a la lista en caché
+    private fun addGameToCache(context: Context, game: Game) {
+        val games = getGamesFromCache(context)
+        if (!games.any { it.id == game.id }) {
+            games.add(game)
+            saveGamesToCache(context, games)
+        }
+    }
+
+    // Función para obtener la lista de IDs almacenados en caché
+     private fun getGamesFromCache(context: Context): MutableList<Game> {
+        val sharedPreferences: SharedPreferences = context.getSharedPreferences("bookmark_data", Context.MODE_PRIVATE)
+        val json = sharedPreferences.getString("games", "[]")
+        val type = object : TypeToken<MutableList<Game>>() {}.type
+        return Gson().fromJson(json, type)
+    }
+
+
+    // Función para guardar la lista de IDs en caché
+    private fun saveGamesToCache(context: Context, games: MutableList<Game>) {
+        val sharedPreferences: SharedPreferences = context.getSharedPreferences("bookmark_data", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val json = Gson().toJson(games)
+        editor.putString("games", json)
+        editor.apply()
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -91,7 +170,7 @@ class BookmarkActivity : AppCompatActivity() {
         finish()
     }
 
-    @Suppress("UNUSED_PARAMETER")
+    @Suppress("UNUSED_PARAMETER","DEPRECATION")
     fun onBackClick(view: View) {
         super.onBackPressed()
     }
