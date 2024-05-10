@@ -40,9 +40,7 @@ class BookmarkActivity : AppCompatActivity() {
     private lateinit var buttonSearch : Button
     private lateinit var linearSearchButton : LinearLayout
     private lateinit var linearErrorSearchButton : LinearLayout
-    private lateinit var linearReloadHome : LinearLayout
     private lateinit var textErrorSearch : TextView
-    private lateinit var buttonReloadHome : Button
     private lateinit var progressBar : ProgressBar
     private val tag = "LOG-BOOKMARK"
 
@@ -71,15 +69,12 @@ class BookmarkActivity : AppCompatActivity() {
         buttonSearch = findViewById(R.id.buttonSearch)
         linearSearchButton = findViewById(R.id.linearSearchButton)
         linearErrorSearchButton = findViewById(R.id.linearErrorSearchButton)
-        linearReloadHome = findViewById(R.id.linearReloadHome)
         textErrorSearch = findViewById(R.id.textErrorSearch)
-        buttonReloadHome = findViewById(R.id.buttonReloadHome)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         linearSearch.removeView(linearSearchButton) //Remove search buttons
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
-        linearSearch.removeView(linearReloadHome) //Remove Reload Home Button
 
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
@@ -129,7 +124,6 @@ class BookmarkActivity : AppCompatActivity() {
                 // En caso de error, mostrar el mensaje de error adecuado
                 linearSearch.addView(linearErrorSearchButton)
                 textErrorSearch.text = getString(R.string.error3)
-                linearSearch.addView(linearReloadHome)
             } finally {
                 // Asegurarse de ocultar el ProgressBar después de la carga, ya sea exitosa o no
                 progressBar.visibility = View.INVISIBLE
@@ -180,7 +174,6 @@ class BookmarkActivity : AppCompatActivity() {
 
                     if (filteredGamesList.isEmpty()) {
                         showError(getString(R.string.error1))
-                        linearSearch.addView(linearReloadHome)
                     } else {
                         val sortedList = sortFilteredGamesList(filteredGamesList, searchTerm)
                         showFilteredGames(sortedList)
@@ -188,7 +181,6 @@ class BookmarkActivity : AppCompatActivity() {
                 } catch (e: IOException) {
                     e.printStackTrace()
                     showError(getString(R.string.error3))
-                    linearSearch.addView(linearReloadHome)
                 } finally {
                     hideProgressBar()
                 }
@@ -215,7 +207,6 @@ class BookmarkActivity : AppCompatActivity() {
     private fun hideLinear()
     {
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
-        linearSearch.removeView(linearReloadHome) //Remove Reload Home Button
     }
 
     private fun showError(errorMessage: String) {
@@ -295,8 +286,7 @@ class BookmarkActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onReloadHomeClick(view: View) {
-        val intent = Intent(this, BookmarkActivity::class.java)
-        startActivity(intent)
-        finish()
+        searchView.setQuery("", false)
+        recreate()
     }
 }
