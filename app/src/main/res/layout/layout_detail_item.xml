@@ -56,7 +56,7 @@
                 android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="0dp"
-                android:background="#499253"
+                android:background="#9A4040"
                 android:contentDescription="@string/fav_button"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
