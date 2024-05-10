@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginTop="10dp">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+
+        app:cardBackgroundColor="#2b2d38"
+        app:cardCornerRadius="10dp">
+
+        <LinearLayout
+            android:id="@+id/layoutList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageLogoList"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="0dp"
+                android:background="#00495D92"
+                android:contentDescription="@string/app_name"
+                android:padding="4dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/logov9"
+                tools:ignore="ImageContrastCheck" />
+
+            <TextView
+                android:id="@+id/textList"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#00735471"
+                android:gravity="center_vertical"
+                android:minHeight="?android:attr/listPreferredItemHeightSmall"
+                android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                android:paddingTop="5dp"
+                android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+                android:paddingBottom="5dp"
+                android:text="Title Game steam db fan"
+                android:textAppearance="?android:attr/textAppearanceListItemSmall"
+                android:textColor="@color/md_theme_dark_onSurface"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/imageButtonList"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="0dp"
+                android:background="#499253"
+                android:contentDescription="@string/fav_button"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/bookmarkdel"
+                tools:ignore="ImageContrastCheck" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
