@@ -3,6 +3,8 @@ package com.ar.sebastiangomez.steam
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -76,13 +78,7 @@ class BookmarkActivity : AppCompatActivity() {
         linearSearch.removeView(linearSearchButton) //Remove search buttons
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
 
-        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
-        if (currentTheme.toString() == "dark") {
-            themeButton.setImageResource(R.drawable.themedarktab)
-        } else {
-            themeButton.setImageResource(R.drawable.themelighttab)
-        }
+        getImageTheme()
 
         // Mostrar el boton buscar al abrir el search
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
@@ -92,10 +88,11 @@ class BookmarkActivity : AppCompatActivity() {
         }
 
         // Obtener el ID del Intent
-        val gameId = intent.getStringExtra("game_id")
-        val gameName = intent.getStringExtra("game_name")
+        var gameId = intent.getStringExtra("game_id")
+        var gameName = intent.getStringExtra("game_name")
         // Log para verificar si los extras se reciben correctamente
         Log.d(tag, "Intent Llegados de Detail - Game ID: $gameId, Game Name: $gameName")
+
         // Almacenar el juego en caché
         if (gameId != null && gameName != null) {
             // Crear un objeto CachedGame con el id y el nombre del juego
@@ -108,8 +105,9 @@ class BookmarkActivity : AppCompatActivity() {
             try {
                 progressBar.visibility = View.VISIBLE
                 val gamesList = withContext(Dispatchers.IO) {
-                    getGamesFromCache(applicationContext) // Obtener la lista de juegos desde la caché
+                    getGamesFromCache(applicationContext).toMutableList().apply { reverse() }
                 }
+                Log.d(tag,gamesList.toString())
 
                 val adapter = BookmarkAdapter(this@BookmarkActivity, gamesList) { position, gameId ->
                 // Acciones a realizar cuando se hace clic en un elemento de la lista
@@ -129,6 +127,14 @@ class BookmarkActivity : AppCompatActivity() {
                 progressBar.visibility = View.INVISIBLE
             }
         }
+    }
+
+    private fun getImageTheme() {
+        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
+        val color = if (currentTheme == "dark") "#914040" else "#EAC69C" // Determina el color según el tema
+        val tintList = ColorStateList.valueOf(Color.parseColor(color))
+        themeButton.setImageTintList(tintList)
     }
 
     // Función para agregar un ID a la lista en caché
