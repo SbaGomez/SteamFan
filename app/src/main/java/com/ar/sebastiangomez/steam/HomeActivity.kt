@@ -2,6 +2,8 @@ package com.ar.sebastiangomez.steam
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -51,7 +53,11 @@ interface SteamApiService {
     suspend fun getAppList(): SteamAppListResponse
 }
 
-class Game(val id: String, val name: String)
+class Game(val id: String, val name: String) {
+    override fun toString(): String {
+        return "Game(id=$id, name='$name')"
+    }
+}
 
 class HomeActivity : AppCompatActivity() {
 
@@ -144,14 +150,10 @@ class HomeActivity : AppCompatActivity() {
 
     private fun getImageTheme() {
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
-        Log.d(tag, "Current Theme: " + currentTheme.toString())
-        if (currentTheme.toString() == "dark") {
-            themeButton.setImageResource(R.drawable.themedarktab)
-        } else {
-            themeButton.setImageResource(R.drawable.themelighttab)
-        }
-        return
+        val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
+        val color = if (currentTheme == "dark") "#914040" else "#EAC69C" // Determina el color según el tema
+        val tintList = ColorStateList.valueOf(Color.parseColor(color))
+        themeButton.setImageTintList(tintList)
     }
 
     // Función para crear el servicio Retrofit
