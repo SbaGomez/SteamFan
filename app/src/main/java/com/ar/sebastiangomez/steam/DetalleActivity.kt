@@ -357,7 +357,7 @@ class DetalleActivity : AppCompatActivity() {
         finish()
     }
 
-    @Suppress("UNUSED_PARAMETER")
+    @Suppress("UNUSED_PARAMETER", "DEPRECATION")
     fun onBackClick(view: View) {
         super.onBackPressed()
     }
