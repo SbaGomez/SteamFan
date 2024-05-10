@@ -2,6 +2,8 @@ package com.ar.sebastiangomez.steam
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -120,21 +122,15 @@ class DetalleActivity : AppCompatActivity() {
         layoutGrafRec = findViewById(R.id.layoutGrafRec)
         layoutAlmRec = findViewById(R.id.layoutAlmRec)
 
-        //Obtener valor del theme y cambiar el icono.
-        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
-        if(currentTheme.toString() == "dark")
-        {
-            themeButton.setImageResource(R.drawable.themedarktab)
-        }
-        else{
-            themeButton.setImageResource(R.drawable.themelighttab)
-        }
+        getImageTheme() //Obtener valor del theme y cambiar el icono.
+        val id = getId() //Obtener ID de HomeActivity por intent y hacer fetch de detalles.
+        fetchGameDetails(id.toString()) //Fetch game details del ID.
+    }
 
-        //Obtener ID de HomeActivity por intent y hacer fetch de detalles.
+    private fun getId(): Int {
         val id = intent.extras!!.getInt("ID")
         Log.d(tag, "ID Game: $id")
-        fetchGameDetails(id.toString())
+        return id
     }
 
     private fun fetchGameDetails(gameId: String) {
@@ -163,13 +159,11 @@ class DetalleActivity : AppCompatActivity() {
                             Log.d(tag, "PC Requirements: ${gameDetail.pc_requirements}")
                             Log.d(tag, "PC Requirements Filter: $pcRequirements")
 
-                            imageButtonBookmark.setOnClickListener { // Crear un Intent para abrir BookmarkActivity
+                            imageButtonBookmark.setOnClickListener { // Crear un Intent para agregarlo a BookmarkActivity
                                 Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
                                 val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
-                                // Pasar los datos del juego al BookmarkActivity
                                 intent.putExtra("game_id", gameDetail.steam_appid.toString())
                                 intent.putExtra("game_name", gameDetail.name)
-                                // Iniciar la actividad
                                 startActivity(intent)
                             }
 
@@ -345,6 +339,14 @@ class DetalleActivity : AppCompatActivity() {
             return GameDetail.PcRequirements(minimumRequirement, recommendedRequirement)
         }
         return null
+    }
+
+    private fun getImageTheme() {
+        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
+        val color = if (currentTheme == "dark") "#914040" else "#EAC69C" // Determina el color según el tema
+        val tintList = ColorStateList.valueOf(Color.parseColor(color))
+        themeButton.setImageTintList(tintList)
     }
 
     @Suppress("UNUSED_PARAMETER")
