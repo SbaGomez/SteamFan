@@ -53,10 +53,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:fontFamily="@font/montserrat_bold"
             android:gravity="center"
             android:text="@string/title_fav"
             android:textColor="@color/title_dark_text"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="18dp" />
@@ -99,7 +100,7 @@
                     android:background="@android:color/transparent"
                     android:iconifiedByDefault="false"
                     android:queryBackground="@null"
-                    android:queryHint="@string/placeholder_search_input"
+                    android:queryHint="@string/placeholder_searchFav_input"
                     android:theme="@style/Base.Theme.Steam.Dark" />
 
             </androidx.cardview.widget.CardView>

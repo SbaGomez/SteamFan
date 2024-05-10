@@ -40,10 +40,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:fontFamily="@font/montserrat_bold"
             android:gravity="center"
             android:text="@string/title_home"
             android:textColor="@color/title_dark_text"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="18dp" />
@@ -171,10 +172,12 @@
                     android:id="@+id/textErrorSearch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat_bold"
                     android:paddingStart="30dp"
                     android:paddingEnd="30dp"
                     android:text="@string/text_error"
-                    android:textColor="#EC407A" />
+                    android:textColor="#EC407A"
+                    android:textSize="14sp" />
             </LinearLayout>
 
 
@@ -264,12 +267,12 @@
             android:id="@+id/themeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#00FFFFFF"
+            android:background="#00881A1A"
             android:contentDescription="@string/theme_button"
             android:onClick="onChangeThemeButtonClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/themedarktab"
+            android:src="@drawable/themelighttab"
             tools:ignore="VisualLintBounds" />
 
     </LinearLayout>
