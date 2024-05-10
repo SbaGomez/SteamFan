@@ -253,7 +253,7 @@ class HomeActivity : AppCompatActivity() {
         val partialMatchWithoutExact = mutableListOf<Game>()
 
         // Verificar si searchTerm no es nulo antes de usarlo
-        searchTerm?.let { term ->
+        searchTerm.let { term ->
             for (game in filteredGamesList) {
                 val lowerCaseName = game.name.lowercase(Locale.getDefault())
                 if (lowerCaseName == term.lowercase(Locale.getDefault())) {
