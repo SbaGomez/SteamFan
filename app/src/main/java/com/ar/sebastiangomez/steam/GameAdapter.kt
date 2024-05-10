@@ -33,9 +33,11 @@ class GameAdapter(private val gamesList: List<Game>, private val onItemClick: (p
         }
 
         holder.imageButton.setOnClickListener {
-            // Aquí se ejecuta la acción cuando se hace clic en el ImageButton
-            // Puedes llamar a una función o realizar cualquier acción necesaria
             Log.d(tag, "Log Button Add Bookmark - ID Position: $position, Game ID: ${game.id}")
+            val intent = Intent(holder.itemView.context, BookmarkActivity::class.java)
+            intent.putExtra("game_id", game.id)
+            intent.putExtra("game_name", game.name)
+            holder.itemView.context.startActivity(intent)
         }
     }
 
