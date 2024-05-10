@@ -13,7 +13,6 @@ class GameAdapter(private val gamesList: List<Game>, private val onItemClick: (p
 
     private val tag = "LOG-LIST"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
-        //val view = LayoutInflater.from(parent.context).inflate(android.R.layout.simple_list_item_1, parent, false)
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_custom_item, parent, false)
         return GameViewHolder(view)
     }
@@ -46,7 +45,6 @@ class GameAdapter(private val gamesList: List<Game>, private val onItemClick: (p
     }
 
     class GameViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        //val textView: TextView = itemView.findViewById(android.R.id.text1)
         private val textView: TextView = itemView.findViewById(R.id.textList)
         val imageButton: ImageButton = itemView.findViewById(R.id.imageButtonList)
         fun bind(game: Game) {
