@@ -65,9 +65,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var buttonSearch : Button
     private lateinit var linearSearchButton : LinearLayout
     private lateinit var linearErrorSearchButton : LinearLayout
-    private lateinit var linearReloadHome : LinearLayout
     private lateinit var textErrorSearch : TextView
-    private lateinit var buttonReloadHome : Button
     private val tag = "LOG-HOME"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,15 +93,12 @@ class HomeActivity : AppCompatActivity() {
         buttonSearch = findViewById(R.id.buttonSearch)
         linearSearchButton = findViewById(R.id.linearSearchButton)
         linearErrorSearchButton = findViewById(R.id.linearErrorSearchButton)
-        linearReloadHome = findViewById(R.id.linearReloadHome)
         textErrorSearch = findViewById(R.id.textErrorSearch)
-        buttonReloadHome = findViewById(R.id.buttonReloadHome)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         linearSearch.removeView(linearSearchButton) //Remove search buttons
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
-        linearSearch.removeView(linearReloadHome) //Remove Reload Home Button
 
         getImageTheme()
 
@@ -129,7 +124,6 @@ class HomeActivity : AppCompatActivity() {
                 // En caso de error, mostrar el mensaje de error adecuado
                 linearSearch.addView(linearErrorSearchButton)
                 textErrorSearch.text = getString(R.string.error3)
-                linearSearch.addView(linearReloadHome)
             } finally {
                 // Asegurarse de ocultar el ProgressBar después de la carga, ya sea exitosa o no
                 progressBar.visibility = View.INVISIBLE
@@ -195,7 +189,6 @@ class HomeActivity : AppCompatActivity() {
 
                     if (filteredGamesList.isEmpty()) {
                         showError(getString(R.string.error1))
-                        linearSearch.addView(linearReloadHome)
                     } else {
                         val sortedList = sortFilteredGamesList(filteredGamesList, searchTerm)
                         showFilteredGames(sortedList)
@@ -203,7 +196,6 @@ class HomeActivity : AppCompatActivity() {
                 } catch (e: IOException) {
                     e.printStackTrace()
                     showError(getString(R.string.error3))
-                    linearSearch.addView(linearReloadHome)
                 } finally {
                     hideProgressBar()
                 }
@@ -230,7 +222,6 @@ class HomeActivity : AppCompatActivity() {
     private fun hideLinear()
     {
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
-        linearSearch.removeView(linearReloadHome) //Remove Reload Home Button
     }
 
     private fun showError(errorMessage: String) {
