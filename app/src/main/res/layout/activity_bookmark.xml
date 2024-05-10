@@ -33,6 +33,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium">
 
+        <!-- ImageButton para el botón de retroceso -->
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/steam_button"
+            android:onClick="onBackClick"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back"
+            tools:ignore="ContentDescription,DuplicateSpeakableTextCheck"
+            tools:layout_editor_absoluteX="16dp" />
+
         <!-- TextView para el título -->
         <TextView
             android:id="@+id/toolbar_title"
@@ -91,6 +105,73 @@
             </androidx.cardview.widget.CardView>
 
             <LinearLayout
+                android:id="@+id/linearSearchButton"
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="fill_vertical"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/buttonSearchClose"
+                        android:layout_width="wrap_content"
+                        android:layout_height="55dp"
+                        android:layout_marginStart="10dp"
+                        android:backgroundTint="#43272E"
+                        android:onClick="onSearchCloseClick"
+                        android:text="@string/search_close_button"
+                        android:textColor="@color/md_theme_dark_inverseSurface"
+                        app:cornerRadius="10dp"
+                        tools:ignore="ButtonStyle" />
+
+                    <Button
+                        android:id="@+id/buttonSearch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="55dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:backgroundTint="@color/md_theme_light_onTertiaryContainer"
+                        android:onClick="onFilterGamesBySearchClick"
+                        android:text="@string/search_button"
+                        android:textColor="@color/md_theme_dark_inverseSurface"
+                        app:cornerRadius="10dp"
+                        app:icon="@drawable/lupa"
+                        app:iconGravity="start"
+                        app:iconPadding="5dp"
+                        app:iconSize="15dp"
+                        app:iconTint="#FFFFFF"
+                        tools:ignore="ButtonStyle,TextSizeCheck" />
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/md_theme_dark_tertiaryContainer"
+                        app:cardCornerRadius="10dp">
+
+                        <ImageButton
+                            android:id="@+id/imageButton"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:backgroundTint="#00FFFFFF"
+                            android:contentDescription="@string/reload_home_button"
+                            android:onClick="onReloadHomeClick"
+                            android:scaleType="center"
+                            app:srcCompat="@android:drawable/stat_notify_sync"
+                            tools:ignore="TouchTargetSizeCheck" />
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/linearErrorSearchButton"
                 style="?android:attr/buttonBarStyle"
                 android:layout_width="match_parent"
@@ -107,73 +188,6 @@
                     android:paddingEnd="30dp"
                     android:text="@string/text_error"
                     android:textColor="#EC407A" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linearReloadHome"
-                style="?android:attr/buttonBarStyle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:paddingTop="8dp">
-
-                <Button
-                    android:id="@+id/buttonReloadHome"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:backgroundTint="@color/md_theme_dark_tertiaryContainer"
-                    android:onClick="onReloadHomeClick"
-                    android:text="@string/reload_home_button"
-                    android:textColor="@color/md_theme_dark_inverseSurface"
-                    app:cornerRadius="10dp"
-                    app:icon="@android:drawable/ic_popup_sync"
-                    app:iconGravity="start"
-                    app:iconPadding="10dp"
-                    app:iconSize="25dp"
-                    app:iconTint="#E6E5E5"
-                    tools:ignore="ButtonStyle" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linearSearchButton"
-                style="?android:attr/buttonBarStyle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/buttonSearchClose"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:backgroundTint="#43272E"
-                    android:onClick="onSearchCloseClick"
-                    android:text="@string/search_close_button"
-                    android:textColor="@color/md_theme_dark_inverseSurface"
-                    app:cornerRadius="10dp"
-                    tools:ignore="ButtonStyle" />
-
-                <Button
-                    android:id="@+id/buttonSearch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:backgroundTint="@color/md_theme_light_onTertiaryContainer"
-                    android:onClick="onFilterGamesBySearchClick"
-                    android:text="@string/search_button"
-                    android:textColor="@color/md_theme_dark_inverseSurface"
-                    app:cornerRadius="10dp"
-                    app:icon="@drawable/lupa"
-                    app:iconGravity="start"
-                    app:iconPadding="15dp"
-                    app:iconSize="15dp"
-                    app:iconTint="#FFFFFF"
-                    tools:ignore="ButtonStyle" />
-
             </LinearLayout>
 
         </LinearLayout>
