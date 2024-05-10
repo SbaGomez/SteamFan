@@ -53,14 +53,14 @@
 
             <ImageButton
                 android:id="@+id/imageButtonList"
-                android:layout_width="50dp"
+                android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="0dp"
                 android:background="#495d92"
                 android:contentDescription="@string/fav_button"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                app:srcCompat="@drawable/bookmarkdel"
+                app:srcCompat="@drawable/bookmarkadd"
                 tools:ignore="ImageContrastCheck" />
 
         </LinearLayout>
