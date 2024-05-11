@@ -174,6 +174,7 @@ class BookmarkActivity : AppCompatActivity() {
             showError(getString(R.string.error2))
         }
     }
+
     private fun hideKeyboard(view: View) {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
