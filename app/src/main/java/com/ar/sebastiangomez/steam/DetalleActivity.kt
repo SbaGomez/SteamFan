@@ -19,7 +19,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.ar.sebastiangomez.steam.utils.ThemeManager
+import com.ar.sebastiangomez.steam.utils.GamesFromCache
+import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -31,8 +32,8 @@ import okhttp3.Response
 import java.io.IOException
 
 class DetalleActivity : AppCompatActivity() {
-
-    private lateinit var themeManager: ThemeManager
+    private lateinit var gamesFromCache: GamesFromCache
+    private lateinit var themeHelper: ThemeHelper
     private lateinit var progressBar : ProgressBar
     private lateinit var titleTxt : TextView
     private lateinit var descripcionTxt : TextView
@@ -70,8 +71,9 @@ class DetalleActivity : AppCompatActivity() {
     private val tag = "LOG-DETAIL"
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        themeManager = ThemeManager(this)
-        themeManager.applyTheme()
+        gamesFromCache = GamesFromCache()
+        themeHelper = ThemeHelper(this)
+        themeHelper.applyTheme()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_detalle)
@@ -159,12 +161,30 @@ class DetalleActivity : AppCompatActivity() {
                             Log.d(tag, "PC Requirements: ${gameDetail.pc_requirements}")
                             Log.d(tag, "PC Requirements Filter: $pcRequirements")
 
-                            imageButtonBookmark.setOnClickListener { // Crear un Intent para agregarlo a BookmarkActivity
-                                Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
-                                val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
-                                intent.putExtra("game_id", gameDetail.steam_appid.toString())
-                                intent.putExtra("game_name", gameDetail.name)
-                                startActivity(intent)
+                            val cachedGames = gamesFromCache.getGamesFromCache(this@DetalleActivity)
+                            val indexID = cachedGames.indexOfFirst { it.id == gameId }
+
+                            if (indexID != -1) { // Si el juego está en la lista de favoritos
+                                imageButtonBookmark.setImageResource(R.drawable.bookmarkdetailremove)
+                                imageButtonBookmark.imageTintList = ColorStateList.valueOf(Color.parseColor("#914040"))
+                                imageButtonBookmark.setOnClickListener {
+                                    cachedGames.removeAt(indexID)
+                                    // Guardar la lista actualizada en la caché
+                                    gamesFromCache.saveGamesToCache(this@DetalleActivity, cachedGames)
+                                    // Actualizar la interfaz de usuario según sea necesario
+                                    imageButtonBookmark.setImageResource(R.drawable.bookmarkdetail)
+                                    imageButtonBookmark.imageTintList = ColorStateList.valueOf(Color.parseColor("#F9F4FB"))
+                                }
+                            } else { // Si el juego no está en la lista de favoritos
+                                imageButtonBookmark.setOnClickListener {
+                                    imageButtonBookmark.setImageResource(R.drawable.bookmarkdetailremove)
+                                    imageButtonBookmark.imageTintList = ColorStateList.valueOf(Color.parseColor("#914040"))
+                                    Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
+                                    val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
+                                    intent.putExtra("game_id", gameDetail.steam_appid.toString())
+                                    intent.putExtra("game_name", gameDetail.name)
+                                    startActivity(intent)
+                                }
                             }
 
                             // Titulo del juego
@@ -344,9 +364,7 @@ class DetalleActivity : AppCompatActivity() {
     private fun getImageTheme() {
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
-        val color = if (currentTheme == "dark") "#914040" else "#EAC69C" // Determina el color según el tema
-        val tintList = ColorStateList.valueOf(Color.parseColor(color))
-        themeButton.setImageTintList(tintList)
+        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -354,7 +372,7 @@ class DetalleActivity : AppCompatActivity() {
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
         val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
-        themeManager.changeTheme(newTheme)
+        themeHelper.changeTheme(newTheme)
     }
 
     @Suppress("UNUSED_PARAMETER")
