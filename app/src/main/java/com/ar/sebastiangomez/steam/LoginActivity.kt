@@ -8,15 +8,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.ar.sebastiangomez.steam.utils.ThemeManager
+import com.ar.sebastiangomez.steam.utils.ThemeHelper
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var themeManager: ThemeManager
+    private lateinit var themeHelper: ThemeHelper
     private lateinit var logoSplash: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
-        themeManager = ThemeManager(this)
-        themeManager.applyTheme()
+        themeHelper = ThemeHelper(this)
+        themeHelper.applyTheme()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
@@ -35,9 +35,9 @@ class LoginActivity : AppCompatActivity() {
         // Array con los IDs de las imágenes en drawable
         val imagenes = arrayOf(
             R.drawable.logov11,
-            R.drawable.logov12,
+            /*R.drawable.logov12,
             R.drawable.logov13,
-            R.drawable.logov14,
+            R.drawable.logov14,*/
         )
 
         // Generar un índice aleatorio
