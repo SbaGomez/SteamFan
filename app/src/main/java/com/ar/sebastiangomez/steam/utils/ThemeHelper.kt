@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.ar.sebastiangomez.steam.R
 
-class ThemeManager(private val context: Context) {
+class ThemeHelper(private val context: Context) {
     private val preferences: SharedPreferences = context.getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
 
     fun applyTheme() {
