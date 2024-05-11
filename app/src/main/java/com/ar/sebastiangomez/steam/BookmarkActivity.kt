@@ -2,7 +2,6 @@ package com.ar.sebastiangomez.steam
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -20,21 +19,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.ar.sebastiangomez.steam.utils.ThemeManager
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ar.sebastiangomez.steam.utils.GamesFromCache
+import com.ar.sebastiangomez.steam.utils.SearchHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
-import java.util.Locale
 
 class BookmarkActivity : AppCompatActivity() {
+    private lateinit var searchHelper: SearchHelper
+    private lateinit var gamesFromCache: GamesFromCache
     private lateinit var recyclerView: RecyclerView
-    private lateinit var themeManager: ThemeManager
+    private lateinit var themeHelper: ThemeHelper
     private lateinit var themeButton : ImageButton
     private lateinit var searchView : SearchView
     private lateinit var linearSearch : LinearLayout
@@ -47,8 +47,10 @@ class BookmarkActivity : AppCompatActivity() {
     private val tag = "LOG-BOOKMARK"
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        themeManager = ThemeManager(this)
-        themeManager.applyTheme()
+        searchHelper = SearchHelper()
+        gamesFromCache = GamesFromCache()
+        themeHelper = ThemeHelper(this)
+        themeHelper.applyTheme()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_bookmark)
@@ -79,17 +81,11 @@ class BookmarkActivity : AppCompatActivity() {
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
 
         getImageTheme()
-
-        // Mostrar el boton buscar al abrir el search
-        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                linearSearch.addView(linearSearchButton)
-            }
-        }
+        showButtonSearch() // Mostrar el boton buscar al abrir el search
 
         // Obtener el ID del Intent
-        var gameId = intent.getStringExtra("game_id")
-        var gameName = intent.getStringExtra("game_name")
+        val gameId = intent.getStringExtra("game_id")
+        val gameName = intent.getStringExtra("game_name")
         // Log para verificar si los extras se reciben correctamente
         Log.d(tag, "Intent Llegados de Detail - Game ID: $gameId, Game Name: $gameName")
 
@@ -98,19 +94,19 @@ class BookmarkActivity : AppCompatActivity() {
             // Crear un objeto CachedGame con el id y el nombre del juego
             val cachedGame = Game(gameId, gameName)
             // Agregar el juego a la lista en caché
-            addGameToCache(this, cachedGame)
+            gamesFromCache.addGameToCache(this, cachedGame)
         }
 
         lifecycleScope.launch {
             try {
                 progressBar.visibility = View.VISIBLE
                 val gamesList = withContext(Dispatchers.IO) {
-                    getGamesFromCache(applicationContext).toMutableList().apply { reverse() }
+                    gamesFromCache.getGamesFromCache(applicationContext).toMutableList().apply { reverse() }
                 }
                 Log.d(tag,gamesList.toString())
 
                 val adapter = BookmarkAdapter(this@BookmarkActivity, gamesList) { position, gameId ->
-                // Acciones a realizar cuando se hace clic en un elemento de la lista
+                    // Acciones a realizar cuando se hace clic en un elemento de la lista
                     val gameName = gamesList[position].name
                     Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
                 }
@@ -129,90 +125,58 @@ class BookmarkActivity : AppCompatActivity() {
         }
     }
 
-    private fun getImageTheme() {
-        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
-        val color = if (currentTheme == "dark") "#914040" else "#EAC69C" // Determina el color según el tema
-        val tintList = ColorStateList.valueOf(Color.parseColor(color))
-        themeButton.setImageTintList(tintList)
-    }
-
-    // Función para agregar un ID a la lista en caché
-    private fun addGameToCache(context: Context, game: Game) {
-        val games = getGamesFromCache(context)
-        if (!games.any { it.id == game.id }) {
-            games.add(game)
-            saveGamesToCache(context, games)
+    private fun showButtonSearch()
+    {
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                linearSearch.addView(linearSearchButton)
+            }
         }
-    }
-
-    // Función para obtener la lista de IDs almacenados en caché
-     private fun getGamesFromCache(context: Context): MutableList<Game> {
-        val sharedPreferences: SharedPreferences = context.getSharedPreferences("bookmark_data", Context.MODE_PRIVATE)
-        val json = sharedPreferences.getString("games", "[]")
-        val type = object : TypeToken<MutableList<Game>>() {}.type
-        return Gson().fromJson(json, type)
-    }
-
-
-    // Función para guardar la lista de IDs en caché
-    private fun saveGamesToCache(context: Context, games: MutableList<Game>) {
-        val sharedPreferences: SharedPreferences = context.getSharedPreferences("bookmark_data", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val json = Gson().toJson(games)
-        editor.putString("games", json)
-        editor.apply()
     }
 
     fun onFilterGamesBySearchClick(view: View) {
         hideKeyboard(view)
-        hideLinear()
+        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
 
         val searchTerm = searchView.query.toString().trim()
 
         if (searchTerm.isNotEmpty()) {
             lifecycleScope.launch {
                 try {
-                    showProgressBar()
+                    recyclerView.visibility = View.INVISIBLE
+                    progressBar.visibility = View.VISIBLE
 
-                    val gamesList = getGamesFromCache(this@BookmarkActivity)
-                    val filteredGamesList = filterGamesBySearchTerm(gamesList, searchTerm)
+                    val gamesList = gamesFromCache.getGamesFromCache(this@BookmarkActivity)
+                    val filteredGamesList = searchHelper.filterGamesBySearchTerm(gamesList, searchTerm)
 
                     if (filteredGamesList.isEmpty()) {
                         showError(getString(R.string.error1))
                     } else {
-                        val sortedList = sortFilteredGamesList(filteredGamesList, searchTerm)
-                        showFilteredGames(sortedList)
+                        val sortedList = searchHelper.sortFilteredGamesList(filteredGamesList, searchTerm)
+                        runOnUiThread {
+                            val adapter = GameAdapter(sortedList) { position, gameId ->
+                                val gameName = sortedList[position].name
+                                Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
+                                // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
+                            }
+                            recyclerView.visibility = View.VISIBLE
+                            recyclerView.adapter = adapter
+                        }
                     }
                 } catch (e: IOException) {
                     e.printStackTrace()
                     showError(getString(R.string.error3))
                 } finally {
-                    hideProgressBar()
+                    progressBar.visibility = View.INVISIBLE
                 }
             }
         } else {
             showError(getString(R.string.error2))
         }
     }
-
     private fun hideKeyboard(view: View) {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-
-    private fun showProgressBar() {
-        recyclerView.visibility = View.INVISIBLE
-        progressBar.visibility = View.VISIBLE
-    }
-
-    private fun hideProgressBar() {
-        progressBar.visibility = View.INVISIBLE
-    }
-
-    private fun hideLinear()
-    {
-        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
     }
 
     private fun showError(errorMessage: String) {
@@ -222,45 +186,10 @@ class BookmarkActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun filterGamesBySearchTerm(gamesList: List<Game>, searchTerm: String): List<Game> {
-        return withContext(Dispatchers.Default) {
-            gamesList.filter { game ->
-                Regex("\\b${searchTerm.lowercase(Locale.getDefault())}\\b").find(game.name.lowercase(
-                    Locale.getDefault())) != null
-            }
-        }
-    }
-
-    private fun sortFilteredGamesList(filteredGamesList: List<Game>, searchTerm: String): List<Game> {
-        val exactMatch = mutableListOf<Game>()
-        val partialMatchWithoutExact = mutableListOf<Game>()
-
-        // Verificar si searchTerm no es nulo antes de usarlo
-        searchTerm.let { term ->
-            for (game in filteredGamesList) {
-                val lowerCaseName = game.name.lowercase(Locale.getDefault())
-                if (lowerCaseName == term.lowercase(Locale.getDefault())) {
-                    exactMatch.add(game)
-                } else if (lowerCaseName.contains(term.lowercase(Locale.getDefault()))) {
-                    partialMatchWithoutExact.add(game)
-                }
-            }
-        }
-
-        return exactMatch + partialMatchWithoutExact
-    }
-
-    private fun showFilteredGames(filteredGamesList: List<Game>) {
-        runOnUiThread {
-            val adapter = GameAdapter(filteredGamesList) { position, gameId ->
-                val gameName = filteredGamesList[position].name
-                Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
-                // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
-            }
-
-            recyclerView.visibility = View.VISIBLE
-            recyclerView.adapter = adapter
-        }
+    private fun getImageTheme() {
+        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
+        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -268,7 +197,7 @@ class BookmarkActivity : AppCompatActivity() {
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
         val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
-        themeManager.changeTheme(newTheme)
+        themeHelper.changeTheme(newTheme)
     }
 
     @Suppress("UNUSED_PARAMETER")
