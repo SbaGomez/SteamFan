@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class GameAdapter(private val gamesList: List<Game>, private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<GameAdapter.GameViewHolder>() {
 
-    private val tag = "LOG-LIST"
+    private val tag = "LOG-GAMES-LIST"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_custom_item, parent, false)
         return GameViewHolder(view)
