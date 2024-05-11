@@ -22,7 +22,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.ar.sebastiangomez.steam.utils.ThemeManager
+import com.ar.sebastiangomez.steam.utils.SearchHelper
+import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,9 +32,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import java.io.IOException
-import java.util.Locale
 
-// Define el modelo para la respuesta JSON
 data class SteamAppListResponse(
     @SerializedName("applist") val appList: AppList
 )
@@ -47,7 +46,6 @@ data class SteamApp(
     @SerializedName("name") val name: String
 )
 
-// Define la interfaz Retrofit para el servicio web
 interface SteamApiService {
     @GET("ISteamApps/GetAppList/v2/")
     suspend fun getAppList(): SteamAppListResponse
@@ -62,7 +60,8 @@ class Game(val id: String, val name: String) {
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var themeManager: ThemeManager
+    private lateinit var searchHelper: SearchHelper
+    private lateinit var themeHelper: ThemeHelper
     private lateinit var progressBar : ProgressBar
     private lateinit var themeButton : ImageButton
     private lateinit var searchView : SearchView
@@ -75,8 +74,9 @@ class HomeActivity : AppCompatActivity() {
     private val tag = "LOG-HOME"
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        themeManager = ThemeManager(this)
-        themeManager.applyTheme()
+        searchHelper = SearchHelper()
+        themeHelper = ThemeHelper(this)
+        themeHelper.applyTheme()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_home)
@@ -107,6 +107,7 @@ class HomeActivity : AppCompatActivity() {
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
 
         getImageTheme()
+        showButtonSearch() // Mostrar el boton buscar al abrir el search
 
         lifecycleScope.launch {
             try {
@@ -135,8 +136,6 @@ class HomeActivity : AppCompatActivity() {
                 progressBar.visibility = View.INVISIBLE
             }
         }
-
-        showButtonSearch() // Mostrar el boton buscar al abrir el search
     }
 
     private fun showButtonSearch()
@@ -151,9 +150,7 @@ class HomeActivity : AppCompatActivity() {
     private fun getImageTheme() {
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
-        val color = if (currentTheme == "dark") "#914040" else "#EAC69C" // Determina el color según el tema
-        val tintList = ColorStateList.valueOf(Color.parseColor(color))
-        themeButton.setImageTintList(tintList)
+        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
     }
 
     // Función para crear el servicio Retrofit
@@ -177,29 +174,39 @@ class HomeActivity : AppCompatActivity() {
 
     fun onFilterGamesBySearchClick(view: View) {
         hideKeyboard(view)
-        hideLinear()
+        linearSearch.removeView(linearErrorSearchButton)
 
         val searchTerm = searchView.query.toString().trim()
 
         if (searchTerm.isNotEmpty()) {
             lifecycleScope.launch {
                 try {
-                    showProgressBar()
+                    recyclerView.visibility = View.INVISIBLE
+                    progressBar.visibility = View.VISIBLE
 
                     val gamesList = fetchGames()
-                    val filteredGamesList = filterGamesBySearchTerm(gamesList, searchTerm)
+                    val filteredGamesList = searchHelper.filterGamesBySearchTerm(gamesList, searchTerm)
 
                     if (filteredGamesList.isEmpty()) {
                         showError(getString(R.string.error1))
                     } else {
-                        val sortedList = sortFilteredGamesList(filteredGamesList, searchTerm)
-                        showFilteredGames(sortedList)
+                        val sortedList = searchHelper.sortFilteredGamesList(filteredGamesList, searchTerm)
+
+                        runOnUiThread {
+                            val adapter = GameAdapter(sortedList) { position, gameId ->
+                                val gameName = sortedList[position].name
+                                Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
+                                // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
+                            }
+                            recyclerView.visibility = View.VISIBLE
+                            recyclerView.adapter = adapter
+                        }
                     }
                 } catch (e: IOException) {
                     e.printStackTrace()
                     showError(getString(R.string.error3))
                 } finally {
-                    hideProgressBar()
+                    progressBar.visibility = View.INVISIBLE
                 }
             }
         } else {
@@ -212,64 +219,10 @@ class HomeActivity : AppCompatActivity() {
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    private fun showProgressBar() {
-        recyclerView.visibility = View.INVISIBLE
-        progressBar.visibility = View.VISIBLE
-    }
-
-    private fun hideProgressBar() {
-        progressBar.visibility = View.INVISIBLE
-    }
-
-    private fun hideLinear()
-    {
-        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
-    }
-
     private fun showError(errorMessage: String) {
         runOnUiThread {
             linearSearch.addView(linearErrorSearchButton)
             textErrorSearch.text = errorMessage
-        }
-    }
-
-    private suspend fun filterGamesBySearchTerm(gamesList: List<Game>, searchTerm: String): List<Game> {
-        return withContext(Dispatchers.Default) {
-            gamesList.filter { game ->
-                Regex("\\b${searchTerm.lowercase(Locale.getDefault())}\\b").find(game.name.lowercase(Locale.getDefault())) != null
-            }
-        }
-    }
-
-    private fun sortFilteredGamesList(filteredGamesList: List<Game>, searchTerm: String): List<Game> {
-        val exactMatch = mutableListOf<Game>()
-        val partialMatchWithoutExact = mutableListOf<Game>()
-
-        // Verificar si searchTerm no es nulo antes de usarlo
-        searchTerm.let { term ->
-            for (game in filteredGamesList) {
-                val lowerCaseName = game.name.lowercase(Locale.getDefault())
-                if (lowerCaseName == term.lowercase(Locale.getDefault())) {
-                    exactMatch.add(game)
-                } else if (lowerCaseName.contains(term.lowercase(Locale.getDefault()))) {
-                    partialMatchWithoutExact.add(game)
-                }
-            }
-        }
-
-        return exactMatch + partialMatchWithoutExact
-    }
-
-    private fun showFilteredGames(filteredGamesList: List<Game>) {
-        runOnUiThread {
-            val adapter = GameAdapter(filteredGamesList) { position, gameId ->
-                val gameName = filteredGamesList[position].name
-                Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
-                // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
-            }
-
-            recyclerView.visibility = View.VISIBLE
-            recyclerView.adapter = adapter
         }
     }
 
@@ -280,7 +233,7 @@ class HomeActivity : AppCompatActivity() {
         val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
 
         Log.d(tag, "New Theme: $newTheme")
-        themeManager.changeTheme(newTheme)
+        themeHelper.changeTheme(newTheme)
     }
 
     @Suppress("UNUSED_PARAMETER")
