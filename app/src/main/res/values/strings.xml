@@ -9,7 +9,7 @@
     <string name="reload_home_button">Recargar juegos.</string>
     <string name="search_close_button">Cerrar</string>
     <string name="placeholder_search_input">Buscar juegos...</string>
-    <string name="placeholder_searchFav_input">Buscar juegos favoritos...</string>
+    <string name="placeholder_searchFav_input">Buscar en tus favoritos...</string>
     <string name="steam_button">Home</string>
     <string name="theme_button">Theme</string>
     <string name="login_button">Sign in with Google</string>
@@ -30,7 +30,7 @@
     <string name="text_error">Texto de error.</string>
 
     <!-- Errores del buscador -->
-    <string name="error1">No se encontro ningun juego.</string>
+    <string name="error1">No se encontro ningun juego con ese nombre.</string>
     <string name="error2">El campo de busqueda esta vacio.</string>
     <string name="error3">Error de conexión. Por favor, verifica tu conexión a internet e intenta nuevamente.</string>
 </resources>
