@@ -33,6 +33,7 @@ class BookmarkAdapter(private val context: Context, private val gamesList: List<
             val intent = Intent(holder.itemView.context, DetalleActivity::class.java)
             intent.putExtra("ID", selectID)
             holder.itemView.context.startActivity(intent)
+            (holder.itemView.context as BookmarkActivity).finish()
         }
 
         holder.imageButton.setOnClickListener {
