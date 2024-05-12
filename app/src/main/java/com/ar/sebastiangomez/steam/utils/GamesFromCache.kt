@@ -32,4 +32,10 @@ class GamesFromCache {
             saveGamesToCache(context, games)
         }
     }
+
+    // Método para contar todos los juegos almacenados en caché
+    fun countAllGames(context: Context): Int {
+        val games = getGamesFromCache(context)
+        return games.size
+    }
 }
