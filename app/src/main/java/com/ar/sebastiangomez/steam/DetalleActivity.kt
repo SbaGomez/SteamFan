@@ -161,29 +161,49 @@ class DetalleActivity : AppCompatActivity() {
                             Log.d(tag, "PC Requirements: ${gameDetail.pc_requirements}")
                             Log.d(tag, "PC Requirements Filter: $pcRequirements")
 
-                            val cachedGames = gamesFromCache.getGamesFromCache(this@DetalleActivity)
-                            val indexID = cachedGames.indexOfFirst { it.id == gameId }
 
-                            if (indexID != -1) { // Si el juego está en la lista de favoritos
-                                imageButtonBookmark.setImageResource(R.drawable.bookmarkdetailremove)
-                                imageButtonBookmark.imageTintList = ColorStateList.valueOf(Color.parseColor("#914040"))
-                                imageButtonBookmark.setOnClickListener {
-                                    cachedGames.removeAt(indexID)
-                                    // Guardar la lista actualizada en la caché
-                                    gamesFromCache.saveGamesToCache(this@DetalleActivity, cachedGames)
-                                    // Actualizar la interfaz de usuario según sea necesario
+                            val cachedGames = gamesFromCache.getGamesFromCache(this@DetalleActivity)
+                            var indexID = cachedGames.indexOfFirst { it.id == gameId }
+
+                            // Función para actualizar la interfaz de usuario según sea necesario
+                            fun updateUI(isInFavorites: Boolean) {
+                                if (isInFavorites) {
                                     imageButtonBookmark.setImageResource(R.drawable.bookmarkdetail)
                                     imageButtonBookmark.imageTintList = ColorStateList.valueOf(Color.parseColor("#F9F4FB"))
-                                }
-                            } else { // Si el juego no está en la lista de favoritos
-                                imageButtonBookmark.setOnClickListener {
+                                } else {
                                     imageButtonBookmark.setImageResource(R.drawable.bookmarkdetailremove)
                                     imageButtonBookmark.imageTintList = ColorStateList.valueOf(Color.parseColor("#914040"))
-                                    Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
-                                    val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
-                                    intent.putExtra("game_id", gameDetail.steam_appid.toString())
-                                    intent.putExtra("game_name", gameDetail.name)
-                                    startActivity(intent)
+                                }
+                            }
+
+                            // Actualiza el UI inicial
+                            updateUI(indexID == -1)
+
+                            // Listener de clic para agregar o eliminar de favoritos
+                            imageButtonBookmark.setOnClickListener {
+                                try {
+                                    if (indexID != -1) { // Si el juego está en la lista de favoritos, eliminarlo
+                                        cachedGames.removeAt(indexID)
+                                        // Guardar la lista actualizada en la caché
+                                        gamesFromCache.saveGamesToCache(this@DetalleActivity, cachedGames)
+                                        // Actualizar el UI
+                                        updateUI(true)
+                                        // Actualizar el índice
+                                        indexID = -1
+                                    } else { // Si el juego no está en la lista de favoritos, agregarlo
+                                        Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
+                                        val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
+                                        intent.putExtra("game_id", gameDetail.steam_appid.toString())
+                                        intent.putExtra("game_name", gameDetail.name)
+                                        startActivity(intent)
+                                        finish()
+                                        // Después de agregar, actualiza el índice
+                                        indexID = cachedGames.indexOfFirst { it.id == gameId }
+                                        // Actualizar el UI
+                                        updateUI(false)
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e(tag, "Error al actualizar la lista de favoritos: ${e.message}")
                                 }
                             }
 
