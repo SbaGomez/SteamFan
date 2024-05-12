@@ -43,6 +43,7 @@ class BookmarkActivity : AppCompatActivity() {
     private lateinit var linearSearchButton : LinearLayout
     private lateinit var linearErrorSearchButton : LinearLayout
     private lateinit var textErrorSearch : TextView
+    private lateinit var textCountGames : TextView
     private lateinit var progressBar : ProgressBar
     private val tag = "LOG-BOOKMARK"
 
@@ -74,6 +75,7 @@ class BookmarkActivity : AppCompatActivity() {
         linearSearchButton = findViewById(R.id.linearSearchButton)
         linearErrorSearchButton = findViewById(R.id.linearErrorSearchButton)
         textErrorSearch = findViewById(R.id.textErrorSearch)
+        textCountGames = findViewById(R.id.textCountGames)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -96,6 +98,9 @@ class BookmarkActivity : AppCompatActivity() {
             // Agregar el juego a la lista en caché
             gamesFromCache.addGameToCache(this, cachedGame)
         }
+
+        //Obtener la cantidad de juegos favoritos
+        textCountGames.text = gamesFromCache.countAllGames(this).toString()
 
         lifecycleScope.launch {
             try {
