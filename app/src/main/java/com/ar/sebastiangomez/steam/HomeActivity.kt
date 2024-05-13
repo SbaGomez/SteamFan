@@ -117,7 +117,7 @@ class HomeActivity : AppCompatActivity() {
                     fetchGames()
                 }
 
-                val adapter = GameAdapter(gamesList) { position, gameId ->
+                val adapter = GameAdapter(this@HomeActivity, gamesList) { position, gameId ->
                     // Acciones a realizar cuando se hace clic en un elemento de la lista
                     val gameName = gamesList[position].name
                     Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
@@ -193,10 +193,11 @@ class HomeActivity : AppCompatActivity() {
                         val sortedList = searchHelper.sortFilteredGamesList(filteredGamesList, searchTerm)
 
                         runOnUiThread {
-                            val adapter = GameAdapter(sortedList) { position, gameId ->
+                            val adapter = GameAdapter(this@HomeActivity, sortedList) { position, gameId ->
                                 val gameName = sortedList[position].name
                                 Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
                                 // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
+                                searchView.clearFocus() // Quita el foco del SearchView
                             }
                             recyclerView.visibility = View.VISIBLE
                             recyclerView.adapter = adapter
