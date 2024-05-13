@@ -9,14 +9,14 @@
 
     <ImageView
         android:id="@+id/logoSplash"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
         android:layout_marginStart="114dp"
         android:layout_marginEnd="114dp"
         android:layout_marginBottom="74dp"
         android:background="#00FFFFFF"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/logov7"
+        android:src="@drawable/gameslogo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
@@ -24,23 +24,4 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.291" />
 
-    <TextView
-        android:id="@+id/textSplash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="32dp"
-        android:background="#00FFFFFF"
-        android:fontFamily="@font/montserrat_bold"
-        android:text="@string/app_name"
-        android:textAllCaps="true"
-        android:textColor="@color/md_theme_light_tertiary"
-        android:textSize="27sp"
-        android:letterSpacing="0.17"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logoSplash"
-        app:layout_constraintVertical_bias="0.751" />
 </androidx.constraintlayout.widget.ConstraintLayout>

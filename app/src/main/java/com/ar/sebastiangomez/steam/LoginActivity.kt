@@ -34,7 +34,7 @@ class LoginActivity : AppCompatActivity() {
 
         // Array con los IDs de las imágenes en drawable
         val imagenes = arrayOf(
-            R.drawable.logov11,
+            R.drawable.gameslogo,
             /*R.drawable.logov12,
             R.drawable.logov13,
             R.drawable.logov14,*/
