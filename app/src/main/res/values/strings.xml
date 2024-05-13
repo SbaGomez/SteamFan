@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Steam DB Fan</string>
+    <string name="app_name">Games DB Fan</string>
     <string name="title_login">Login</string>
     <string name="title_home">Home</string>
     <string name="title_detail">Detalle</string>
