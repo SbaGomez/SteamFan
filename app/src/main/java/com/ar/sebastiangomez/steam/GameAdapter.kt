@@ -1,5 +1,6 @@
 package com.ar.sebastiangomez.steam
 
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,9 +9,11 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.ar.sebastiangomez.steam.utils.GamesFromCache
 
-class GameAdapter(private val gamesList: List<Game>, private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<GameAdapter.GameViewHolder>() {
+class GameAdapter(private val context: Context, private val gamesList: List<Game>, private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<GameAdapter.GameViewHolder>() {
 
+    private lateinit var gamesFromCache: GamesFromCache
     private val tag = "LOG-GAMES-LIST"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_custom_item, parent, false)
@@ -18,6 +21,7 @@ class GameAdapter(private val gamesList: List<Game>, private val onItemClick: (p
     }
 
     override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
+        gamesFromCache = GamesFromCache()
         val game = gamesList[position]
         holder.bind(game)
 
@@ -33,9 +37,10 @@ class GameAdapter(private val gamesList: List<Game>, private val onItemClick: (p
 
         holder.imageButton.setOnClickListener {
             Log.d(tag, "Log Button Add Bookmark - ID Position: $position, Game ID: ${game.id}")
+            val cachedGame = Game(game.id, game.name)
+            // Agregar el juego a la lista en caché
+            gamesFromCache.addGameToCache(context, cachedGame)
             val intent = Intent(holder.itemView.context, BookmarkActivity::class.java)
-            intent.putExtra("game_id", game.id)
-            intent.putExtra("game_name", game.name)
             holder.itemView.context.startActivity(intent)
         }
     }

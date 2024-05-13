@@ -192,9 +192,10 @@ class DetalleActivity : AppCompatActivity() {
                                         indexID = -1
                                     } else { // Si el juego no está en la lista de favoritos, agregarlo
                                         Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
+                                        val cachedGame = Game(gameDetail.steam_appid.toString(), gameDetail.name)
+                                        // Agregar el juego a la lista en caché
+                                        gamesFromCache.addGameToCache(this@DetalleActivity, cachedGame)
                                         val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
-                                        intent.putExtra("game_id", gameDetail.steam_appid.toString())
-                                        intent.putExtra("game_name", gameDetail.name)
                                         startActivity(intent)
                                         finish()
                                         // Después de agregar, actualiza el índice

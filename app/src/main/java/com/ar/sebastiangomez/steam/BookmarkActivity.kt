@@ -85,20 +85,6 @@ class BookmarkActivity : AppCompatActivity() {
         getImageTheme()
         showButtonSearch() // Mostrar el boton buscar al abrir el search
 
-        // Obtener el ID del Intent
-        val gameId = intent.getStringExtra("game_id")
-        val gameName = intent.getStringExtra("game_name")
-        // Log para verificar si los extras se reciben correctamente
-        Log.d(tag, "Intent Llegados de Detail - Game ID: $gameId, Game Name: $gameName")
-
-        // Almacenar el juego en caché
-        if (gameId != null && gameName != null) {
-            // Crear un objeto CachedGame con el id y el nombre del juego
-            val cachedGame = Game(gameId, gameName)
-            // Agregar el juego a la lista en caché
-            gamesFromCache.addGameToCache(this, cachedGame)
-        }
-
         //Obtener la cantidad de juegos favoritos
         textCountGames.text = gamesFromCache.countAllGames(this).toString()
 
@@ -108,7 +94,6 @@ class BookmarkActivity : AppCompatActivity() {
                 val gamesList = withContext(Dispatchers.IO) {
                     gamesFromCache.getGamesFromCache(applicationContext).toMutableList().apply { reverse() }
                 }
-                Log.d(tag,gamesList.toString())
 
                 val adapter = BookmarkAdapter(this@BookmarkActivity, gamesList) { position, gameId ->
                     // Acciones a realizar cuando se hace clic en un elemento de la lista
@@ -159,7 +144,7 @@ class BookmarkActivity : AppCompatActivity() {
                     } else {
                         val sortedList = searchHelper.sortFilteredGamesList(filteredGamesList, searchTerm)
                         runOnUiThread {
-                            val adapter = GameAdapter(sortedList) { position, gameId ->
+                            val adapter = BookmarkAdapter(this@BookmarkActivity, sortedList) { position, gameId ->
                                 val gameName = sortedList[position].name
                                 Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
                                 // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
