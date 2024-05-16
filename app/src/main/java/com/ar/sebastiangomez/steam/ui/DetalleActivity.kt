@@ -25,7 +25,7 @@ import com.ar.sebastiangomez.steam.model.GameDetail
 import com.ar.sebastiangomez.steam.model.GameDetailResponse
 import com.ar.sebastiangomez.steam.model.PcRequirement
 import com.ar.sebastiangomez.steam.model.PcRequirements
-import com.ar.sebastiangomez.steam.utils.GamesFromCache
+import com.ar.sebastiangomez.steam.utils.GamesCache
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
@@ -38,7 +38,7 @@ import okhttp3.Response
 import java.io.IOException
 
 class DetalleActivity : AppCompatActivity() {
-    private lateinit var gamesFromCache: GamesFromCache
+    private lateinit var gamesCache: GamesCache
     private lateinit var themeHelper: ThemeHelper
     private lateinit var progressBar : ProgressBar
     private lateinit var titleTxt : TextView
@@ -77,7 +77,7 @@ class DetalleActivity : AppCompatActivity() {
     private val tag = "LOG-DETAIL"
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        gamesFromCache = GamesFromCache()
+        gamesCache = GamesCache()
         themeHelper = ThemeHelper(this)
         themeHelper.applyTheme()
         super.onCreate(savedInstanceState)
@@ -189,7 +189,7 @@ class DetalleActivity : AppCompatActivity() {
 
     private fun setData(gameDetail : GameDetail){
         val pcRequirements = parsePcRequirements(gameDetail.pc_requirements.toString())
-        val cachedGames = gamesFromCache.getGamesFromCache(this@DetalleActivity)
+        val cachedGames = gamesCache.getGamesFromCache(this@DetalleActivity)
         var indexID = cachedGames.indexOfFirst { it.id == gameDetail.steam_appid.toString() }
 
         // Función para actualizar la interfaz de usuario según sea necesario
@@ -212,7 +212,7 @@ class DetalleActivity : AppCompatActivity() {
                 if (indexID != -1) { // Si el juego está en la lista de favoritos, eliminarlo
                     cachedGames.removeAt(indexID)
                     // Guardar la lista actualizada en la caché
-                    gamesFromCache.saveGamesToCache(this@DetalleActivity, cachedGames)
+                    gamesCache.saveGamesToCache(this@DetalleActivity, cachedGames)
                     // Actualizar el UI
                     updateUI(true)
                     // Actualizar el índice
@@ -224,7 +224,7 @@ class DetalleActivity : AppCompatActivity() {
                         gameDetail.name
                     )
                     // Agregar el juego a la lista en caché
-                    gamesFromCache.addGameToCache(this@DetalleActivity, cachedGame)
+                    gamesCache.addGameToCache(this@DetalleActivity, cachedGame)
                     val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
                     startActivity(intent)
                     finish()

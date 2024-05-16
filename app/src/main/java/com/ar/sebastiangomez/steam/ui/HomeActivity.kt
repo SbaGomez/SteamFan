@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.data.GamesRepository
 import com.ar.sebastiangomez.steam.model.Game
+import com.ar.sebastiangomez.steam.ui.adapter.GamesAdapter
 import com.ar.sebastiangomez.steam.utils.SearchHelper
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import kotlinx.coroutines.Dispatchers
@@ -117,6 +118,7 @@ class HomeActivity : AppCompatActivity() {
                 allGamesList = withContext(Dispatchers.IO) {
                     gamesRepository.getGames()
                 }
+                gamesRepository.countGames()
                 loadMoreGames()
             } catch (e: IOException) {
                 e.printStackTrace()

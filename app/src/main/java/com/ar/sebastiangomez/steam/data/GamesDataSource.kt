@@ -14,14 +14,26 @@ class GamesDataSource {
             .baseUrl(API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build().create(SteamApiService::class.java)
+        
         suspend fun getGames() : List<Game>{
             Log.d(tag, "Games DataSource Get")
 
             val response = apiGames.getAppList()
 
+            Log.d(tag, "Juegos: ${response.appList.apps}")
+
             return response.appList.apps
                 .map { steamApp -> Game(steamApp.id, steamApp.name) }
                 .filter { game -> game.name.isNotEmpty() }
+        }
+
+        suspend fun countGames() : Int{
+            Log.d(tag, "Games DataSource Get Count")
+
+            val response = apiGames.getAppList()
+
+            Log.d(tag, "Total de juegos: ${response.appList.apps.size}")
+            return response.appList.apps.size
         }
     }
 }

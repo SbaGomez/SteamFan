@@ -6,4 +6,8 @@ class GamesRepository {
     suspend fun getGames() : List<Game>{
         return GamesDataSource.getGames()
     }
+
+    suspend fun countGames() : Int{
+        return GamesDataSource.countGames()
+    }
 }

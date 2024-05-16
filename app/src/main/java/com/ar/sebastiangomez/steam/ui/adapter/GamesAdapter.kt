@@ -1,4 +1,4 @@
-package com.ar.sebastiangomez.steam.ui
+package com.ar.sebastiangomez.steam.ui.adapter
 
 import android.content.Context
 import android.content.Intent
@@ -11,11 +11,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.model.Game
-import com.ar.sebastiangomez.steam.utils.GamesFromCache
+import com.ar.sebastiangomez.steam.ui.BookmarkActivity
+import com.ar.sebastiangomez.steam.ui.DetalleActivity
+import com.ar.sebastiangomez.steam.utils.GamesCache
 
 class GamesAdapter(private val context: Context, private val gamesList: List<Game>, private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<GamesAdapter.GameViewHolder>() {
 
-    private lateinit var gamesFromCache: GamesFromCache
+    private lateinit var gamesCache: GamesCache
     private val tag = "LOG-GAMES-LIST"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_custom_item, parent, false)
@@ -23,7 +25,7 @@ class GamesAdapter(private val context: Context, private val gamesList: List<Gam
     }
 
     override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
-        gamesFromCache = GamesFromCache()
+        gamesCache = GamesCache()
         val game = gamesList[position]
         holder.bind(game)
 
@@ -41,7 +43,7 @@ class GamesAdapter(private val context: Context, private val gamesList: List<Gam
             Log.d(tag, "Log Button Add Bookmark - ID Position: $position, Game ID: ${game.id}")
             val cachedGame = Game(game.id, game.name)
             // Agregar el juego a la lista en caché
-            gamesFromCache.addGameToCache(context, cachedGame)
+            gamesCache.addGameToCache(context, cachedGame)
             val intent = Intent(holder.itemView.context, BookmarkActivity::class.java)
             holder.itemView.context.startActivity(intent)
         }

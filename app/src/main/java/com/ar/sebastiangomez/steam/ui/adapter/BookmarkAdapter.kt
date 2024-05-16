@@ -1,4 +1,4 @@
-package com.ar.sebastiangomez.steam.ui
+package com.ar.sebastiangomez.steam.ui.adapter
 
 import android.content.Context
 import android.content.Intent
@@ -11,11 +11,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.model.Game
-import com.ar.sebastiangomez.steam.utils.GamesFromCache
+import com.ar.sebastiangomez.steam.ui.BookmarkActivity
+import com.ar.sebastiangomez.steam.ui.DetalleActivity
+import com.ar.sebastiangomez.steam.utils.GamesCache
 
 class BookmarkAdapter(private val context: Context, private val gamesList: List<Game>, private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<BookmarkAdapter.GameViewHolder>() {
 
-    private lateinit var gamesFromCache: GamesFromCache
+    private lateinit var gamesCache: GamesCache
     private val tag = "LOG-BOOKMARK-LIST"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_detail_item, parent, false)
@@ -23,7 +25,7 @@ class BookmarkAdapter(private val context: Context, private val gamesList: List<
     }
 
     override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
-        gamesFromCache = GamesFromCache()
+        gamesCache = GamesCache()
         val game = gamesList[position]
         holder.bind(game, position, itemCount)
 
@@ -40,7 +42,7 @@ class BookmarkAdapter(private val context: Context, private val gamesList: List<
 
         holder.imageButton.setOnClickListener {
             // Obtener la lista de juegos en caché
-            val cachedGames = gamesFromCache.getGamesFromCache(context)
+            val cachedGames = gamesCache.getGamesFromCache(context)
 
             // Encontrar el índice del juego a eliminar en la lista
             val indexToRemove = cachedGames.indexOfFirst { it.id == game.id }
@@ -50,7 +52,7 @@ class BookmarkAdapter(private val context: Context, private val gamesList: List<
                 cachedGames.removeAt(indexToRemove)
 
                 // Guardar la lista actualizada en la caché
-                gamesFromCache.saveGamesToCache(context, cachedGames)
+                gamesCache.saveGamesToCache(context, cachedGames)
 
                 // Log de la acción y cualquier otra acción necesaria
                 Log.d(tag, "Removed game from cache - ID: ${game.id}, Name: ${game.name}")

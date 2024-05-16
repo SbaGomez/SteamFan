@@ -6,7 +6,7 @@ import com.ar.sebastiangomez.steam.model.Game
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class GamesFromCache {
+class GamesCache {
     // Función para obtener la lista de IDs almacenados en caché
     fun getGamesFromCache(context: Context): MutableList<Game> {
         val sharedPreferences: SharedPreferences = context.getSharedPreferences("bookmark_data", Context.MODE_PRIVATE)

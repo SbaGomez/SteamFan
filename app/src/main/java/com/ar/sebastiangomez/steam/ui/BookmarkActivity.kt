@@ -24,7 +24,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
-import com.ar.sebastiangomez.steam.utils.GamesFromCache
+import com.ar.sebastiangomez.steam.ui.adapter.BookmarkAdapter
+import com.ar.sebastiangomez.steam.utils.GamesCache
 import com.ar.sebastiangomez.steam.utils.SearchHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,7 +34,7 @@ import java.io.IOException
 
 class BookmarkActivity : AppCompatActivity() {
     private lateinit var searchHelper: SearchHelper
-    private lateinit var gamesFromCache: GamesFromCache
+    private lateinit var gamesCache: GamesCache
     private lateinit var recyclerView: RecyclerView
     private lateinit var themeHelper: ThemeHelper
     private lateinit var themeButton : ImageButton
@@ -50,7 +51,7 @@ class BookmarkActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         searchHelper = SearchHelper()
-        gamesFromCache = GamesFromCache()
+        gamesCache = GamesCache()
         themeHelper = ThemeHelper(this)
         themeHelper.applyTheme()
         super.onCreate(savedInstanceState)
@@ -92,13 +93,13 @@ class BookmarkActivity : AppCompatActivity() {
     private fun getAll()
     {
         //Obtener la cantidad de juegos favoritos
-        textCountGames.text = gamesFromCache.countAllGames(this).toString()
+        textCountGames.text = gamesCache.countAllGames(this).toString()
 
         lifecycleScope.launch {
             try {
                 progressBar.visibility = View.VISIBLE
                 val gamesList = withContext(Dispatchers.IO) {
-                    gamesFromCache.getGamesFromCache(applicationContext).toMutableList().apply {
+                    gamesCache.getGamesFromCache(applicationContext).toMutableList().apply {
                         reverse()
                     }
                 }
@@ -144,7 +145,7 @@ class BookmarkActivity : AppCompatActivity() {
                     recyclerView.visibility = View.INVISIBLE
                     progressBar.visibility = View.VISIBLE
 
-                    val gamesList = gamesFromCache.getGamesFromCache(this@BookmarkActivity)
+                    val gamesList = gamesCache.getGamesFromCache(this@BookmarkActivity)
                     val filteredGamesList = searchHelper.filterGamesBySearchTerm(gamesList, searchTerm)
 
                     if (filteredGamesList.isEmpty()) {
