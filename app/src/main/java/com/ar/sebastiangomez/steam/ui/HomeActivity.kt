@@ -24,15 +24,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
-import com.ar.sebastiangomez.steam.data.SteamApiService
+import com.ar.sebastiangomez.steam.data.GamesRepository
 import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.utils.SearchHelper
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 
 
@@ -59,6 +57,8 @@ class HomeActivity : AppCompatActivity() {
     private var currentPage = 0
     private var isLoading = false
 
+    private val gamesRepository: GamesRepository = GamesRepository()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         searchHelper = SearchHelper()
         themeHelper = ThemeHelper(this)
@@ -79,7 +79,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun bindViewObject() {
-        recyclerView = findViewById(R.id.recyclerView)
         progressBar = findViewById(R.id.progressBar)
         themeButton = findViewById(R.id.themeButton)
         searchView = findViewById(R.id.searchInput)
@@ -90,20 +89,18 @@ class HomeActivity : AppCompatActivity() {
         linearErrorSearchButton = findViewById(R.id.linearErrorSearchButton)
         textErrorSearch = findViewById(R.id.textErrorSearch)
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
         linearSearch.removeView(linearSearchButton) //Remove search buttons
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
     }
 
     private fun getList()
     {
+        recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = GameAdapter(this@HomeActivity, displayedGamesList) { position, gameId ->
+        val adapter = GamesAdapter(this@HomeActivity, displayedGamesList) { position, gameId ->
             val gameName = displayedGamesList[position].name
             Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
         }
-
         recyclerView.adapter = adapter
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -118,7 +115,7 @@ class HomeActivity : AppCompatActivity() {
             try {
                 progressBar.visibility = View.VISIBLE
                 allGamesList = withContext(Dispatchers.IO) {
-                    fetchGames()
+                    gamesRepository.getGames()
                 }
                 loadMoreGames()
             } catch (e: IOException) {
@@ -144,40 +141,6 @@ class HomeActivity : AppCompatActivity() {
         isLoading = false
     }
 
-    private fun showButtonSearch()
-    {
-        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                linearSearch.addView(linearSearchButton)
-            }
-        }
-    }
-
-    private fun getImageTheme() {
-        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
-        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
-    }
-
-    // Función para crear el servicio Retrofit
-    private fun createSteamApiService(): SteamApiService {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.steampowered.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        return retrofit.create(SteamApiService::class.java)
-    }
-
-    // Método optimizado para obtener la lista de juegos utilizando Retrofit y Gson
-    private suspend fun fetchGames(): List<Game> {
-        val service = createSteamApiService()
-        val response = service.getAppList()
-        return response.appList.apps
-            .map { steamApp -> Game(steamApp.id, steamApp.name) }
-            .filter { game -> game.name.isNotEmpty() }
-    }
-
     fun onFilterGamesBySearchClick(view: View) {
         hideKeyboard(view)
         linearSearch.removeView(linearErrorSearchButton)
@@ -190,7 +153,7 @@ class HomeActivity : AppCompatActivity() {
                     recyclerView.visibility = View.INVISIBLE
                     progressBar.visibility = View.VISIBLE
 
-                    val gamesList = fetchGames()
+                    val gamesList = gamesRepository.getGames()
                     val filteredGamesList = searchHelper.filterGamesBySearchTerm(gamesList, searchTerm)
 
                     if (filteredGamesList.isEmpty()) {
@@ -199,7 +162,7 @@ class HomeActivity : AppCompatActivity() {
                         val sortedList = searchHelper.sortFilteredGamesList(filteredGamesList, searchTerm)
 
                         runOnUiThread {
-                            val adapter = GameAdapter(this@HomeActivity, sortedList) { position, gameId ->
+                            val adapter = GamesAdapter(this@HomeActivity, sortedList) { position, gameId ->
                                 val gameName = sortedList[position].name
                                 Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
                                 // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
@@ -219,6 +182,21 @@ class HomeActivity : AppCompatActivity() {
         } else {
             showError(getString(R.string.error2))
         }
+    }
+
+    private fun showButtonSearch()
+    {
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                linearSearch.addView(linearSearchButton)
+            }
+        }
+    }
+
+    private fun getImageTheme() {
+        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
+        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
     }
 
     private fun hideKeyboard(view: View) {

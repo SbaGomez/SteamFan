@@ -13,7 +13,7 @@ import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.utils.GamesFromCache
 
-class GameAdapter(private val context: Context, private val gamesList: List<Game>, private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<GameAdapter.GameViewHolder>() {
+class GamesAdapter(private val context: Context, private val gamesList: List<Game>, private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<GamesAdapter.GameViewHolder>() {
 
     private lateinit var gamesFromCache: GamesFromCache
     private val tag = "LOG-GAMES-LIST"
