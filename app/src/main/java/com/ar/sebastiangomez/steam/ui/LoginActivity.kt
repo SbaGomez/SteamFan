@@ -16,6 +16,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var themeHelper: ThemeHelper
     private lateinit var logoSplash: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
+
         themeHelper = ThemeHelper(this)
         themeHelper.applyTheme()
         super.onCreate(savedInstanceState)
@@ -35,10 +36,7 @@ class LoginActivity : AppCompatActivity() {
 
         // Array con los IDs de las imágenes en drawable
         val imagenes = arrayOf(
-            R.drawable.gameslogo,
-            /*R.drawable.logov12,
-            R.drawable.logov13,
-            R.drawable.logov14,*/
+            R.drawable.gameslogo
         )
 
         // Generar un índice aleatorio
