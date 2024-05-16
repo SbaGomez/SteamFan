@@ -1,4 +1,4 @@
-package com.ar.sebastiangomez.steam
+package com.ar.sebastiangomez.steam.ui
 
 import android.content.Context
 import android.content.Intent
@@ -19,6 +19,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.model.Game
+import com.ar.sebastiangomez.steam.model.GameDetail
+import com.ar.sebastiangomez.steam.model.GameDetailResponse
+import com.ar.sebastiangomez.steam.model.PcRequirement
+import com.ar.sebastiangomez.steam.model.PcRequirements
 import com.ar.sebastiangomez.steam.utils.GamesFromCache
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.bumptech.glide.Glide
@@ -84,6 +90,9 @@ class DetalleActivity : AppCompatActivity() {
         }
 
         bindViewObject()
+        getImageTheme() //Obtener valor del theme y cambiar el icono.
+        val id = getId() //Obtener ID de HomeActivity por intent y hacer fetch de detalles.
+        fetchGameDetails(id.toString()) //Fetch game details del ID.
     }
 
     private fun bindViewObject() {
@@ -123,10 +132,6 @@ class DetalleActivity : AppCompatActivity() {
         layoutMemRec = findViewById(R.id.layoutMemRec)
         layoutGrafRec = findViewById(R.id.layoutGrafRec)
         layoutAlmRec = findViewById(R.id.layoutAlmRec)
-
-        getImageTheme() //Obtener valor del theme y cambiar el icono.
-        val id = getId() //Obtener ID de HomeActivity por intent y hacer fetch de detalles.
-        fetchGameDetails(id.toString()) //Fetch game details del ID.
     }
 
     private fun getId(): Int {
@@ -149,133 +154,14 @@ class DetalleActivity : AppCompatActivity() {
                 runOnUiThread {
                     Log.d(tag, ("GAME DETAIL COMPLETE: $responseData"))
                     if (responseData != null) {
-                        val gameDetailMap = Gson().fromJson<Map<String, GameDetail.GameDetailResponse>>(
+                        val gameDetailMap = Gson().fromJson<Map<String, GameDetailResponse>>(
                             responseData,
-                            object : TypeToken<Map<String, GameDetail.GameDetailResponse>>() {}.type
+                            object : TypeToken<Map<String, GameDetailResponse>>() {}.type
                         )
                         val gameDetail = gameDetailMap[gameId]?.data
                         if (gameDetail != null) {
-                            // Verifica si las propiedades son nulas antes de usarlas
-                            val pcRequirements = parsePcRequirements(gameDetail.pc_requirements.toString())
-                            Log.d(tag,"GAME DETAIL - ID: ${gameDetail.steam_appid}, Name: ${gameDetail.name}, Type: ${gameDetail.type}, ${gameDetail.header_image},Short description: ${gameDetail.short_description}")
-                            Log.d(tag, "PC Requirements: ${gameDetail.pc_requirements}")
-                            Log.d(tag, "PC Requirements Filter: $pcRequirements")
 
-
-                            val cachedGames = gamesFromCache.getGamesFromCache(this@DetalleActivity)
-                            var indexID = cachedGames.indexOfFirst { it.id == gameId }
-
-                            // Función para actualizar la interfaz de usuario según sea necesario
-                            fun updateUI(isInFavorites: Boolean) {
-                                if (isInFavorites) {
-                                    imageButtonBookmark.setImageResource(R.drawable.bookmarkdetail)
-                                    imageButtonBookmark.imageTintList = ColorStateList.valueOf(Color.parseColor("#F9F4FB"))
-                                } else {
-                                    imageButtonBookmark.setImageResource(R.drawable.bookmarkdetailremove)
-                                    imageButtonBookmark.imageTintList = ColorStateList.valueOf(Color.parseColor("#914040"))
-                                }
-                            }
-
-                            // Actualiza el UI inicial
-                            updateUI(indexID == -1)
-
-                            // Listener de clic para agregar o eliminar de favoritos
-                            imageButtonBookmark.setOnClickListener {
-                                try {
-                                    if (indexID != -1) { // Si el juego está en la lista de favoritos, eliminarlo
-                                        cachedGames.removeAt(indexID)
-                                        // Guardar la lista actualizada en la caché
-                                        gamesFromCache.saveGamesToCache(this@DetalleActivity, cachedGames)
-                                        // Actualizar el UI
-                                        updateUI(true)
-                                        // Actualizar el índice
-                                        indexID = -1
-                                    } else { // Si el juego no está en la lista de favoritos, agregarlo
-                                        Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
-                                        val cachedGame = Game(gameDetail.steam_appid.toString(), gameDetail.name)
-                                        // Agregar el juego a la lista en caché
-                                        gamesFromCache.addGameToCache(this@DetalleActivity, cachedGame)
-                                        val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
-                                        startActivity(intent)
-                                        finish()
-                                        // Después de agregar, actualiza el índice
-                                        indexID = cachedGames.indexOfFirst { it.id == gameId }
-                                        // Actualizar el UI
-                                        updateUI(false)
-                                    }
-                                } catch (e: Exception) {
-                                    Log.e(tag, "Error al actualizar la lista de favoritos: ${e.message}")
-                                }
-                            }
-
-                            // Titulo del juego
-                            titleTxt.text = gameDetail.name
-
-                            //Type Game/Dlc/Demo/Music
-                            when (gameDetail.type) {
-                                "dlc" -> {
-                                    imageType.setImageResource(R.drawable.tagdlc)
-                                }
-                                "demo" -> {
-                                    imageType.setImageResource(R.drawable.tagdemo)
-                                }
-                                "game" -> {
-                                    imageType.setImageResource(R.drawable.taggame)
-                                }
-                                "music" -> {
-                                    imageType.setImageResource(R.drawable.tagmusic)
-                                }
-                            }
-
-                            // Cargar la imagen utilizando Glide
-                            runOnUiThread {
-                                // Verifica si la actividad aún es válida antes de cargar la imagen
-                                if (!isDestroyed && !isFinishing) {
-                                    Glide.with(this@DetalleActivity)
-                                        .load(gameDetail.header_image) // URL de la imagen
-                                        .placeholder(R.drawable.steamdb) // Placeholder mientras se carga la imagen (opcional)
-                                        .error(R.drawable.error) // Imagen de error en caso de falla de carga (opcional)
-                                        .into(headerImg) // Establecer la imagen en el ImageView
-                                }
-                            }
-
-                            // Descripcion
-                            if(gameDetail.short_description.isEmpty())
-                            {
-                                layoutDetalle.removeView(cardDescription)
-                            }
-                            descripcionTxt.text = gameDetail.short_description.replace(Regex("<br />|&quot;"), "")
-
-                            // Requerimientos Minimos
-                            if(pcRequirements?.minimum != null)
-                            {
-                                pcRequirements.minimum.os.takeIf { it.isNotEmpty() }?.let { textSO.text = it } ?: layoutMin.removeView(layoutSOMin)
-                                pcRequirements.minimum.processor.takeIf { it.isNotEmpty() }?.let { textProcesador.text = it } ?: layoutMin.removeView(layoutProMin)
-                                pcRequirements.minimum.memory.takeIf { it.isNotEmpty() }?.let { textMemoria.text = it } ?: layoutMin.removeView(layoutMemMin)
-                                pcRequirements.minimum.graphics.takeIf { it.isNotEmpty() }?.let { textGraficos.text = it } ?: layoutMin.removeView(layoutGrafMin)
-                                pcRequirements.minimum.storage.takeIf { it.isNotEmpty() }?.let { textAlmacenamiento.text = it } ?: layoutMin.removeView(layoutAlmMin)
-                            }
-                            else{
-                                layoutDetalle.removeView(cardMin)
-                            }
-                            // Requerimientos Recomendados
-                            if(pcRequirements?.recommended != null)
-                            {
-                                if(pcRequirements.recommended != pcRequirements.minimum)
-                                {
-                                    pcRequirements.recommended.os.takeIf { it.isNotEmpty() }?.let { textSORec.text = it } ?: layoutRec.removeView(layoutSORec)
-                                    pcRequirements.recommended.processor.takeIf { it.isNotEmpty() }?.let { textProcesadorRec.text = it }?: layoutRec.removeView(layoutProRec)
-                                    pcRequirements.recommended.memory.takeIf { it.isNotEmpty() }?.let { textMemoriaRec.text = it } ?: layoutRec.removeView(layoutMemRec)
-                                    pcRequirements.recommended.graphics.takeIf { it.isNotEmpty() }?.let { textGraficosRec.text = it } ?: layoutRec.removeView(layoutGrafRec)
-                                    pcRequirements.recommended.storage.takeIf { it.isNotEmpty() }?.let { textAlmacenamientoRec.text = it }?: layoutRec.removeView(layoutAlmRec)
-                                }
-                                else{
-                                    layoutDetalle.removeView(cardRec)
-                                }
-                            }
-                            else{
-                                layoutDetalle.removeView(cardRec)
-                            }
+                            setData(gameDetail)
 
                             //Handler para ocultar progressBar y mostrar el layoutDetalle
                             Handler(Looper.getMainLooper()).postDelayed({
@@ -301,7 +187,128 @@ class DetalleActivity : AppCompatActivity() {
         })
     }
 
-    fun parsePcRequirements(pcRequirementsString: String): GameDetail.PcRequirements? {
+    private fun setData(gameDetail : GameDetail){
+        val pcRequirements = parsePcRequirements(gameDetail.pc_requirements.toString())
+        val cachedGames = gamesFromCache.getGamesFromCache(this@DetalleActivity)
+        var indexID = cachedGames.indexOfFirst { it.id == gameDetail.steam_appid.toString() }
+
+        // Función para actualizar la interfaz de usuario según sea necesario
+        fun updateUI(isInFavorites: Boolean) {
+            if (isInFavorites) {
+                imageButtonBookmark.setImageResource(R.drawable.bookmarkdetail)
+                imageButtonBookmark.imageTintList = ColorStateList.valueOf(Color.parseColor("#F9F4FB"))
+            } else {
+                imageButtonBookmark.setImageResource(R.drawable.bookmarkdetailremove)
+                imageButtonBookmark.imageTintList = ColorStateList.valueOf(Color.parseColor("#914040"))
+            }
+        }
+
+        // Actualiza el UI inicial
+        updateUI(indexID == -1)
+
+        // Listener de clic para agregar o eliminar de favoritos
+        imageButtonBookmark.setOnClickListener {
+            try {
+                if (indexID != -1) { // Si el juego está en la lista de favoritos, eliminarlo
+                    cachedGames.removeAt(indexID)
+                    // Guardar la lista actualizada en la caché
+                    gamesFromCache.saveGamesToCache(this@DetalleActivity, cachedGames)
+                    // Actualizar el UI
+                    updateUI(true)
+                    // Actualizar el índice
+                    indexID = -1
+                } else { // Si el juego no está en la lista de favoritos, agregarlo
+                    Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
+                    val cachedGame = Game(
+                        gameDetail.steam_appid.toString(),
+                        gameDetail.name
+                    )
+                    // Agregar el juego a la lista en caché
+                    gamesFromCache.addGameToCache(this@DetalleActivity, cachedGame)
+                    val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                    // Después de agregar, actualiza el índice
+                    indexID = cachedGames.indexOfFirst { it.id == gameDetail.steam_appid.toString() }
+                    // Actualizar el UI
+                    updateUI(false)
+                }
+            } catch (e: Exception) {
+                Log.e(tag, "Error al actualizar la lista de favoritos: ${e.message}")
+            }
+        }
+
+        // Titulo del juego
+        titleTxt.text = gameDetail.name
+
+        //Type Game/Dlc/Demo/Music
+        when (gameDetail.type) {
+            "dlc" -> {
+                imageType.setImageResource(R.drawable.tagdlc)
+            }
+            "demo" -> {
+                imageType.setImageResource(R.drawable.tagdemo)
+            }
+            "game" -> {
+                imageType.setImageResource(R.drawable.taggame)
+            }
+            "music" -> {
+                imageType.setImageResource(R.drawable.tagmusic)
+            }
+        }
+
+        // Cargar la imagen utilizando Glide
+        runOnUiThread {
+            // Verifica si la actividad aún es válida antes de cargar la imagen
+            if (!isDestroyed && !isFinishing) {
+                Glide.with(this@DetalleActivity)
+                    .load(gameDetail.header_image) // URL de la imagen
+                    .placeholder(R.drawable.steamdb) // Placeholder mientras se carga la imagen (opcional)
+                    .error(R.drawable.error) // Imagen de error en caso de falla de carga (opcional)
+                    .into(headerImg) // Establecer la imagen en el ImageView
+            }
+        }
+
+        // Descripcion
+        if(gameDetail.short_description.isEmpty())
+        {
+            layoutDetalle.removeView(cardDescription)
+        }
+        descripcionTxt.text = gameDetail.short_description.replace(Regex("<br />|&quot;"), "")
+
+        // Requerimientos Minimos
+        if(pcRequirements?.minimum != null)
+        {
+            pcRequirements.minimum.os.takeIf { it.isNotEmpty() }?.let { textSO.text = it } ?: layoutMin.removeView(layoutSOMin)
+            pcRequirements.minimum.processor.takeIf { it.isNotEmpty() }?.let { textProcesador.text = it } ?: layoutMin.removeView(layoutProMin)
+            pcRequirements.minimum.memory.takeIf { it.isNotEmpty() }?.let { textMemoria.text = it } ?: layoutMin.removeView(layoutMemMin)
+            pcRequirements.minimum.graphics.takeIf { it.isNotEmpty() }?.let { textGraficos.text = it } ?: layoutMin.removeView(layoutGrafMin)
+            pcRequirements.minimum.storage.takeIf { it.isNotEmpty() }?.let { textAlmacenamiento.text = it } ?: layoutMin.removeView(layoutAlmMin)
+        }
+        else{
+            layoutDetalle.removeView(cardMin)
+        }
+        // Requerimientos Recomendados
+        if(pcRequirements?.recommended != null)
+        {
+            if(pcRequirements.recommended != pcRequirements.minimum)
+            {
+                pcRequirements.recommended.os.takeIf { it.isNotEmpty() }?.let { textSORec.text = it } ?: layoutRec.removeView(layoutSORec)
+                pcRequirements.recommended.processor.takeIf { it.isNotEmpty() }?.let { textProcesadorRec.text = it }?: layoutRec.removeView(layoutProRec)
+                pcRequirements.recommended.memory.takeIf { it.isNotEmpty() }?.let { textMemoriaRec.text = it } ?: layoutRec.removeView(layoutMemRec)
+                pcRequirements.recommended.graphics.takeIf { it.isNotEmpty() }?.let { textGraficosRec.text = it } ?: layoutRec.removeView(layoutGrafRec)
+                pcRequirements.recommended.storage.takeIf { it.isNotEmpty() }?.let { textAlmacenamientoRec.text = it }?: layoutRec.removeView(layoutAlmRec)
+            }
+            else{
+                layoutDetalle.removeView(cardRec)
+            }
+        }
+        else{
+            layoutDetalle.removeView(cardRec)
+        }
+    }
+
+    private fun parsePcRequirements(pcRequirementsString: String): PcRequirements? {
         // Elimina las etiquetas HTML y caracteres innecesarios
         val cleanString = pcRequirementsString
             .replace("<strong>", " ")
@@ -332,7 +339,7 @@ class DetalleActivity : AppCompatActivity() {
         }
 
         // Función auxiliar para crear un objeto PcRequirement a partir de una cadena de requisito
-        fun createPcRequirement(requirementString: String): GameDetail.PcRequirement? {
+        fun createPcRequirement(requirementString: String): PcRequirement? {
             val os = extractRequirement(requirementString, "OS:")
             val processor = extractRequirement(requirementString, "Processor:")
             val memory = extractRequirement(requirementString, "Memory:")
@@ -344,7 +351,7 @@ class DetalleActivity : AppCompatActivity() {
 
             return if (os.isNotEmpty() || processor.isNotEmpty() || memory.isNotEmpty() || graphics.isNotEmpty() ||
                 directx.isNotEmpty() || soundcard.isNotEmpty() || network.isNotEmpty() || storage.isNotEmpty()) {
-                GameDetail.PcRequirement(
+                PcRequirement(
                     os = os,
                     processor = processor,
                     memory = memory,
@@ -377,7 +384,7 @@ class DetalleActivity : AppCompatActivity() {
 
         if (minimumRequirement != null || recommendedRequirement != null) {
             // Crea el objeto PcRequirements con los requisitos mínimos y recomendados
-            return GameDetail.PcRequirements(minimumRequirement, recommendedRequirement)
+            return PcRequirements(minimumRequirement, recommendedRequirement)
         }
         return null
     }

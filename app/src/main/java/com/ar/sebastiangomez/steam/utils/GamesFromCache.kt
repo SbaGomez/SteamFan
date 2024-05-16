@@ -2,7 +2,7 @@ package com.ar.sebastiangomez.steam.utils
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.ar.sebastiangomez.steam.Game
+import com.ar.sebastiangomez.steam.model.Game
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:backgroundTint="#00FFFFFF"
-    tools:context=".HomeActivity"
+    tools:context=".ui.HomeActivity"
     tools:ignore="VisualLintTextFieldSize">
 
     <ProgressBar
@@ -117,6 +117,9 @@
                         android:text="@string/search_close_button"
                         android:textColor="@color/md_theme_dark_inverseSurface"
                         app:cornerRadius="10dp"
+                        app:icon="@android:drawable/ic_delete"
+                        app:iconPadding="5dp"
+                        app:iconTint="#FFFFFF"
                         tools:ignore="ButtonStyle" />
 
                     <Button
@@ -170,13 +173,14 @@
 
                 <TextView
                     android:id="@+id/textErrorSearch"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_bold"
+                    android:gravity="center"
                     android:paddingStart="30dp"
                     android:paddingEnd="30dp"
                     android:text="@string/text_error"
-                    android:textColor="#EC407A"
+                    android:textColor="#B34C4C"
                     android:textSize="14sp" />
             </LinearLayout>
 

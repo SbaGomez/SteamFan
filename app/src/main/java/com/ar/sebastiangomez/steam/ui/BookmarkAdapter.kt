@@ -1,4 +1,4 @@
-package com.ar.sebastiangomez.steam
+package com.ar.sebastiangomez.steam.ui
 
 import android.content.Context
 import android.content.Intent
@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.utils.GamesFromCache
 
 class BookmarkAdapter(private val context: Context, private val gamesList: List<Game>, private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<BookmarkAdapter.GameViewHolder>() {
@@ -23,7 +25,7 @@ class BookmarkAdapter(private val context: Context, private val gamesList: List<
     override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
         gamesFromCache = GamesFromCache()
         val game = gamesList[position]
-        holder.bind(game)
+        holder.bind(game, position, itemCount)
 
         holder.itemView.setOnClickListener {
             onItemClick.invoke(position, game.id) // Pasar el ID del juego al onItemClick
@@ -69,8 +71,10 @@ class BookmarkAdapter(private val context: Context, private val gamesList: List<
     class GameViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val textView: TextView = itemView.findViewById(R.id.textList)
         val imageButton: ImageButton = itemView.findViewById(R.id.imageButtonList)
-        fun bind(game: Game) {
+        private val textNro: TextView = itemView.findViewById(R.id.textNro)
+        fun bind(game: Game, position: Int, totalItems: Int) {
             textView.text = game.name
+            textNro.text = (totalItems - position).toString()
         }
     }
 }

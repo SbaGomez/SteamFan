@@ -16,19 +16,19 @@
         android:theme="@style/Base.Theme.Steam.Dark"
         tools:targetApi="31">
         <activity
-            android:name=".BookmarkActivity"
+            android:name="com.ar.sebastiangomez.steam.ui.BookmarkActivity"
             android:exported="false" />
         <activity
-            android:name=".DetalleActivity"
+            android:name="com.ar.sebastiangomez.steam.ui.DetalleActivity"
             android:exported="false" />
         <activity
-            android:name=".HomeActivity"
+            android:name="com.ar.sebastiangomez.steam.ui.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.ar.sebastiangomez.steam.ui.LoginActivity"
             android:exported="false"/>
         <activity
-            android:name=".SplashActivity"
+            android:name="com.ar.sebastiangomez.steam.ui.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

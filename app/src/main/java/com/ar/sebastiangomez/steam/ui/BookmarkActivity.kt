@@ -1,4 +1,4 @@
-package com.ar.sebastiangomez.steam
+package com.ar.sebastiangomez.steam.ui
 
 import android.content.Context
 import android.content.Intent
@@ -19,50 +19,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.utils.GamesFromCache
 import com.ar.sebastiangomez.steam.utils.SearchHelper
-import com.ar.sebastiangomez.steam.utils.ThemeHelper
-import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
 import java.io.IOException
 
-data class SteamAppListResponse(
-    @SerializedName("applist") val appList: AppList
-)
-
-data class AppList(
-    @SerializedName("apps") val apps: List<SteamApp>
-)
-
-data class SteamApp(
-    @SerializedName("appid") val id: String,
-    @SerializedName("name") val name: String
-)
-
-interface SteamApiService {
-    @GET("ISteamApps/GetAppList/v2/")
-    suspend fun getAppList(): SteamAppListResponse
-}
-
-class Game(val id: String, val name: String) {
-    override fun toString(): String {
-        return "Game(id=$id, name='$name')"
-    }
-}
-
-class HomeActivity : AppCompatActivity() {
-
-    private lateinit var recyclerView: RecyclerView
+class BookmarkActivity : AppCompatActivity() {
     private lateinit var searchHelper: SearchHelper
+    private lateinit var gamesFromCache: GamesFromCache
+    private lateinit var recyclerView: RecyclerView
     private lateinit var themeHelper: ThemeHelper
-    private lateinit var progressBar : ProgressBar
     private lateinit var themeButton : ImageButton
     private lateinit var searchView : SearchView
     private lateinit var linearSearch : LinearLayout
@@ -71,15 +44,18 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var linearSearchButton : LinearLayout
     private lateinit var linearErrorSearchButton : LinearLayout
     private lateinit var textErrorSearch : TextView
-    private val tag = "LOG-HOME"
+    private lateinit var textCountGames : TextView
+    private lateinit var progressBar : ProgressBar
+    private val tag = "LOG-BOOKMARK"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         searchHelper = SearchHelper()
+        gamesFromCache = GamesFromCache()
         themeHelper = ThemeHelper(this)
         themeHelper.applyTheme()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_home)
+        setContentView(R.layout.activity_bookmark)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -90,8 +66,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun bindViewObject() {
-        recyclerView = findViewById(R.id.recyclerView)
         progressBar = findViewById(R.id.progressBar)
+        recyclerView = findViewById(R.id.recyclerView)
         themeButton = findViewById(R.id.themeButton)
         searchView = findViewById(R.id.searchInput)
         linearSearch = findViewById(R.id.linearSearch)
@@ -100,6 +76,7 @@ class HomeActivity : AppCompatActivity() {
         linearSearchButton = findViewById(R.id.linearSearchButton)
         linearErrorSearchButton = findViewById(R.id.linearErrorSearchButton)
         textErrorSearch = findViewById(R.id.textErrorSearch)
+        textCountGames = findViewById(R.id.textCountGames)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -108,25 +85,33 @@ class HomeActivity : AppCompatActivity() {
 
         getImageTheme()
         showButtonSearch() // Mostrar el boton buscar al abrir el search
+        getAll()
+
+    }
+
+    private fun getAll()
+    {
+        //Obtener la cantidad de juegos favoritos
+        textCountGames.text = gamesFromCache.countAllGames(this).toString()
 
         lifecycleScope.launch {
             try {
                 progressBar.visibility = View.VISIBLE
-
                 val gamesList = withContext(Dispatchers.IO) {
-                    fetchGames()
+                    gamesFromCache.getGamesFromCache(applicationContext).toMutableList().apply {
+                        reverse()
+                    }
                 }
 
-                val adapter = GameAdapter(this@HomeActivity, gamesList) { position, gameId ->
+                val adapter = BookmarkAdapter(this@BookmarkActivity, gamesList) { position, gameId ->
                     // Acciones a realizar cuando se hace clic en un elemento de la lista
                     val gameName = gamesList[position].name
                     Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
-                    // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
                 }
 
                 recyclerView.adapter = adapter
 
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 // En caso de error, mostrar el mensaje de error adecuado
                 linearSearch.addView(linearErrorSearchButton)
@@ -147,34 +132,9 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun getImageTheme() {
-        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
-        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
-    }
-
-    // Función para crear el servicio Retrofit
-    private fun createSteamApiService(): SteamApiService {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.steampowered.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        return retrofit.create(SteamApiService::class.java)
-    }
-
-    // Método optimizado para obtener la lista de juegos utilizando Retrofit y Gson
-    private suspend fun fetchGames(): List<Game> {
-        val service = createSteamApiService()
-        val response = service.getAppList()
-        return response.appList.apps
-            .map { steamApp -> Game(steamApp.id, steamApp.name) }
-            .filter { game -> game.name.isNotEmpty() }
-    }
-
     fun onFilterGamesBySearchClick(view: View) {
         hideKeyboard(view)
-        linearSearch.removeView(linearErrorSearchButton)
+        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
 
         val searchTerm = searchView.query.toString().trim()
 
@@ -184,20 +144,18 @@ class HomeActivity : AppCompatActivity() {
                     recyclerView.visibility = View.INVISIBLE
                     progressBar.visibility = View.VISIBLE
 
-                    val gamesList = fetchGames()
+                    val gamesList = gamesFromCache.getGamesFromCache(this@BookmarkActivity)
                     val filteredGamesList = searchHelper.filterGamesBySearchTerm(gamesList, searchTerm)
 
                     if (filteredGamesList.isEmpty()) {
                         showError(getString(R.string.error1))
                     } else {
                         val sortedList = searchHelper.sortFilteredGamesList(filteredGamesList, searchTerm)
-
                         runOnUiThread {
-                            val adapter = GameAdapter(this@HomeActivity, sortedList) { position, gameId ->
+                            val adapter = BookmarkAdapter(this@BookmarkActivity, sortedList) { position, gameId ->
                                 val gameName = sortedList[position].name
                                 Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
                                 // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
-                                searchView.clearFocus() // Quita el foco del SearchView
                             }
                             recyclerView.visibility = View.VISIBLE
                             recyclerView.adapter = adapter
@@ -227,20 +185,30 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun getImageTheme() {
+        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+        val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
+        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
+    }
+
     @Suppress("UNUSED_PARAMETER")
     fun onChangeThemeButtonClick(view: View) {
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
         val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
-
-        Log.d(tag, "New Theme: $newTheme")
         themeHelper.changeTheme(newTheme)
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun onBookmarkClick(view: View) {
-        val intent = Intent(this, BookmarkActivity::class.java)
+    fun onHomeClick(view: View) {
+        val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
+        finish()
+    }
+
+    @Suppress("UNUSED_PARAMETER","DEPRECATION")
+    fun onBackClick(view: View) {
+        super.onBackPressed()
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -255,6 +223,4 @@ class HomeActivity : AppCompatActivity() {
         searchView.setQuery("", false)
         recreate()
     }
-
 }
-

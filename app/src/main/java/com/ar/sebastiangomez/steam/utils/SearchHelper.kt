@@ -1,6 +1,6 @@
 package com.ar.sebastiangomez.steam.utils
 
-import com.ar.sebastiangomez.steam.Game
+import com.ar.sebastiangomez.steam.model.Game
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Locale
