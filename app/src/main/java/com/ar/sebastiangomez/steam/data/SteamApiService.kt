@@ -6,4 +6,5 @@ import retrofit2.http.GET
 interface SteamApiService {
     @GET("ISteamApps/GetAppList/v2/")
     suspend fun getAppList(): SteamAppListResponse
+
 }
