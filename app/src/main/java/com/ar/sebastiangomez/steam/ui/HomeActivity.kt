@@ -76,7 +76,7 @@ class HomeActivity : AppCompatActivity() {
         bindViewObject()
         getImageTheme()
         showButtonSearch() // Mostrar el boton buscar al abrir el search
-        getList()
+        getGames()
     }
 
     private fun bindViewObject() {
@@ -94,7 +94,7 @@ class HomeActivity : AppCompatActivity() {
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
     }
 
-    private fun getList()
+    private fun getGames()
     {
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)

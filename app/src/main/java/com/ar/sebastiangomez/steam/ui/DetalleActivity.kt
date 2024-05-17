@@ -19,23 +19,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.data.GamesRepository
 import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.model.GameDetail
-import com.ar.sebastiangomez.steam.model.GameDetailResponse
 import com.ar.sebastiangomez.steam.model.PcRequirement
 import com.ar.sebastiangomez.steam.model.PcRequirements
 import com.ar.sebastiangomez.steam.utils.GamesCache
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.bumptech.glide.Glide
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import java.io.IOException
+import kotlinx.coroutines.launch
 
 class DetalleActivity : AppCompatActivity() {
     private lateinit var gamesCache: GamesCache
@@ -76,6 +70,8 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var imageButtonBookmark : ImageButton
     private val tag = "LOG-DETAIL"
 
+    private val gamesRepository: GamesRepository = GamesRepository()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         gamesCache = GamesCache()
         themeHelper = ThemeHelper(this)
@@ -92,7 +88,7 @@ class DetalleActivity : AppCompatActivity() {
         bindViewObject()
         getImageTheme() //Obtener valor del theme y cambiar el icono.
         val id = getId() //Obtener ID de HomeActivity por intent y hacer fetch de detalles.
-        fetchGameDetails(id.toString()) //Fetch game details del ID.
+        getDetails(id.toString()) //Fetch game details del ID.
     }
 
     private fun bindViewObject() {
@@ -140,51 +136,22 @@ class DetalleActivity : AppCompatActivity() {
         return id
     }
 
-    private fun fetchGameDetails(gameId: String) {
+    private fun getDetails(gameId: String) {
         progressBar.visibility = View.VISIBLE
-        val client = OkHttpClient()
-        val url = "https://store.steampowered.com/api/appdetails?appids=$gameId"
-        val request = Request.Builder()
-            .url(url)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onResponse(call: Call, response: Response) {
-                val responseData = response.body?.string()
-                runOnUiThread {
-                    Log.d(tag, ("GAME DETAIL COMPLETE: $responseData"))
-                    if (responseData != null) {
-                        val gameDetailMap = Gson().fromJson<Map<String, GameDetailResponse>>(
-                            responseData,
-                            object : TypeToken<Map<String, GameDetailResponse>>() {}.type
-                        )
-                        val gameDetail = gameDetailMap[gameId]?.data
-                        if (gameDetail != null) {
-
-                            setData(gameDetail)
-
-                            //Handler para ocultar progressBar y mostrar el layoutDetalle
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                progressBar.visibility = View.INVISIBLE
-                                layoutDetalle.visibility = View.VISIBLE
-                            }, 2000)
-
-                        } else {
-                            cardView.visibility = View.VISIBLE
-                            progressBar.visibility = View.INVISIBLE
-                            Log.e(tag,"ERROR: Game detail not found for ID: $gameId")
-
-                        }
-                    } else {
-                        Log.e(tag,"ERROR: Empty response body")
-                    }
-                }
+        lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
+            val gameDetail = gamesRepository.getDetails(gameId)
+            if (gameDetail != null) {
+                setData(gameDetail)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    progressBar.visibility = View.INVISIBLE
+                    layoutDetalle.visibility = View.VISIBLE
+                }, 2000)
+            } else {
+                cardView.visibility = View.VISIBLE
+                progressBar.visibility = View.INVISIBLE
             }
-
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e(tag, "ERROR: Failed to fetch game details: ${e.message}")
-            }
-        })
+        }
     }
 
     private fun setData(gameDetail : GameDetail){
