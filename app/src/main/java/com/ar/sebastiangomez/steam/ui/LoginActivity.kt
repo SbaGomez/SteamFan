@@ -49,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun onLoginClick(view: View)
     {
-        val intent = Intent(this, HomeActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
     }
