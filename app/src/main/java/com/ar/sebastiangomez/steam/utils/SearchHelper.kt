@@ -1,38 +1,36 @@
 package com.ar.sebastiangomez.steam.utils
 
-import com.ar.sebastiangomez.steam.model.Game
+import com.ar.sebastiangomez.steam.model.GameInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
 class SearchHelper {
-    suspend fun filterGamesBySearchTerm(gamesList: List<Game>, searchTerm: String): List<Game> {
+    suspend fun <T : GameInterface> filterGamesBySearchTerm(gamesList: List<T>, searchTerm: String): List<T> {
         return withContext(Dispatchers.Default) {
+            val regex = Regex("\\b${Regex.escape(searchTerm.lowercase(Locale.getDefault()))}\\b")
             gamesList.filter { game ->
-                Regex("\\b${searchTerm.lowercase(Locale.getDefault())}\\b").find(game.name.lowercase(
-                    Locale.getDefault())) != null
+                regex.containsMatchIn(game.name.lowercase(Locale.getDefault()))
             }
         }
     }
 
-    fun sortFilteredGamesList(filteredGamesList: List<Game>, searchTerm: String): List<Game> {
-        val exactMatch = mutableListOf<Game>()
-        val partialMatchWithoutExact = mutableListOf<Game>()
-        val containsSearchTerm = mutableListOf<Game>()
+    fun <T : GameInterface> sortFilteredGamesList(filteredGamesList: List<T>, searchTerm: String): List<T> {
+        val exactMatch = mutableListOf<T>()
+        val partialMatchWithoutExact = mutableListOf<T>()
+        val containsSearchTerm = mutableListOf<T>()
 
-        searchTerm.let { term ->
-            for (game in filteredGamesList) {
-                val lowerCaseName = game.name.lowercase(Locale.getDefault())
-                if (lowerCaseName == term.lowercase(Locale.getDefault())) {
-                    exactMatch.add(game)
-                } else if (lowerCaseName.contains(term.lowercase(Locale.getDefault()))) {
-                    partialMatchWithoutExact.add(game)
-                } else if (term.isNotEmpty() && lowerCaseName.split(" ").any { it.contains(term.lowercase(
-                        Locale.getDefault())) }) {
-                    containsSearchTerm.add(game)
-                }
+        val lowerCaseTerm = searchTerm.lowercase(Locale.getDefault())
+
+        for (game in filteredGamesList) {
+            val lowerCaseName = game.name.lowercase(Locale.getDefault())
+            when {
+                lowerCaseName == lowerCaseTerm -> exactMatch.add(game)
+                lowerCaseName.contains(lowerCaseTerm) -> partialMatchWithoutExact.add(game)
+                lowerCaseTerm.isNotEmpty() && lowerCaseName.split(" ").any { it.contains(lowerCaseTerm) } -> containsSearchTerm.add(game)
             }
         }
+
         return exactMatch + partialMatchWithoutExact + containsSearchTerm
     }
 
