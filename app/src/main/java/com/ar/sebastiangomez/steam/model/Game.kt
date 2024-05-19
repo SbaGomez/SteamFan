@@ -2,9 +2,19 @@ package com.ar.sebastiangomez.steam.model
 
 import com.google.gson.annotations.SerializedName
 
-data class Game(val id: String, val name: String) {
+interface GameInterface {
+    val name: String
+}
+
+data class Game(val id: String, override val name: String) : GameInterface {
     override fun toString(): String {
         return "Game(id=$id, name='$name')"
+    }
+}
+
+data class GameCached(val id: String, override val name: String, var image: String) : GameInterface {
+    override fun toString(): String {
+        return "GameCached(id=$id, name='$name', image='$image')"
     }
 }
 
