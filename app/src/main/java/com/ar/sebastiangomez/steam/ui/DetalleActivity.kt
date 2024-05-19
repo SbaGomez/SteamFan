@@ -380,7 +380,11 @@ class DetalleActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onHomeClick(view: View) {
-        val intent = Intent(this, HomeActivity::class.java)
+        val intent = Intent(
+            this,
+            HomeActivity::class.java
+        )
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         finish()
     }

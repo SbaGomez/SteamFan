@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +26,7 @@ import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.ui.adapter.BookmarkAdapter
 import com.ar.sebastiangomez.steam.utils.GamesCache
 import com.ar.sebastiangomez.steam.utils.SearchHelper
+import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -202,7 +202,11 @@ class BookmarkActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onHomeClick(view: View) {
-        val intent = Intent(this, HomeActivity::class.java)
+        val intent = Intent(
+            this,
+            HomeActivity::class.java
+        )
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         finish()
     }

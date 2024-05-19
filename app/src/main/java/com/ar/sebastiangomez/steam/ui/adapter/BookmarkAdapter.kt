@@ -10,7 +10,6 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.model.GameCached
@@ -46,30 +45,7 @@ class BookmarkAdapter(private val context: Context, private val gamesList: List<
         }
 
         holder.imageButton.setOnClickListener {
-            // Obtener la lista de juegos en caché
-            val cachedGames = gamesCache.getGamesFromCache(context)
-
-            // Encontrar el índice del juego a eliminar en la lista
-            val indexToRemove = cachedGames.indexOfFirst { it.id == game.id }
-
-            if (indexToRemove != -1) {
-                // Remover el juego de la lista en caché
-                cachedGames.removeAt(indexToRemove)
-
-                // Guardar la lista actualizada en la caché
-                gamesCache.saveGamesToCache(context, cachedGames)
-
-                // Log de la acción y cualquier otra acción necesaria
-                Log.d(tag, "Removed game from cache - ID: ${game.id}, Name: ${game.name}")
-
-                Toast.makeText(context, "Eliminaste - ${game.name} - de favoritos.", Toast.LENGTH_LONG).show()
-
-                // Iniciar la actividad de marcadores (o cualquier otra acción necesaria)
-                (holder.itemView.context as BookmarkActivity).recreate()
-            } else {
-                // El juego no se encontró en la lista en caché
-                Log.d(tag, "Game not found in cache - ID: ${game.id}, Name: ${game.name}")
-            }
+            gamesCache.removeGameToCache(context, game.id, "BookmarkActivity")
         }
     }
 
