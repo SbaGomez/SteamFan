@@ -30,7 +30,7 @@ class GamesAdapter(
     private val tag = "LOG-GAMES-LIST"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_custom_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_game_item, parent, false)
         return GameViewHolder(view)
     }
 
