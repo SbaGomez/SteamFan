@@ -20,10 +20,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class GamesAdapter(private val context: Context, private val gamesList: List<Game>, private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<GamesAdapter.GameViewHolder>() {
+class GamesAdapter(
+    private val context: Context,
+    private val gamesList: List<Game>,
+    private val onItemClick: (position: Int, gameId: String) -> Unit
+) : RecyclerView.Adapter<GamesAdapter.GameViewHolder>() {
 
     private lateinit var gamesCache: GamesCache
     private val tag = "LOG-GAMES-LIST"
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_custom_item, parent, false)
         return GameViewHolder(view)
@@ -33,22 +38,12 @@ class GamesAdapter(private val context: Context, private val gamesList: List<Gam
         gamesCache = GamesCache()
         val game = gamesList[position]
         holder.bind(game)
-        var isBookmarked = false
-
-        val cachedGames = gamesCache.getGamesFromCache(context)
-        //val indexID = cachedGames.indexOfFirst { it.id == game.id }
-        val indexID = gamesCache.exists(context, game.id)
-
-        if (indexID) {
-            holder.imageButton.setImageResource(R.drawable.bookmarkdel)
-            holder.imageButton.setBackgroundColor(Color.parseColor("#9A4040"))
-            isBookmarked = true
-        }
+        updateBookmarkButton(holder, game)
 
         holder.itemView.setOnClickListener {
-            onItemClick.invoke(position, game.id) // Pasar el ID del juego al onItemClick
+            onItemClick.invoke(position, game.id)
             val selectID = game.id.toInt()
-            Log.d(tag,"ID Position: ${game.id} Select ID: $selectID")
+            Log.d(tag, "ID Position: ${game.id} Select ID: $selectID")
 
             val intent = Intent(holder.itemView.context, DetalleActivity::class.java)
             intent.putExtra("ID", selectID)
@@ -56,19 +51,18 @@ class GamesAdapter(private val context: Context, private val gamesList: List<Gam
         }
 
         holder.imageButton.setOnClickListener {
+            val isBookmarked = gamesCache.exists(context, game.id)
             if (isBookmarked) {
                 gamesCache.removeGameToCache(context, game.id, "HomeActivity")
-                //holder.imageButton.setImageResource(R.drawable.bookmarkdel)
-                //holder.imageButton.setBackgroundColor(Color.parseColor("#495d92"))
-            }
-            else{
+                updateBookmarkButton(holder, game)
+            } else {
                 Log.d(tag, "Log Button Add Bookmark - ID Position: $position, Game ID: ${game.id}")
                 val gamesRepository = GamesRepository()
                 CoroutineScope(Dispatchers.Main).launch {
                     val imageUrl = gamesRepository.getImage(game.id)
                     val cachedGame = GameCached(game.id, game.name, imageUrl.toString())
-                    // Agregar el juego a la lista en caché
                     gamesCache.addGameToCache(context, cachedGame)
+                    updateBookmarkButton(holder, game)
                 }
             }
         }
@@ -76,6 +70,17 @@ class GamesAdapter(private val context: Context, private val gamesList: List<Gam
 
     override fun getItemCount(): Int {
         return gamesList.size
+    }
+
+    private fun updateBookmarkButton(holder: GameViewHolder, game: Game) {
+        val isBookmarked = gamesCache.exists(context, game.id)
+        if (isBookmarked) {
+            holder.imageButton.setImageResource(R.drawable.bookmarkdel)
+            holder.imageButton.setBackgroundColor(Color.parseColor("#9A4040"))
+        } else {
+            holder.imageButton.setImageResource(R.drawable.bookmarkadd)
+            holder.imageButton.setBackgroundColor(Color.parseColor("#495d92"))
+        }
     }
 
     class GameViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
