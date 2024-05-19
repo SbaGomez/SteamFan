@@ -7,20 +7,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
-import com.ar.sebastiangomez.steam.model.Game
+import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.ui.BookmarkActivity
 import com.ar.sebastiangomez.steam.ui.DetalleActivity
 import com.ar.sebastiangomez.steam.utils.GamesCache
+import com.bumptech.glide.Glide
 
-class BookmarkAdapter(private val context: Context, private val gamesList: List<Game>, private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<BookmarkAdapter.GameViewHolder>() {
+class BookmarkAdapter(private val context: Context, private val gamesList: List<GameCached>, private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<BookmarkAdapter.GameViewHolder>() {
 
     private lateinit var gamesCache: GamesCache
     private val tag = "LOG-BOOKMARK-LIST"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_detail_item, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.layout_bookmark_item, parent, false)
         return GameViewHolder(view)
     }
 
@@ -32,7 +37,7 @@ class BookmarkAdapter(private val context: Context, private val gamesList: List<
         holder.itemView.setOnClickListener {
             onItemClick.invoke(position, game.id) // Pasar el ID del juego al onItemClick
             val selectID = game.id.toInt()
-            Log.d(tag,"ID Position: ${game.id} Select ID: $selectID")
+            Log.d(tag, "ID Position: ${game.id} Select ID: $selectID")
 
             val intent = Intent(holder.itemView.context, DetalleActivity::class.java)
             intent.putExtra("ID", selectID)
@@ -57,6 +62,8 @@ class BookmarkAdapter(private val context: Context, private val gamesList: List<
                 // Log de la acción y cualquier otra acción necesaria
                 Log.d(tag, "Removed game from cache - ID: ${game.id}, Name: ${game.name}")
 
+                Toast.makeText(context, "Juego eliminado.", Toast.LENGTH_LONG).show()
+
                 // Iniciar la actividad de marcadores (o cualquier otra acción necesaria)
                 (holder.itemView.context as BookmarkActivity).recreate()
             } else {
@@ -71,12 +78,21 @@ class BookmarkAdapter(private val context: Context, private val gamesList: List<
     }
 
     class GameViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val textView: TextView = itemView.findViewById(R.id.textList)
+        //private val textView: TextView = itemView.findViewById(R.id.textList)
         val imageButton: ImageButton = itemView.findViewById(R.id.imageButtonList)
         private val textNro: TextView = itemView.findViewById(R.id.textNro)
-        fun bind(game: Game, position: Int, totalItems: Int) {
-            textView.text = game.name
+        private val imageView: ImageView = itemView.findViewById(R.id.imageBookmark)
+        private val progressBar: ProgressBar = itemView.findViewById(R.id.progressBar)
+
+        fun bind(game: GameCached, position: Int, totalItems: Int) {
+            // Mostrar el ProgressBar
+            progressBar.visibility = View.VISIBLE
+            //textView.text = game.name
             textNro.text = (totalItems - position).toString()
+            Glide.with(itemView.context)
+                .load(game.image)
+                .centerCrop()
+                .into(imageView)
         }
     }
 }

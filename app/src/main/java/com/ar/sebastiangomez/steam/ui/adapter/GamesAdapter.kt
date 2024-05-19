@@ -8,12 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.data.GamesRepository
 import com.ar.sebastiangomez.steam.model.Game
+import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.ui.BookmarkActivity
 import com.ar.sebastiangomez.steam.ui.DetalleActivity
 import com.ar.sebastiangomez.steam.utils.GamesCache
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class GamesAdapter(private val context: Context, private val gamesList: List<Game>, private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<GamesAdapter.GameViewHolder>() {
 
@@ -41,11 +47,16 @@ class GamesAdapter(private val context: Context, private val gamesList: List<Gam
 
         holder.imageButton.setOnClickListener {
             Log.d(tag, "Log Button Add Bookmark - ID Position: $position, Game ID: ${game.id}")
-            val cachedGame = Game(game.id, game.name)
-            // Agregar el juego a la lista en caché
-            gamesCache.addGameToCache(context, cachedGame)
-            val intent = Intent(holder.itemView.context, BookmarkActivity::class.java)
-            holder.itemView.context.startActivity(intent)
+            val gamesRepository = GamesRepository()
+            CoroutineScope(Dispatchers.Main).launch {
+                val imageUrl = gamesRepository.getImage(game.id)
+                val cachedGame = GameCached(game.id, game.name, imageUrl.toString())
+                // Agregar el juego a la lista en caché
+                gamesCache.addGameToCache(context, cachedGame)
+                Toast.makeText(context, "Juego A.", Toast.LENGTH_LONG).show()
+                val intent = Intent(holder.itemView.context, BookmarkActivity::class.java)
+                holder.itemView.context.startActivity(intent)
+            }
         }
     }
 

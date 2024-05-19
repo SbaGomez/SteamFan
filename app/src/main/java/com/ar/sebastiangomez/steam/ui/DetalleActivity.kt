@@ -22,7 +22,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.data.GamesRepository
-import com.ar.sebastiangomez.steam.model.Game
+import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.model.GameDetail
 import com.ar.sebastiangomez.steam.model.PcRequirement
 import com.ar.sebastiangomez.steam.model.PcRequirements
@@ -177,26 +177,27 @@ class DetalleActivity : AppCompatActivity() {
         imageButtonBookmark.setOnClickListener {
             try {
                 if (indexID != -1) { // Si el juego está en la lista de favoritos, eliminarlo
-                    cachedGames.removeAt(indexID)
-                    // Guardar la lista actualizada en la caché
-                    gamesCache.saveGamesToCache(this@DetalleActivity, cachedGames)
-                    // Actualizar el UI
-                    updateUI(true)
-                    // Actualizar el índice
-                    indexID = -1
-                } else { // Si el juego no está en la lista de favoritos, agregarlo
-                    Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
-                    val cachedGame = Game(
-                        gameDetail.steam_appid.toString(),
-                        gameDetail.name
-                    )
-                    // Agregar el juego a la lista en caché
-                    gamesCache.addGameToCache(this@DetalleActivity, cachedGame)
-                    val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                    // Después de agregar, actualiza el índice
-                    indexID = cachedGames.indexOfFirst { it.id == gameDetail.steam_appid.toString() }
+                        cachedGames.removeAt(indexID)
+                        // Guardar la lista actualizada en la caché
+                        gamesCache.saveGamesToCache(this@DetalleActivity, cachedGames)
+                        // Actualizar el UI
+                        updateUI(true)
+                        // Actualizar el índice
+                        indexID = -1
+                    } else { // Si el juego no está en la lista de favoritos, agregarlo
+                        Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
+                        val cachedGame = GameCached(
+                            gameDetail.steam_appid.toString(),
+                            gameDetail.name,
+                            gameDetail.header_image
+                        )
+                        // Agregar el juego a la lista en caché
+                        gamesCache.addGameToCache(this@DetalleActivity, cachedGame)
+                        val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                        // Después de agregar, actualiza el índice
+                        indexID = cachedGames.indexOfFirst { it.id == gameDetail.steam_appid.toString() }
                     // Actualizar el UI
                     updateUI(false)
                 }
