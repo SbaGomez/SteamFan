@@ -12,6 +12,10 @@ class GamesRepository {
         return GamesDataSource.getDetails(gameId)
     }
 
+    suspend fun getImage(gameId: String): String?{
+        return GamesDataSource.getImage(gameId)
+    }
+
     suspend fun countGames() : Int{
         return GamesDataSource.countGames()
     }

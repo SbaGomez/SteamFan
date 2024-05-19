@@ -61,6 +61,26 @@ class GamesDataSource {
             }
         }
 
+        suspend fun getImage(gameId: String): String? {
+            Log.d(tag, "Fetching details for game ID: $gameId")
+
+            return try {
+                val response = apiDetails.getGameDetails(gameId)
+                val gameDetailResponse = response[gameId]
+                if (gameDetailResponse?.success == true) {
+                    val headerImage = gameDetailResponse.data.header_image
+                    Log.d(tag, "Header image fetched successfully for game ID: $gameId")
+                    headerImage // Return the header image URL
+                } else {
+                    Log.e(tag, "ERROR: Unsuccessful response or success flag is false")
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e(tag, "ERROR: Failed to fetch game details: ${e.message}")
+                null
+            }
+        }
+
         suspend fun countGames() : Int{
             Log.d(tag, "Games DataSource Get Count")
 
