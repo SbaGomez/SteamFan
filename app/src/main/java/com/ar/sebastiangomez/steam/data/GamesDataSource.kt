@@ -62,7 +62,7 @@ class GamesDataSource {
         }
 
         suspend fun getImage(gameId: String): String? {
-            Log.d(tag, "Fetching details for game ID: $gameId")
+            Log.d(tag, "Fetching image for game ID: $gameId")
 
             return try {
                 val response = apiDetails.getGameDetails(gameId)
@@ -76,7 +76,7 @@ class GamesDataSource {
                     null
                 }
             } catch (e: Exception) {
-                Log.e(tag, "ERROR: Failed to fetch game details: ${e.message}")
+                Log.e(tag, "ERROR: Failed to fetch game image: ${e.message}")
                 null
             }
         }
