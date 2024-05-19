@@ -664,7 +664,7 @@
             android:onClick="onBookmarkClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/tabbookmark"
+            android:src="@drawable/tabbookmarkactive"
             tools:ignore="VisualLintBounds" />
 
         <!-- Espacio para separar los botones -->
@@ -678,13 +678,13 @@
             android:id="@+id/homeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
             android:background="#00FFFFFF"
             android:contentDescription="@string/steam_button"
-            android:layout_marginStart="30dp"
             android:onClick="onHomeClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/homesteamtab" />
+            android:src="@drawable/homesteamtabactive" />
 
         <!-- Espacio para separar los botones -->
         <View

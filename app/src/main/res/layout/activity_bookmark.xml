@@ -297,7 +297,7 @@
             android:contentDescription="@string/fav_button"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/tabbookmarkactive"
+            android:src="@drawable/tabbookmark"
             tools:ignore="VisualLintBounds" />
 
         <!-- Espacio para separar los botones -->
@@ -317,7 +317,7 @@
             android:onClick="onHomeClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/homesteamtab"
+            android:src="@drawable/homesteamtabactive"
             tools:ignore="DuplicateSpeakableTextCheck" />
 
         <!-- Espacio para separar los botones -->

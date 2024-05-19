@@ -238,7 +238,7 @@
             android:onClick="onBookmarkClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/tabbookmark"
+            android:src="@drawable/tabbookmarkactive"
             tools:ignore="VisualLintBounds" />
 
         <!-- Espacio para separar los botones -->
@@ -257,7 +257,7 @@
             android:contentDescription="@string/app_name"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/homesteamtabactive"
+            android:src="@drawable/homesteamtab"
             tools:ignore="DuplicateSpeakableTextCheck" />
 
         <!-- Espacio para separar los botones -->
