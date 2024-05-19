@@ -60,9 +60,6 @@ class GamesCache
             {
                 (context as BookmarkActivity).recreate()
             }
-            else{
-                (context as HomeActivity).recreate()
-            }
         } else {
             // El juego no se encontró en la lista en caché
             Log.d(tag, "Game not found in cache - ID: $id")

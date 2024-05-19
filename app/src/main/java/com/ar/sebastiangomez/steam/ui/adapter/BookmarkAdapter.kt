@@ -2,6 +2,7 @@ package com.ar.sebastiangomez.steam.ui.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,13 +19,15 @@ import com.ar.sebastiangomez.steam.ui.DetalleActivity
 import com.ar.sebastiangomez.steam.utils.GamesCache
 import com.bumptech.glide.Glide
 
-class BookmarkAdapter(private val context: Context, private val gamesList: List<GameCached>, private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<BookmarkAdapter.GameViewHolder>() {
+class BookmarkAdapter(private val context: Context,
+                      private val gamesList: List<GameCached>,
+                      private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<BookmarkAdapter.GameViewHolder>() {
 
     private lateinit var gamesCache: GamesCache
     private val tag = "LOG-BOOKMARK-LIST"
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.layout_bookmark_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_bookmark_item, parent, false)
         return GameViewHolder(view)
     }
 
@@ -46,6 +49,8 @@ class BookmarkAdapter(private val context: Context, private val gamesList: List<
 
         holder.imageButton.setOnClickListener {
             gamesCache.removeGameToCache(context, game.id, "BookmarkActivity")
+            holder.imageButton.setImageResource(R.drawable.bookmarkadd)
+            holder.imageButton.setBackgroundColor(Color.parseColor("#495d92"))
         }
     }
 

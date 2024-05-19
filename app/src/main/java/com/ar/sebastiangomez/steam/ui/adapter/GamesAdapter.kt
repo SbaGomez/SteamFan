@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.data.GamesRepository
@@ -20,11 +21,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class GamesAdapter(
-    private val context: Context,
-    private val gamesList: List<Game>,
-    private val onItemClick: (position: Int, gameId: String) -> Unit
-) : RecyclerView.Adapter<GamesAdapter.GameViewHolder>() {
+class GamesAdapter(private val context: Context,
+                   private val gamesList: List<Game>,
+                   private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<GamesAdapter.GameViewHolder>() {
 
     private lateinit var gamesCache: GamesCache
     private val tag = "LOG-GAMES-LIST"
@@ -52,6 +51,7 @@ class GamesAdapter(
 
         holder.imageButton.setOnClickListener {
             val isBookmarked = gamesCache.exists(context, game.id)
+
             if (isBookmarked) {
                 gamesCache.removeGameToCache(context, game.id, "HomeActivity")
                 updateBookmarkButton(holder, game)
@@ -59,10 +59,17 @@ class GamesAdapter(
                 Log.d(tag, "Log Button Add Bookmark - ID Position: $position, Game ID: ${game.id}")
                 val gamesRepository = GamesRepository()
                 CoroutineScope(Dispatchers.Main).launch {
-                    val imageUrl = gamesRepository.getImage(game.id)
-                    val cachedGame = GameCached(game.id, game.name, imageUrl.toString())
-                    gamesCache.addGameToCache(context, cachedGame)
-                    updateBookmarkButton(holder, game)
+                    val detail = gamesRepository.getDetails(game.id)
+                    if(detail != null)
+                    {
+                        val imageUrl = gamesRepository.getImage(game.id)
+                        val cachedGame = GameCached(game.id, game.name, imageUrl.toString())
+                        gamesCache.addGameToCache(context, cachedGame)
+                        updateBookmarkButton(holder, game)
+                    }
+                    else{
+                        Toast.makeText(context, "El juego - ${game.name} - no tiene datos.", Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         }
