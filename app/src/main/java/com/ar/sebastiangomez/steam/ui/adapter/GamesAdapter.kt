@@ -53,7 +53,7 @@ class GamesAdapter(private val context: Context, private val gamesList: List<Gam
                 val cachedGame = GameCached(game.id, game.name, imageUrl.toString())
                 // Agregar el juego a la lista en caché
                 gamesCache.addGameToCache(context, cachedGame)
-                Toast.makeText(context, "Juego A.", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Agregaste - ${game.name} - a favoritos.", Toast.LENGTH_LONG).show()
                 val intent = Intent(holder.itemView.context, BookmarkActivity::class.java)
                 holder.itemView.context.startActivity(intent)
             }

@@ -62,7 +62,7 @@ class BookmarkAdapter(private val context: Context, private val gamesList: List<
                 // Log de la acción y cualquier otra acción necesaria
                 Log.d(tag, "Removed game from cache - ID: ${game.id}, Name: ${game.name}")
 
-                Toast.makeText(context, "Juego eliminado.", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Eliminaste - ${game.name} - de favoritos.", Toast.LENGTH_LONG).show()
 
                 // Iniciar la actividad de marcadores (o cualquier otra acción necesaria)
                 (holder.itemView.context as BookmarkActivity).recreate()
