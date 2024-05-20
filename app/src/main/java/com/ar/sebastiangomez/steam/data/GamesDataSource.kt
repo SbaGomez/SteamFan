@@ -47,6 +47,7 @@ class GamesDataSource {
                 val gameDetailResponse = response[gameId]
                 if (gameDetailResponse?.success == true) {
                     val gameDetail = gameDetailResponse.data
+                    Log.d(tag, "Game details: $gameDetail")
                     run {
                         Log.d(tag, "Game details fetched successfully for ID: $gameId")
                         gameDetail // Return the game detail
