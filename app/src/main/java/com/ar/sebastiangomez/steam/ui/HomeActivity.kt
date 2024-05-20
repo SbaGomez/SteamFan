@@ -105,45 +105,6 @@ class HomeActivity : AppCompatActivity() {
         searchJob.cancel()
     }
 
-    private fun setupSearchBar() {
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                if (query != null) {
-                    performFiltering(query)
-                }
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
-                    debounceFilter(newText)
-                }
-                return true
-            }
-        })
-    }
-
-    private fun debounceFilter(query: String) {
-        filterJob?.cancel() // Cancela el trabajo anterior si existe
-        filterJob = uiScope.launch {
-            delay(300) // Espera 300ms antes de ejecutar el filtro
-            performFiltering(query)
-        }
-    }
-
-    private fun performFiltering(query: String) {
-        uiScope.launch {
-            if (::allGamesList.isInitialized) {
-                val filteredList = searchHelper.filterGamesBySearchTerm(allGamesList, query)
-                withContext(Dispatchers.Main) {
-                    filteredGames.value = ArrayList(filteredList)
-                }
-            } else {
-                Log.e("HomeActivity", "allGamesList is not initialized yet.")
-            }
-        }
-    }
-
     private fun bindViewObject() {
         progressBar = findViewById(R.id.progressBar)
         themeButton = findViewById(R.id.themeButton)
@@ -216,6 +177,45 @@ class HomeActivity : AppCompatActivity() {
         isLoading = false
     }
 
+    private fun setupSearchBar() {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    performFiltering(query)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    debounceFilter(newText)
+                }
+                return true
+            }
+        })
+    }
+
+    private fun debounceFilter(query: String) {
+        filterJob?.cancel() // Cancela el trabajo anterior si existe
+        filterJob = uiScope.launch {
+            delay(300) // Espera 300ms antes de ejecutar el filtro
+            performFiltering(query)
+        }
+    }
+
+    private fun performFiltering(query: String) {
+        uiScope.launch {
+            if (::allGamesList.isInitialized) {
+                val filteredList = searchHelper.filterGamesBySearchTerm(allGamesList, query)
+                withContext(Dispatchers.Main) {
+                    filteredGames.value = ArrayList(filteredList)
+                }
+            } else {
+                Log.e("HomeActivity", "allGamesList is not initialized yet.")
+            }
+        }
+    }
+
     fun onFilterGamesBySearchClick(view: View) {
         hideKeyboard(view)
         linearSearch.removeView(linearErrorSearchButton)
@@ -272,7 +272,7 @@ class HomeActivity : AppCompatActivity() {
             themeChangeReceiver, IntentFilter("com.example.ACTION_THEME_CHANGED")
         )
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
+        val currentTheme = preferences.getString("theme", "light") ?: "light" //  Get theme from shared preferences
         themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
     }
 
@@ -291,8 +291,8 @@ class HomeActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun onChangeThemeButtonClick(view: View) {
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
-        val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
+        val currentTheme = preferences.getString("theme", "light") // Get theme from shared preferences
+        val newTheme = if (currentTheme == "light") "dark" else "light" // Change theme
 
         Log.d(tag, "New Theme: $newTheme")
         themeHelper.changeTheme(newTheme, this)
@@ -308,7 +308,7 @@ class HomeActivity : AppCompatActivity() {
     fun onSearchCloseClick(view: View) {
         linearSearch.removeView(linearSearchButton) //Remove search buttons
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
-        searchView.clearFocus() // Quita el foco del SearchView
+        searchView.clearFocus() // Remove Focus from SearchView
     }
 
     @SuppressLint("NotifyDataSetChanged")
