@@ -172,7 +172,7 @@ class BookmarkActivity : AppCompatActivity() {
 
     fun onFilterGamesBySearchClick(view: View) {
         hideKeyboard(view)
-        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
+        linearSearch.removeView(linearErrorSearchButton) // Remove Error Search
 
         val searchTerm = searchView.query.toString().trim()
 
@@ -183,15 +183,14 @@ class BookmarkActivity : AppCompatActivity() {
                     progressBar.visibility = View.VISIBLE
 
                     val gamesList = gamesCache.getGamesFromCache(this@BookmarkActivity)
-                    val filteredGamesList = searchHelper.filterGamesBySearchTerm(gamesList, searchTerm)
+                    val sortedFilteredGamesList = searchHelper.filterGamesBySearchTerm(gamesList, searchTerm)
 
-                    if (filteredGamesList.isEmpty()) {
+                    if (sortedFilteredGamesList.isEmpty()) {
                         showError(getString(R.string.error1))
                     } else {
-                        val sortedList = searchHelper.sortFilteredGamesList(filteredGamesList, searchTerm)
                         runOnUiThread {
-                            val adapter = BookmarkAdapter(this@BookmarkActivity, sortedList) { position, gameId ->
-                                val gameName = sortedList[position].name
+                            val adapter = BookmarkAdapter(this@BookmarkActivity, sortedFilteredGamesList) { position, gameId ->
+                                val gameName = sortedFilteredGamesList[position].name
                                 Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
                                 // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
                             }

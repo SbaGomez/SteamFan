@@ -33,7 +33,10 @@ import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.ui.adapter.GamesAdapter
 import com.ar.sebastiangomez.steam.utils.SearchHelper
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -61,7 +64,12 @@ class HomeActivity : AppCompatActivity() {
     private val itemsPerPage = 10
     private var currentPage = 0
     private var isLoading = false
+
+    private val searchJob = Job()
+    private val uiScope = CoroutineScope(Dispatchers.Main + searchJob)
+    private var filterJob: Job? = null
     private var filteredGames: MutableLiveData<List<Game>> = MutableLiveData<List<Game>>()
+
     private val gamesRepository: GamesRepository = GamesRepository()
 
     private val themeChangeReceiver = object : BroadcastReceiver() {
@@ -84,55 +92,55 @@ class HomeActivity : AppCompatActivity() {
             insets
         }
 
-        // Registrar el receptor del broadcast
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-            themeChangeReceiver, IntentFilter("com.example.ACTION_THEME_CHANGED")
-        )
-
         bindViewObject()
         getImageTheme()
         showButtonSearch() // Mostrar el boton buscar al abrir el search
         getGames()
-
-        setupSearchBar()
-
-        filteredGames.observe(this) { filteredGames ->
-            (recyclerView.adapter as? GamesAdapter)?.updateItems(filteredGames)
-        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         // Desregistrar el receptor del broadcast
         LocalBroadcastManager.getInstance(this).unregisterReceiver(themeChangeReceiver)
+        searchJob.cancel()
     }
 
     private fun setupSearchBar() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
-                    filterGames(query)
+                    performFiltering(query)
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                    filterGames(newText)
+                    debounceFilter(newText)
                 }
                 return true
             }
         })
     }
 
-    fun filterGames(query: String) {
-        if (::allGamesList.isInitialized) {
-            val filteredList = allGamesList.filter {
-                it.name.contains(query, ignoreCase = true)
+    private fun debounceFilter(query: String) {
+        filterJob?.cancel() // Cancela el trabajo anterior si existe
+        filterJob = uiScope.launch {
+            delay(300) // Espera 300ms antes de ejecutar el filtro
+            performFiltering(query)
+        }
+    }
+
+    private fun performFiltering(query: String) {
+        uiScope.launch {
+            if (::allGamesList.isInitialized) {
+                val filteredList = searchHelper.filterGamesBySearchTerm(allGamesList, query)
+                withContext(Dispatchers.Main) {
+                    filteredGames.value = ArrayList(filteredList)
+                }
+            } else {
+                Log.e("HomeActivity", "allGamesList is not initialized yet.")
             }
-            filteredGames.value = ArrayList(filteredList)
-        } else {
-            Log.e("HomeActivity", "allGamesList is not initialized yet.")
         }
     }
 
@@ -152,6 +160,12 @@ class HomeActivity : AppCompatActivity() {
         
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        setupSearchBar()
+
+        filteredGames.observe(this) { filteredGames ->
+            (recyclerView.adapter as? GamesAdapter)?.updateItems(filteredGames)
+        }
     }
 
     private fun getGames()
@@ -220,11 +234,9 @@ class HomeActivity : AppCompatActivity() {
                     if (filteredGamesList.isEmpty()) {
                         showError(getString(R.string.error1))
                     } else {
-                        val sortedList = searchHelper.sortFilteredGamesList(filteredGamesList, searchTerm)
-
                         runOnUiThread {
-                            val adapter = GamesAdapter(this@HomeActivity, sortedList) { position, gameId ->
-                                val gameName = sortedList[position].name
+                            val adapter = GamesAdapter(this@HomeActivity, filteredGamesList) { position, gameId ->
+                                val gameName = filteredGamesList[position].name
                                 Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
                                 // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
                                 searchView.clearFocus() // Quita el foco del SearchView
@@ -255,6 +267,10 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun getImageTheme() {
+        // Registrar el receptor del broadcast
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            themeChangeReceiver, IntentFilter("com.example.ACTION_THEME_CHANGED")
+        )
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
         themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
