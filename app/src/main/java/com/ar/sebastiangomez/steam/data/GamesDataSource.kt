@@ -62,6 +62,21 @@ class GamesDataSource {
             }
         }
 
+        suspend fun isSuccess(gameId: String): Boolean? {
+            Log.d(tag, "Fetching isSuccess for game ID: $gameId")
+
+            return try {
+                val response = apiDetails.getGameDetails(gameId)
+                val gameDetailResponse = response[gameId]
+                val isSuccess = gameDetailResponse?.success
+                Log.d(tag, "Game isSuccess: $isSuccess")
+                isSuccess
+            } catch (e: Exception) {
+                Log.e(tag, "ERROR: Failed to fetch game details: ${e.message}")
+                null
+            }
+        }
+
         suspend fun getImage(gameId: String): String? {
             Log.d(tag, "Fetching image for game ID: $gameId")
 

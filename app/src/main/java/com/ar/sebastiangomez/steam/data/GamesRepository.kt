@@ -12,6 +12,10 @@ class GamesRepository {
         return GamesDataSource.getDetails(gameId)
     }
 
+    suspend fun isGameSuccess(gameId: String): Boolean? {
+        return GamesDataSource.isSuccess(gameId)
+    }
+
     suspend fun getImage(gameId: String): String?{
         return GamesDataSource.getImage(gameId)
     }

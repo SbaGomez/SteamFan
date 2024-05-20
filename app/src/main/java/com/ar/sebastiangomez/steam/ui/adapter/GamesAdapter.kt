@@ -60,8 +60,8 @@ class GamesAdapter(private val context: Context,
                 Log.d(tag, "Log Button Add Bookmark - ID Position: $position, Game ID: ${game.id}")
                 val gamesRepository = GamesRepository()
                 CoroutineScope(Dispatchers.Main).launch {
-                    val detail = gamesRepository.getDetails(game.id)
-                    if(detail != null)
+                    val isSuccess = gamesRepository.isGameSuccess(game.id)
+                    if(isSuccess == true)
                     {
                         val imageUrl = gamesRepository.getImage(game.id)
                         val cachedGame = GameCached(game.id, game.name, imageUrl.toString())
