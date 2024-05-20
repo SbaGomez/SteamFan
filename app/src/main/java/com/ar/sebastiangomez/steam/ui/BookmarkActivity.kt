@@ -234,7 +234,7 @@ class BookmarkActivity : AppCompatActivity() {
         val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
         val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
         val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
-        themeHelper.changeTheme(newTheme)
+        themeHelper.changeTheme(newTheme, this)
     }
 
     @Suppress("UNUSED_PARAMETER")

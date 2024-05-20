@@ -21,12 +21,20 @@ class ThemeHelper(private val context: Context) {
         }
     }
 
-    fun changeTheme(theme: String) {
-        val editor = preferences.edit()
-        editor.putString("theme", theme)
-        editor.apply()
-        val intent = Intent("com.example.ACTION_THEME_CHANGED")
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
-        (context as? AppCompatActivity)?.recreate() // Recrea la actividad para aplicar el nuevo tema
+    fun changeTheme(theme: String, context: Context) {
+        try {
+            val preferences = context.getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
+            val editor = preferences.edit()
+            editor.putString("theme", theme)
+            editor.apply()
+            if (context is AppCompatActivity) {
+                context.recreate()
+            } else {
+                Log.e("ERROR", "Context is not an instance of AppCompatActivity")
+            }
+        } catch (e: Exception) {
+            Log.e("ERROR", "Failed to change theme: ${e.message}")
+            e.printStackTrace()
+        }
     }
 }

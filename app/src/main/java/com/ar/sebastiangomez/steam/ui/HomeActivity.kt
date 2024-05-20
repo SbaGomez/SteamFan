@@ -61,9 +61,7 @@ class HomeActivity : AppCompatActivity() {
     private val itemsPerPage = 10
     private var currentPage = 0
     private var isLoading = false
-
     private var filteredGames: MutableLiveData<List<Game>> = MutableLiveData<List<Game>>()
-
     private val gamesRepository: GamesRepository = GamesRepository()
 
     private val themeChangeReceiver = object : BroadcastReceiver() {
@@ -103,6 +101,12 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        // Desregistrar el receptor del broadcast
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(themeChangeReceiver)
+    }
+
     private fun setupSearchBar() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -122,16 +126,14 @@ class HomeActivity : AppCompatActivity() {
     }
 
     fun filterGames(query: String) {
-        val filteredList = allGamesList.filter {
-            it.name.contains(query, ignoreCase = true)
+        if (::allGamesList.isInitialized) {
+            val filteredList = allGamesList.filter {
+                it.name.contains(query, ignoreCase = true)
+            }
+            filteredGames.value = ArrayList(filteredList)
+        } else {
+            Log.e("HomeActivity", "allGamesList is not initialized yet.")
         }
-        filteredGames.value = ArrayList(filteredList)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        // Desregistrar el receptor del broadcast
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(themeChangeReceiver)
     }
 
     private fun bindViewObject() {
@@ -277,7 +279,7 @@ class HomeActivity : AppCompatActivity() {
         val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
 
         Log.d(tag, "New Theme: $newTheme")
-        themeHelper.changeTheme(newTheme)
+        themeHelper.changeTheme(newTheme, this)
     }
 
     @Suppress("UNUSED_PARAMETER")
