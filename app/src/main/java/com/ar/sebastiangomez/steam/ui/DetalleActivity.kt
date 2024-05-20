@@ -21,7 +21,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.data.DolarRepository
 import com.ar.sebastiangomez.steam.data.GamesRepository
+import com.ar.sebastiangomez.steam.model.Dolar
 import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.model.GameDetail
 import com.ar.sebastiangomez.steam.model.PcRequirement
@@ -71,6 +73,7 @@ class DetalleActivity : AppCompatActivity() {
     private val tag = "LOG-DETAIL"
 
     private val gamesRepository: GamesRepository = GamesRepository()
+    private val dolarRepository: DolarRepository = DolarRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         gamesCache = GamesCache()
@@ -154,7 +157,7 @@ class DetalleActivity : AppCompatActivity() {
         }
     }
 
-    private fun setData(gameDetail : GameDetail){
+    private suspend fun setData(gameDetail : GameDetail){
         val pcRequirements = parsePcRequirements(gameDetail.pc_requirements.toString())
         val cachedGames = gamesCache.getGamesFromCache(this@DetalleActivity)
         var indexID = cachedGames.indexOfFirst { it.id == gameDetail.steam_appid.toString() }
@@ -224,6 +227,11 @@ class DetalleActivity : AppCompatActivity() {
                 imageType.setImageResource(R.drawable.tagmusic)
             }
         }
+
+        val dolar: Dolar? = dolarRepository.getDolarTarjeta()
+
+        Log.d(tag, "Dolar Tarjeta: ${dolar?.venta}")
+        Log.d(tag, "Precio: ${gameDetail.price_overview.final_formatted}")
 
         // Cargar la imagen utilizando Glide
         runOnUiThread {
