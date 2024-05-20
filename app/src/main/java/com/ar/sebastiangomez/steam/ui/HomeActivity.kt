@@ -33,14 +33,8 @@ import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.ui.adapter.GamesAdapter
 import com.ar.sebastiangomez.steam.utils.SearchHelper
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.IOException
-
 
 class HomeActivity : AppCompatActivity() {
 
@@ -118,7 +112,7 @@ class HomeActivity : AppCompatActivity() {
 
         linearSearch.removeView(linearSearchButton) //Remove search buttons
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
-        
+
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -135,7 +129,7 @@ class HomeActivity : AppCompatActivity() {
             val gameName = displayedGamesList[position].name
             Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
         }
-        
+
         recyclerView.adapter = adapter
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -206,7 +200,9 @@ class HomeActivity : AppCompatActivity() {
     private fun performFiltering(query: String) {
         uiScope.launch {
             if (::allGamesList.isInitialized) {
-                val filteredList = searchHelper.filterGamesBySearchTerm(allGamesList, query)
+                val filteredList = withContext(Dispatchers.Default) {
+                    searchHelper.filterGamesBySearchTerm(allGamesList, query)
+                }
                 withContext(Dispatchers.Main) {
                     filteredGames.value = ArrayList(filteredList)
                 }
@@ -328,6 +324,4 @@ class HomeActivity : AppCompatActivity() {
         // Fetch games again
         getGames()
     }
-
 }
-
