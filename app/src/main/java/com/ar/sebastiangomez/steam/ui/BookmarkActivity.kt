@@ -19,11 +19,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.model.Game
+import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.ui.adapter.BookmarkAdapter
+import com.ar.sebastiangomez.steam.ui.adapter.GamesAdapter
 import com.ar.sebastiangomez.steam.utils.GamesCache
 import com.ar.sebastiangomez.steam.utils.SearchHelper
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
@@ -48,6 +52,8 @@ class BookmarkActivity : AppCompatActivity() {
     private lateinit var textCountGames : TextView
     private lateinit var progressBar : ProgressBar
     private val tag = "LOG-BOOKMARK"
+
+    private var filteredGames: MutableLiveData<List<GameCached>> = MutableLiveData<List<GameCached>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         searchHelper = SearchHelper()
@@ -88,6 +94,37 @@ class BookmarkActivity : AppCompatActivity() {
         showButtonSearch() // Mostrar el boton buscar al abrir el search
         getAll()
 
+        setupSearchBar()
+
+        filteredGames.observe(this) { filteredGames ->
+            (recyclerView.adapter as? BookmarkAdapter)?.updateItems(filteredGames)
+        }
+    }
+
+    private fun setupSearchBar() {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    filterGames(query)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    filterGames(newText)
+                }
+                return true
+            }
+        })
+    }
+
+    fun filterGames(query: String) {
+        val gamesList = gamesCache.getGamesFromCache(this)
+        val filteredList = gamesList.filter {
+            it.name.contains(query, ignoreCase = true)
+        }
+        filteredGames.value = ArrayList(filteredList)
     }
 
     private fun getAll()

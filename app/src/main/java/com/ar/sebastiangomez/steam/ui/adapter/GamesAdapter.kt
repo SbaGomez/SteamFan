@@ -1,5 +1,6 @@
 package com.ar.sebastiangomez.steam.ui.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -22,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class GamesAdapter(private val context: Context,
-                   private val gamesList: List<Game>,
+                   private var gamesList: List<Game>,
                    private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<GamesAdapter.GameViewHolder>() {
 
     private lateinit var gamesCache: GamesCache
@@ -77,6 +78,12 @@ class GamesAdapter(private val context: Context,
 
     override fun getItemCount(): Int {
         return gamesList.size
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateItems(lista: List<Game>) {
+        gamesList = lista
+        this.notifyDataSetChanged()
     }
 
     private fun updateBookmarkButton(holder: GameViewHolder, game: Game) {

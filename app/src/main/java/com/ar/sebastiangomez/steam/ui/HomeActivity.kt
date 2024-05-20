@@ -1,8 +1,10 @@
 package com.ar.sebastiangomez.steam.ui
 
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -20,7 +22,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
@@ -58,7 +62,16 @@ class HomeActivity : AppCompatActivity() {
     private var currentPage = 0
     private var isLoading = false
 
+    private var filteredGames: MutableLiveData<List<Game>> = MutableLiveData<List<Game>>()
+
     private val gamesRepository: GamesRepository = GamesRepository()
+
+    private val themeChangeReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            // Recargar la actividad para aplicar el nuevo tema
+            recreate()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         searchHelper = SearchHelper()
@@ -73,10 +86,52 @@ class HomeActivity : AppCompatActivity() {
             insets
         }
 
+        // Registrar el receptor del broadcast
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            themeChangeReceiver, IntentFilter("com.example.ACTION_THEME_CHANGED")
+        )
+
         bindViewObject()
         getImageTheme()
         showButtonSearch() // Mostrar el boton buscar al abrir el search
         getGames()
+
+        setupSearchBar()
+
+        filteredGames.observe(this) { filteredGames ->
+            (recyclerView.adapter as? GamesAdapter)?.updateItems(filteredGames)
+        }
+    }
+
+    private fun setupSearchBar() {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    filterGames(query)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) {
+                    filterGames(newText)
+                }
+                return true
+            }
+        })
+    }
+
+    fun filterGames(query: String) {
+        val filteredList = allGamesList.filter {
+            it.name.contains(query, ignoreCase = true)
+        }
+        filteredGames.value = ArrayList(filteredList)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Desregistrar el receptor del broadcast
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(themeChangeReceiver)
     }
 
     private fun bindViewObject() {
@@ -92,16 +147,18 @@ class HomeActivity : AppCompatActivity() {
 
         linearSearch.removeView(linearSearchButton) //Remove search buttons
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
+        
+        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
     }
 
     private fun getGames()
     {
-        recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
         val adapter = GamesAdapter(this@HomeActivity, displayedGamesList) { position, gameId ->
             val gameName = displayedGamesList[position].name
             Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
         }
+        
         recyclerView.adapter = adapter
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -236,10 +293,22 @@ class HomeActivity : AppCompatActivity() {
         searchView.clearFocus() // Quita el foco del SearchView
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Suppress("UNUSED_PARAMETER")
     fun onReloadHomeClick(view: View) {
         searchView.setQuery("", false)
-        recreate()
+        searchView.clearFocus()
+
+        // Reset pagination variables
+        currentPage = 0
+        isLoading = false
+        displayedGamesList.clear()
+
+        // Notify the adapter that the data set has changed
+        recyclerView.adapter?.notifyDataSetChanged()
+
+        // Fetch games again
+        getGames()
     }
 
 }

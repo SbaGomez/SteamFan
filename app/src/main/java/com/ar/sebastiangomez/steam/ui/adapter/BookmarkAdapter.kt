@@ -1,8 +1,10 @@
 package com.ar.sebastiangomez.steam.ui.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,14 +15,19 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.ui.BookmarkActivity
 import com.ar.sebastiangomez.steam.ui.DetalleActivity
 import com.ar.sebastiangomez.steam.utils.GamesCache
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 
 class BookmarkAdapter(private val context: Context,
-                      private val gamesList: List<GameCached>,
+                      private var gamesList: List<GameCached>,
                       private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<BookmarkAdapter.GameViewHolder>() {
 
     private lateinit var gamesCache: GamesCache
@@ -54,6 +61,12 @@ class BookmarkAdapter(private val context: Context,
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateItems(lista: List<GameCached>) {
+        gamesList = lista
+        this.notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int {
         return gamesList.size
     }
@@ -66,13 +79,38 @@ class BookmarkAdapter(private val context: Context,
         private val progressBar: ProgressBar = itemView.findViewById(R.id.progressBar)
 
         fun bind(game: GameCached, position: Int, totalItems: Int) {
-            // Mostrar el ProgressBar
+            // Mostrar el ProgressBar antes de cargar la imagen
             progressBar.visibility = View.VISIBLE
-            //textView.text = game.name
+            //textNro.text = game.name
             textNro.text = (totalItems - position).toString()
+
+            // Cargar la imagen usando Glide con un listener para manejar la visibilidad del ProgressBar
             Glide.with(itemView.context)
                 .load(game.image)
                 .centerCrop()
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        // Ocultar el ProgressBar si la carga de la imagen falla
+                        progressBar.visibility = View.INVISIBLE
+                        return false
+                    }
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        model: Any,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        // Ocultar el ProgressBar cuando la imagen haya sido cargada
+                        progressBar.visibility = View.INVISIBLE
+                        return false
+                    }
+                })
                 .into(imageView)
         }
     }
