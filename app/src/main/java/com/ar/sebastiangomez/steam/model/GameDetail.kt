@@ -11,6 +11,7 @@ data class GameDetail(
     val steam_appid: Int,
     val required_age: Int,
     val is_free: Boolean,
+    val dlc: List<Int>,
     val detailed_description: String,
     val about_the_game: String,
     val short_description: String,
@@ -18,6 +19,16 @@ data class GameDetail(
     val capsule_image: String,
     val website: String?,
     val pc_requirements: Any?,
+    val price_overview: PriceOverview
+)
+
+data class PriceOverview(
+    val currency: String,
+    val initial: Int,
+    val final: Int,
+    val discount_percent: Int,
+    val initial_formatted: String,
+    val final_formatted: String
 )
 
 data class PcRequirements(
