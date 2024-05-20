@@ -5,7 +5,7 @@
     <string name="title_detail">Detalle</string>
     <string name="title_fav">Favoritos</string>
     <string name="fav_button">Fav</string>
-    <string name="search_button">Buscar juego.</string>
+    <string name="search_button">Busqueda exacta.</string>
     <string name="reload_home_button">Recargar juegos.</string>
     <string name="search_close_button">Cerrar</string>
     <string name="placeholder_search_input">Buscar juegos...</string>
