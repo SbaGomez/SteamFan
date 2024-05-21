@@ -24,10 +24,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
-import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.ui.adapter.BookmarkAdapter
-import com.ar.sebastiangomez.steam.ui.adapter.GamesAdapter
 import com.ar.sebastiangomez.steam.utils.GamesCache
 import com.ar.sebastiangomez.steam.utils.SearchHelper
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
@@ -193,6 +191,7 @@ class BookmarkActivity : AppCompatActivity() {
                                 val gameName = sortedFilteredGamesList[position].name
                                 Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
                                 // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
+                                searchView.clearFocus()
                             }
                             recyclerView.visibility = View.VISIBLE
                             recyclerView.adapter = adapter

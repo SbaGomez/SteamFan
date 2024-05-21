@@ -15,7 +15,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
-import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.ui.BookmarkActivity
 import com.ar.sebastiangomez.steam.ui.DetalleActivity
