@@ -312,7 +312,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    @Suppress("UNUSED_PARAMETER")
     fun onReloadHomeClick(view: View) {
         searchView.setQuery("", false)
         onSearchCloseClick(view)
