@@ -5,11 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -33,7 +35,6 @@ import com.ar.sebastiangomez.steam.utils.GamesCache
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 class DetalleActivity : AppCompatActivity() {
     private lateinit var gamesCache: GamesCache
@@ -77,10 +78,12 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var linearPrincipal : LinearLayout
     private lateinit var linearPrecioUSD : LinearLayout
     private lateinit var linearPrecioARG : LinearLayout
+    private lateinit var linearLanzamiento : LinearLayout
     private lateinit var textFechaLanzamiento : TextView
     private lateinit var textPrecioUSD : TextView
     private lateinit var textPrecioARG : TextView
     private lateinit var textDolarTarjeta : TextView
+    private lateinit var buttonComprar : Button
 
     private val tag = "LOG-DETAIL"
 
@@ -148,10 +151,12 @@ class DetalleActivity : AppCompatActivity() {
         linearPrincipal = findViewById(R.id.linearPrincipal)
         linearPrecioARG = findViewById(R.id.linearPrecioARG)
         linearPrecioUSD = findViewById(R.id.linearPrecioUSD)
+        linearLanzamiento = findViewById(R.id.linearLanzamiento)
         textFechaLanzamiento = findViewById(R.id.textFechaLanzamiento)
         textPrecioUSD = findViewById(R.id.textPrecioUSD)
         textPrecioARG = findViewById(R.id.textPrecioARG)
         textDolarTarjeta = findViewById(R.id.textDolarTarjeta)
+        buttonComprar = findViewById(R.id.buttonComprar)
     }
 
     private fun getId(): Int {
@@ -249,27 +254,37 @@ class DetalleActivity : AppCompatActivity() {
                 imageType.setImageResource(R.drawable.tagmusic)
             }
         }
+        if(gameDetail.release_date.date.isEmpty())
+        {
+            linearInformacion.removeView(linearLanzamiento)
+        }else {
+            textFechaLanzamiento.text = gameDetail.release_date.date
+        }
 
-        if(gameDetail.is_free || gameDetail.release_date.coming_soon || gameDetail.price_overview == null)
+        val priceOverview =  gameDetail.price_overview
+        if(gameDetail.is_free || gameDetail.release_date.coming_soon || priceOverview == null)
         {
             linearInformacion.removeView(linearPrecioARG)
             linearPrincipal.removeView(linearPrecioUSD)
         }
         else{
-            if(!gameDetail.release_date.coming_soon && gameDetail.price_overview != null)
-            {
-                textFechaLanzamiento.text = gameDetail.release_date.date
-                val dolartarjeta: Dolar? = dolarRepository.getDolarTarjeta()
-                val ventaTarjetaNoNulo: Double = dolartarjeta?.venta ?: 0.0
-                textDolarTarjeta.text = ventaTarjetaNoNulo.toString()
-                val priceDolar = gameDetail.price_overview.final_formatted ?: "N/A"
-                val priceDouble = """\$\s?([0-9]+(?:\.[0-9]+)?) USD""".toRegex().find(priceDolar)?.groups?.get(1)?.value?.toDoubleOrNull() ?: 0.0
-                Log.d(tag, priceDouble.toString())
-                val priceArg = priceDouble * ventaTarjetaNoNulo
-                val priceArgFormatted = String.format("%.2f", priceArg)
-                textPrecioARG.text = priceDolar
-                textPrecioUSD.text = "$ $priceArgFormatted ARG"
-            }
+            val dolartarjeta: Dolar? = dolarRepository.getDolarTarjeta()
+            val ventaTarjetaNoNulo: Double = dolartarjeta?.venta ?: 0.0
+            textDolarTarjeta.text = "$ $ventaTarjetaNoNulo ARG"
+            val priceDolar = gameDetail.price_overview.final_formatted
+            val priceDouble = """\$\s?([0-9]+(?:\.[0-9]+)?) USD""".toRegex().find(priceDolar)?.groups?.get(1)?.value?.toDoubleOrNull() ?: 0.0
+            Log.d(tag, priceDouble.toString())
+            val priceArg = priceDouble * ventaTarjetaNoNulo
+            val priceArgFormatted = String.format("%.2f", priceArg)
+            textPrecioARG.text = "$ $priceArgFormatted ARG"
+            textPrecioUSD.text = priceDolar
+        }
+
+        buttonComprar.setOnClickListener {
+            val url = "https://store.steampowered.com/app/${gameDetail.steam_appid}"
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+            startActivity(intent)
         }
 
         // Cargar la imagen utilizando Glide

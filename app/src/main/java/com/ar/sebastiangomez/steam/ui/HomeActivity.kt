@@ -128,6 +128,7 @@ class HomeActivity : AppCompatActivity() {
         val adapter = GamesAdapter(this@HomeActivity, displayedGamesList) { position, gameId ->
             val gameName = displayedGamesList[position].name
             Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
+            searchView.clearFocus()
         }
 
         recyclerView.adapter = adapter
@@ -158,16 +159,17 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun loadMoreGames() {
         if (isLoading) return
         isLoading = true
         val start = currentPage * itemsPerPage
         val end = minOf(start + itemsPerPage, allGamesList.size)
-        val nextPageItems = allGamesList.subList(start, end)
-        displayedGamesList.addAll(nextPageItems)
-        recyclerView.adapter?.notifyDataSetChanged()
-        currentPage++
+        if (start < allGamesList.size) {
+            val nextPageItems = allGamesList.subList(start, end)
+            displayedGamesList.addAll(nextPageItems)
+            recyclerView.adapter?.notifyItemRangeInserted(start, nextPageItems.size)
+            currentPage++
+        }
         isLoading = false
     }
 
