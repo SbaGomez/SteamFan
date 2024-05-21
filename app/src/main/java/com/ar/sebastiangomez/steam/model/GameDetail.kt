@@ -19,7 +19,12 @@ data class GameDetail(
     val capsule_image: String,
     val website: String?,
     val pc_requirements: Any?,
-    val price_overview: PriceOverview
+    val price_overview: PriceOverview,
+    val release_date: ReleaseDate
+)
+data class ReleaseDate(
+    val coming_soon: Boolean,
+    val date: String,
 )
 
 data class PriceOverview(

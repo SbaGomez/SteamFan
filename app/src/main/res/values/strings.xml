@@ -16,6 +16,7 @@
     <string name="title_activity_login">Login</string>
     <string name="title">Titulo</string>
     <string name="title_descripcion">Descripcion</string>
+    <string name="title_informacion">Informacion</string>
     <string name="title_requisitos_minimos">Requisitos Minimos</string>
     <string name="title_requisitos_recomendados">Requisitos Recomendados</string>
     <string name="proximamente">Proximamente…</string>
@@ -30,6 +31,15 @@
     <string name="text_count">count</string>
     <string name="text_error">Texto de error.</string>
     <string name="games_count">Total de juegos:</string>
+
+    <string name="title_fecha_lanzamiento">Fecha de lanzamiento:</string>
+    <string name="title_precio_usd">Precio USD:</string>
+    <string name="title_precio_dolar_tarjeta">Dolar Tarjeta en Pesos:</string>
+    <string name="comprar_juego_button">Comprar juego</string>
+    <string name="precio_usd">$ 0 USD</string>
+    <string name="precio_arg">$ 0 ARG</string>
+    <string name="fecha">8 Feb, 2018</string>
+
 
     <!-- Errores del buscador -->
     <string name="error1">No se encontro ningun juego con ese nombre.</string>

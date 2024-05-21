@@ -1,5 +1,6 @@
 package com.ar.sebastiangomez.steam.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -32,6 +33,7 @@ import com.ar.sebastiangomez.steam.utils.GamesCache
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class DetalleActivity : AppCompatActivity() {
     private lateinit var gamesCache: GamesCache
@@ -70,6 +72,16 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var layoutMin : LinearLayout
     private lateinit var layoutRec : LinearLayout
     private lateinit var imageButtonBookmark : ImageButton
+
+    private lateinit var linearInformacion : LinearLayout
+    private lateinit var linearPrincipal : LinearLayout
+    private lateinit var linearPrecioUSD : LinearLayout
+    private lateinit var linearPrecioARG : LinearLayout
+    private lateinit var textFechaLanzamiento : TextView
+    private lateinit var textPrecioUSD : TextView
+    private lateinit var textPrecioARG : TextView
+    private lateinit var textDolarTarjeta : TextView
+
     private val tag = "LOG-DETAIL"
 
     private val gamesRepository: GamesRepository = GamesRepository()
@@ -131,6 +143,15 @@ class DetalleActivity : AppCompatActivity() {
         layoutMemRec = findViewById(R.id.layoutMemRec)
         layoutGrafRec = findViewById(R.id.layoutGrafRec)
         layoutAlmRec = findViewById(R.id.layoutAlmRec)
+
+        linearInformacion = findViewById(R.id.linearInformacion)
+        linearPrincipal = findViewById(R.id.linearPrincipal)
+        linearPrecioARG = findViewById(R.id.linearPrecioARG)
+        linearPrecioUSD = findViewById(R.id.linearPrecioUSD)
+        textFechaLanzamiento = findViewById(R.id.textFechaLanzamiento)
+        textPrecioUSD = findViewById(R.id.textPrecioUSD)
+        textPrecioARG = findViewById(R.id.textPrecioARG)
+        textDolarTarjeta = findViewById(R.id.textDolarTarjeta)
     }
 
     private fun getId(): Int {
@@ -157,6 +178,7 @@ class DetalleActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n", "DefaultLocale")
     private suspend fun setData(gameDetail : GameDetail){
         val pcRequirements = parsePcRequirements(gameDetail.pc_requirements.toString())
         val cachedGames = gamesCache.getGamesFromCache(this@DetalleActivity)
@@ -180,27 +202,27 @@ class DetalleActivity : AppCompatActivity() {
         imageButtonBookmark.setOnClickListener {
             try {
                 if (indexID != -1) { // Si el juego está en la lista de favoritos, eliminarlo
-                        cachedGames.removeAt(indexID)
-                        // Guardar la lista actualizada en la caché
-                        gamesCache.saveGamesToCache(this@DetalleActivity, cachedGames)
-                        // Actualizar el UI
-                        updateUI(true)
-                        // Actualizar el índice
-                        indexID = -1
-                    } else { // Si el juego no está en la lista de favoritos, agregarlo
-                        Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
-                        val cachedGame = GameCached(
-                            gameDetail.steam_appid.toString(),
-                            gameDetail.name,
-                            gameDetail.header_image
-                        )
-                        // Agregar el juego a la lista en caché
-                        gamesCache.addGameToCache(this@DetalleActivity, cachedGame)
-                        val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                        // Después de agregar, actualiza el índice
-                        indexID = cachedGames.indexOfFirst { it.id == gameDetail.steam_appid.toString() }
+                    cachedGames.removeAt(indexID)
+                    // Guardar la lista actualizada en la caché
+                    gamesCache.saveGamesToCache(this@DetalleActivity, cachedGames)
+                    // Actualizar el UI
+                    updateUI(true)
+                    // Actualizar el índice
+                    indexID = -1
+                } else { // Si el juego no está en la lista de favoritos, agregarlo
+                    Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
+                    val cachedGame = GameCached(
+                        gameDetail.steam_appid.toString(),
+                        gameDetail.name,
+                        gameDetail.header_image
+                    )
+                    // Agregar el juego a la lista en caché
+                    gamesCache.addGameToCache(this@DetalleActivity, cachedGame)
+                    val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                    // Después de agregar, actualiza el índice
+                    indexID = cachedGames.indexOfFirst { it.id == gameDetail.steam_appid.toString() }
                     // Actualizar el UI
                     updateUI(false)
                 }
@@ -228,10 +250,27 @@ class DetalleActivity : AppCompatActivity() {
             }
         }
 
-        val dolar: Dolar? = dolarRepository.getDolarTarjeta()
-
-        Log.d(tag, "Dolar Tarjeta: ${dolar?.venta}")
-        Log.d(tag, "Precio: ${gameDetail.price_overview.final_formatted}")
+        if(gameDetail.is_free || gameDetail.release_date.coming_soon || gameDetail.price_overview == null)
+        {
+            linearInformacion.removeView(linearPrecioARG)
+            linearPrincipal.removeView(linearPrecioUSD)
+        }
+        else{
+            if(!gameDetail.release_date.coming_soon && gameDetail.price_overview != null)
+            {
+                textFechaLanzamiento.text = gameDetail.release_date.date
+                val dolartarjeta: Dolar? = dolarRepository.getDolarTarjeta()
+                val ventaTarjetaNoNulo: Double = dolartarjeta?.venta ?: 0.0
+                textDolarTarjeta.text = ventaTarjetaNoNulo.toString()
+                val priceDolar = gameDetail.price_overview.final_formatted ?: "N/A"
+                val priceDouble = """\$\s?([0-9]+(?:\.[0-9]+)?) USD""".toRegex().find(priceDolar)?.groups?.get(1)?.value?.toDoubleOrNull() ?: 0.0
+                Log.d(tag, priceDouble.toString())
+                val priceArg = priceDouble * ventaTarjetaNoNulo
+                val priceArgFormatted = String.format("%.2f", priceArg)
+                textPrecioARG.text = priceDolar
+                textPrecioUSD.text = "$ $priceArgFormatted ARG"
+            }
+        }
 
         // Cargar la imagen utilizando Glide
         runOnUiThread {
@@ -239,7 +278,7 @@ class DetalleActivity : AppCompatActivity() {
             if (!isDestroyed && !isFinishing) {
                 Glide.with(this@DetalleActivity)
                     .load(gameDetail.header_image) // URL de la imagen
-                    .placeholder(R.drawable.steamdb) // Placeholder mientras se carga la imagen (opcional)
+                    .placeholder(R.drawable.progressbar) // Placeholder mientras se carga la imagen (opcional)
                     .error(R.drawable.error) // Imagen de error en caso de falla de carga (opcional)
                     .into(headerImg) // Establecer la imagen en el ImageView
             }
