@@ -128,7 +128,9 @@ class HomeActivity : AppCompatActivity() {
         val adapter = GamesAdapter(this@HomeActivity, displayedGamesList) { position, gameId ->
             val gameName = displayedGamesList[position].name
             Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
-            searchView.clearFocus()
+            linearSearch.removeView(linearSearchButton) //Remove search buttons
+            linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
+            searchView.clearFocus() // Remove Focus from SearchView
         }
 
         recyclerView.adapter = adapter
@@ -214,7 +216,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     fun onFilterGamesBySearchClick(view: View) {
-        hideKeyboard(view)
+        hideKeyboard()
         linearSearch.removeView(linearErrorSearchButton)
 
         val searchTerm = searchView.query.toString().trim()
@@ -236,7 +238,8 @@ class HomeActivity : AppCompatActivity() {
                                 val gameName = filteredGamesList[position].name
                                 Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
                                 // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
-                                searchView.clearFocus() // Quita el foco del SearchView
+                                hideKeyboard()
+                                onSearchCloseClick(view)
                             }
                             recyclerView.visibility = View.VISIBLE
                             recyclerView.adapter = adapter
@@ -273,9 +276,9 @@ class HomeActivity : AppCompatActivity() {
         themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
     }
 
-    private fun hideKeyboard(view: View) {
+    private fun hideKeyboard() {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+        inputMethodManager.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
     }
 
     private fun showError(errorMessage: String) {
@@ -312,8 +315,7 @@ class HomeActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun onReloadHomeClick(view: View) {
         searchView.setQuery("", false)
-        searchView.clearFocus()
-
+        onSearchCloseClick(view)
         // Reset pagination variables
         currentPage = 0
         isLoading = false
