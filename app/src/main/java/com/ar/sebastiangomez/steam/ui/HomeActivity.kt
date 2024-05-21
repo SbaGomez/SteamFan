@@ -159,17 +159,16 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun loadMoreGames() {
         if (isLoading) return
         isLoading = true
         val start = currentPage * itemsPerPage
         val end = minOf(start + itemsPerPage, allGamesList.size)
-        if (start < allGamesList.size) {
-            val nextPageItems = allGamesList.subList(start, end)
-            displayedGamesList.addAll(nextPageItems)
-            recyclerView.adapter?.notifyItemRangeInserted(start, nextPageItems.size)
-            currentPage++
-        }
+        val nextPageItems = allGamesList.subList(start, end)
+        displayedGamesList.addAll(nextPageItems)
+        recyclerView.adapter?.notifyDataSetChanged()
+        currentPage++
         isLoading = false
     }
 
