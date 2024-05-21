@@ -268,15 +268,13 @@ class DetalleActivity : AppCompatActivity() {
             linearPrincipal.removeView(linearPrecioUSD)
         }
         else{
-
+            Log.d(tag, "Log Price Overview - ID Game: ${gameDetail.steam_appid} - ${gameDetail.price_overview}")
             val priceDolar = gameDetail.price_overview.final_formatted
-            Log.d(tag, gameDetail.price_overview.final_formatted)
             val pricePattern = """\$\s?([0-9]+(?:\.[0-9]+)?)\s?(?:USD)?""".toRegex()
             val priceDouble = pricePattern.find(gameDetail.price_overview.final_formatted)?.groups?.get(1)?.value?.toDoubleOrNull() ?: 0.0
             val dolartarjeta: Dolar? = dolarRepository.getDolarTarjeta()
             val ventaTarjetaNoNulo: Double = dolartarjeta?.venta ?: 0.0
             textDolarTarjeta.text = "$ $ventaTarjetaNoNulo ARS"
-            Log.d(tag, priceDouble.toString())
             val priceArg = priceDouble * ventaTarjetaNoNulo
             val priceArgFormatted = String.format("%.2f", priceArg)
             textPrecioARG.text = "$ $priceArgFormatted ARS"
