@@ -226,7 +226,7 @@ class HomeActivity : AppCompatActivity() {
                     progressBar.visibility = View.VISIBLE
 
                     val gamesList = gamesRepository.getGames()
-                    val filteredGamesList = searchHelper.filterGamesBySearchTerm(gamesList, searchTerm)
+                    val filteredGamesList = searchHelper.filterGamesByExactAndContainsTerm(gamesList, searchTerm)
 
                     if (filteredGamesList.isEmpty()) {
                         showError(getString(R.string.error1))

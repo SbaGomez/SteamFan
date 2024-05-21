@@ -24,12 +24,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.ui.adapter.BookmarkAdapter
 import com.ar.sebastiangomez.steam.utils.GamesCache
 import com.ar.sebastiangomez.steam.utils.SearchHelper
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -51,6 +55,9 @@ class BookmarkActivity : AppCompatActivity() {
     private lateinit var progressBar : ProgressBar
     private val tag = "LOG-BOOKMARK"
 
+    private val searchJob = Job()
+    private val uiScope = CoroutineScope(Dispatchers.Main + searchJob)
+    private var filterJob: Job? = null
     private var filteredGames: MutableLiveData<List<GameCached>> = MutableLiveData<List<GameCached>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,27 +110,51 @@ class BookmarkActivity : AppCompatActivity() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
-                    filterGames(query)
+                    performFiltering(query)
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                    filterGames(newText)
+                    debounceFilter(newText)
                 }
                 return true
             }
         })
     }
 
-    fun filterGames(query: String) {
+    private fun debounceFilter(query: String) {
+        filterJob?.cancel() // Cancela el trabajo anterior si existe
+        filterJob = uiScope.launch {
+            delay(300) // Espera 300ms antes de ejecutar el filtro
+            performFiltering(query)
+        }
+    }
+
+    private fun performFiltering(query: String) {
+        val gamesList = gamesCache.getGamesFromCache(this@BookmarkActivity)
+        uiScope.launch {
+            if (gamesList.isNotEmpty()) {
+                val filteredList = withContext(Dispatchers.Default) {
+                    searchHelper.filterGamesByExactAndContainsTerm(gamesList, query)
+                }
+                withContext(Dispatchers.Main) {
+                    filteredGames.value = ArrayList(filteredList)
+                }
+            } else {
+                Log.e(tag, "gamesList is empty.")
+            }
+        }
+    }
+
+    /*fun filterGames(query: String) {
         val gamesList = gamesCache.getGamesFromCache(this)
         val filteredList = gamesList.filter {
             it.name.contains(query, ignoreCase = true)
         }
         filteredGames.value = ArrayList(filteredList)
-    }
+    }*/
 
     private fun getAll()
     {
@@ -181,7 +212,7 @@ class BookmarkActivity : AppCompatActivity() {
                     progressBar.visibility = View.VISIBLE
 
                     val gamesList = gamesCache.getGamesFromCache(this@BookmarkActivity)
-                    val sortedFilteredGamesList = searchHelper.filterGamesBySearchTerm(gamesList, searchTerm)
+                    val sortedFilteredGamesList = searchHelper.filterGamesByExactAndContainsTerm(gamesList, searchTerm)
 
                     if (sortedFilteredGamesList.isEmpty()) {
                         showError(getString(R.string.error1))

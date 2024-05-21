@@ -27,4 +27,38 @@ class SearchHelper {
         }
     }
 
+    suspend fun <T : GameInterface> filterExactMatchGames(gamesList: List<T>, searchTerm: String): List<T> {
+        return withContext(Dispatchers.Default) {
+            val lowerCaseTerm = searchTerm.lowercase(Locale.getDefault())
+            val exactMatch = mutableListOf<T>()
+
+            for (game in gamesList) {
+                val lowerCaseName = game.name.lowercase(Locale.getDefault())
+                if (lowerCaseName == lowerCaseTerm) {
+                    exactMatch.add(game)
+                }
+            }
+
+            exactMatch
+        }
+    }
+
+    suspend fun <T : GameInterface> filterGamesByExactAndContainsTerm(gamesList: List<T>, searchTerm: String): List<T> {
+        return withContext(Dispatchers.Default) {
+            val lowerCaseTerm = searchTerm.lowercase(Locale.getDefault())
+            val exactMatch = mutableListOf<T>()
+            val containsSearchTerm = mutableListOf<T>()
+
+            for (game in gamesList) {
+                val lowerCaseName = game.name.lowercase(Locale.getDefault())
+                when {
+                    lowerCaseName == lowerCaseTerm -> exactMatch.add(game)
+                    lowerCaseName.contains(lowerCaseTerm) -> containsSearchTerm.add(game)
+                }
+            }
+
+            exactMatch + containsSearchTerm
+        }
+    }
+
 }
