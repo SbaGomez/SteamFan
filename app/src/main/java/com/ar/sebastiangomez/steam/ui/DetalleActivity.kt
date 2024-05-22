@@ -267,7 +267,7 @@ class DetalleActivity : AppCompatActivity() {
 
         if(gameDetail.price_overview.discount_percent > 0)
         {
-            textDescuento.text = "${gameDetail.price_overview.discount_percent}%"
+            textDescuento.text = "${gameDetail.price_overview.final_formatted}"
         }
         else{
             linearPrecioARG.removeView(linearDescuento)
@@ -290,7 +290,11 @@ class DetalleActivity : AppCompatActivity() {
             val priceArg = priceDouble * ventaTarjetaNoNulo
             val priceArgFormatted = String.format("%.2f", priceArg)
             textPrecioARG.text = "$ $priceArgFormatted ARS"
-            textPrecioUSD.text = priceDolar
+            if (gameDetail.price_overview.initial_formatted.isEmpty()) {
+                textPrecioUSD.text = gameDetail.price_overview.final_formatted;
+            } else {
+                textPrecioUSD.text = gameDetail.price_overview.initial_formatted;
+            }
         }
 
         buttonComprar.setOnClickListener {

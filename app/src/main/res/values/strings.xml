@@ -33,8 +33,8 @@
     <string name="games_count">Total de juegos:</string>
 
     <string name="title_fecha_lanzamiento">Fecha de lanzamiento:</string>
-    <string name="title_descuento">Descuento:</string>
-    <string name="title_precio_usd">Precio USD:</string>
+    <string name="title_precio_descuento">Precio con descuento:</string>
+    <string name="title_precio_sin_descuento">Precio sin descuento:</string>
     <string name="title_precio_dolar_tarjeta">Dolar Tarjeta en Pesos:</string>
     <string name="comprar_juego_button">Comprar juego</string>
     <string name="descuento">85%</string>
