@@ -147,14 +147,6 @@ class BookmarkActivity : AppCompatActivity() {
         }
     }
 
-    /*fun filterGames(query: String) {
-        val gamesList = gamesCache.getGamesFromCache(this)
-        val filteredList = gamesList.filter {
-            it.name.contains(query, ignoreCase = true)
-        }
-        filteredGames.value = ArrayList(filteredList)
-    }*/
-
     private fun getAll()
     {
         //Obtener la cantidad de juegos favoritos

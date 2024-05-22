@@ -213,7 +213,7 @@
                             android:layout_marginBottom="15dp"
                             android:contentDescription="@string/app_name"
                             android:scaleType="center"
-                            app:srcCompat="@drawable/steamdb" />
+                            app:srcCompat="@drawable/header" />
 
                         <LinearLayout
                             android:id="@+id/linearPrecioUSD"
@@ -313,6 +313,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:fontFamily="@font/montserrat_bold"
                                 android:paddingTop="10dp"
                                 android:paddingBottom="10dp"
                                 android:text="@string/fecha"
@@ -327,6 +328,40 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="vertical">
+
+                            <LinearLayout
+                                android:id="@+id/linearDescuento"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="10dp"
+                                    android:text="@string/title_descuento"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/md_theme_dark_inverseSurface"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:id="@+id/textDescuento"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:fontFamily="@font/montserrat_bold"
+                                    android:paddingTop="10dp"
+                                    android:paddingBottom="10dp"
+                                    android:text="@string/descuento"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/md_theme_dark_onTertiaryContainer"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal" />
+                            </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -351,6 +386,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
+                                    android:fontFamily="@font/montserrat_bold"
                                     android:paddingTop="10dp"
                                     android:paddingBottom="10dp"
                                     android:text="@string/precio_usd"
@@ -384,6 +420,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
+                                    android:fontFamily="@font/montserrat_bold"
                                     android:paddingTop="10dp"
                                     android:paddingBottom="10dp"
                                     android:text="@string/precio_usd"

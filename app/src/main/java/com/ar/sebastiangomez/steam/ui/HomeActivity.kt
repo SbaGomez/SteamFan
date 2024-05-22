@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -62,15 +63,28 @@ class HomeActivity : AppCompatActivity() {
     private val searchJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + searchJob)
     private var filterJob: Job? = null
-    private var filteredGames: MutableLiveData<List<Game>> = MutableLiveData<List<Game>>()
+    private val filteredGames: LiveData<List<Game>> = MutableLiveData()
 
     private val gamesRepository: GamesRepository = GamesRepository()
+
 
     private val themeChangeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             // Recargar la actividad para aplicar el nuevo tema
             recreate()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            themeChangeReceiver, IntentFilter("com.example.ACTION_THEME_CHANGED")
+        )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(themeChangeReceiver)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -168,8 +182,9 @@ class HomeActivity : AppCompatActivity() {
         val start = currentPage * itemsPerPage
         val end = minOf(start + itemsPerPage, allGamesList.size)
         val nextPageItems = allGamesList.subList(start, end)
+        val currentSize = displayedGamesList.size
         displayedGamesList.addAll(nextPageItems)
-        recyclerView.adapter?.notifyDataSetChanged()
+        recyclerView.adapter?.notifyItemRangeInserted(currentSize, nextPageItems.size)
         currentPage++
         isLoading = false
     }
@@ -202,15 +217,19 @@ class HomeActivity : AppCompatActivity() {
 
     private fun performFiltering(query: String) {
         uiScope.launch {
-            if (::allGamesList.isInitialized) {
-                val filteredList = withContext(Dispatchers.Default) {
-                    searchHelper.filterGamesBySearchTerm(allGamesList, query)
+            try {
+                if (::allGamesList.isInitialized) {
+                    val filteredList = withContext(Dispatchers.Default) {
+                        searchHelper.filterGamesBySearchTerm(allGamesList, query)
+                    }
+                    withContext(Dispatchers.Main) {
+                        (filteredGames as MutableLiveData).value = ArrayList(filteredList)
+                    }
+                } else {
+                    Log.e("HomeActivity", "allGamesList is not initialized yet.")
                 }
-                withContext(Dispatchers.Main) {
-                    filteredGames.value = ArrayList(filteredList)
-                }
-            } else {
-                Log.e("HomeActivity", "allGamesList is not initialized yet.")
+            } catch (e: Exception) {
+                Log.e("HomeActivity", "Error filtering games", e)
             }
         }
     }
@@ -278,13 +297,17 @@ class HomeActivity : AppCompatActivity() {
 
     private fun hideKeyboard() {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(this.currentFocus?.windowToken, 0)
+        currentFocus?.let {
+            inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
+        }
     }
 
     private fun showError(errorMessage: String) {
-        runOnUiThread {
-            linearSearch.addView(linearErrorSearchButton)
-            textErrorSearch.text = errorMessage
+        uiScope.launch {
+            withContext(Dispatchers.Main) {
+                linearSearch.addView(linearErrorSearchButton)
+                textErrorSearch.text = errorMessage
+            }
         }
     }
 

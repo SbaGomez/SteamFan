@@ -11,8 +11,8 @@ android {
         applicationId = "com.ar.sebastiangomez.steam"
         minSdk = 28
         targetSdk = 34
-        versionCode = 38
-        versionName = "38.0"
+        versionCode = 40
+        versionName = "40.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

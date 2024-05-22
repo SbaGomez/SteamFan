@@ -76,10 +76,12 @@ class DetalleActivity : AppCompatActivity() {
 
     private lateinit var linearInformacion : LinearLayout
     private lateinit var linearPrincipal : LinearLayout
+    private lateinit var linearDescuento : LinearLayout
     private lateinit var linearPrecioUSD : LinearLayout
     private lateinit var linearPrecioARG : LinearLayout
     private lateinit var linearLanzamiento : LinearLayout
     private lateinit var textFechaLanzamiento : TextView
+    private lateinit var textDescuento : TextView
     private lateinit var textPrecioUSD : TextView
     private lateinit var textPrecioARG : TextView
     private lateinit var textDolarTarjeta : TextView
@@ -148,11 +150,13 @@ class DetalleActivity : AppCompatActivity() {
         layoutAlmRec = findViewById(R.id.layoutAlmRec)
 
         linearInformacion = findViewById(R.id.linearInformacion)
+        linearDescuento = findViewById(R.id.linearDescuento)
         linearPrincipal = findViewById(R.id.linearPrincipal)
         linearPrecioARG = findViewById(R.id.linearPrecioARG)
         linearPrecioUSD = findViewById(R.id.linearPrecioUSD)
         linearLanzamiento = findViewById(R.id.linearLanzamiento)
         textFechaLanzamiento = findViewById(R.id.textFechaLanzamiento)
+        textDescuento = findViewById(R.id.textDescuento)
         textPrecioUSD = findViewById(R.id.textPrecioUSD)
         textPrecioARG = findViewById(R.id.textPrecioARG)
         textDolarTarjeta = findViewById(R.id.textDolarTarjeta)
@@ -259,6 +263,14 @@ class DetalleActivity : AppCompatActivity() {
             linearInformacion.removeView(linearLanzamiento)
         }else {
             textFechaLanzamiento.text = gameDetail.release_date.date
+        }
+
+        if(gameDetail.price_overview.discount_percent > 0)
+        {
+            textDescuento.text = "${gameDetail.price_overview.discount_percent}%"
+        }
+        else{
+            linearPrecioARG.removeView(linearDescuento)
         }
 
         val priceOverview =  gameDetail.price_overview
