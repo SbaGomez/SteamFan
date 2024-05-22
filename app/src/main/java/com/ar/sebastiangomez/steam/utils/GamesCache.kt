@@ -7,7 +7,6 @@ import android.util.Log
 import android.widget.Toast
 import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.ui.BookmarkActivity
-import com.ar.sebastiangomez.steam.ui.HomeActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
