@@ -76,6 +76,7 @@ class DetalleActivity : AppCompatActivity() {
 
     private lateinit var linearInformacion : LinearLayout
     private lateinit var linearPrincipal : LinearLayout
+    private lateinit var linearButtons : LinearLayout
     private lateinit var linearDescuento : LinearLayout
     private lateinit var linearPrecioUSD : LinearLayout
     private lateinit var linearPrecioARG : LinearLayout
@@ -87,6 +88,7 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var textDolarTarjeta : TextView
     private lateinit var textTitlePrecioUSD : TextView
     private lateinit var buttonComprar : Button
+    private lateinit var buttonVer : Button
 
     private val tag = "LOG-DETAIL"
 
@@ -151,6 +153,7 @@ class DetalleActivity : AppCompatActivity() {
         layoutAlmRec = findViewById(R.id.layoutAlmRec)
 
         linearInformacion = findViewById(R.id.linearInformacion)
+        linearButtons = findViewById(R.id.linearButtons)
         linearDescuento = findViewById(R.id.linearDescuento)
         linearPrincipal = findViewById(R.id.linearPrincipal)
         linearPrecioARG = findViewById(R.id.linearPrecioARG)
@@ -163,6 +166,7 @@ class DetalleActivity : AppCompatActivity() {
         textDolarTarjeta = findViewById(R.id.textDolarTarjeta)
         textTitlePrecioUSD = findViewById(R.id.textTitlePrecioUSD)
         buttonComprar = findViewById(R.id.buttonComprar)
+        buttonVer = findViewById(R.id.buttonVer)
     }
 
     private fun getId(): Int {
@@ -260,11 +264,50 @@ class DetalleActivity : AppCompatActivity() {
                 imageType.setImageResource(R.drawable.tagmusic)
             }
         }
+
         if(gameDetail.release_date.date.isEmpty())
         {
             linearInformacion.removeView(linearLanzamiento)
         }else {
             textFechaLanzamiento.text = gameDetail.release_date.date
+        }
+
+        if(gameDetail.is_free)
+        {
+            when (gameDetail.type) {
+                "dlc" -> {
+                    buttonVer.text = "Ver dlc"
+                    buttonVer.setBackgroundColor(Color.parseColor("#A454B0"))
+                }
+                "demo" -> {
+                    buttonVer.text = "Ver demo"
+                    buttonVer.setBackgroundColor(Color.parseColor("#55B269"))
+                }
+                "game" -> {
+                    buttonVer.text = "Ver juego"
+                    buttonVer.setBackgroundColor(Color.parseColor("#5B7DD3"))
+                }
+                "music" -> {
+                    buttonVer.text = "Ver Soundtrack"
+                    buttonVer.setBackgroundColor(Color.parseColor("#B2555B"))
+                }
+            }
+        }
+
+        if(gameDetail.release_date.coming_soon)
+        {
+            if (gameDetail.type == "game")
+            {
+                buttonVer.text = "Ver juego"
+                buttonVer.setBackgroundColor(Color.parseColor("#5B7DD3"))
+            }
+        }
+
+        buttonVer.setOnClickListener {
+            val url = "https://store.steampowered.com/app/${gameDetail.steam_appid}"
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+            startActivity(intent)
         }
 
         if(gameDetail.is_free || gameDetail.release_date.coming_soon || gameDetail.price_overview == null)
@@ -273,10 +316,11 @@ class DetalleActivity : AppCompatActivity() {
             linearPrincipal.removeView(linearPrecioUSD)
         }
         else{
+            linearPrincipal.removeView(linearButtons)
             Log.d(tag, "Log Price Overview - ID Game: ${gameDetail.steam_appid} - ${gameDetail.price_overview}")
             val pricePattern = """\$\s?([0-9]+(?:\.[0-9]+)?)\s?(?:USD)?""".toRegex()
             val priceDouble = pricePattern.find(gameDetail.price_overview.final_formatted)?.groups?.get(1)?.value?.toDoubleOrNull() ?: 0.0
-            val dolartarjeta: Dolar? = dolarRepository.getDolarTarjeta()
+            val dolartarjeta = dolarRepository.getDolarTarjeta()
             val ventaTarjetaNoNulo: Double = dolartarjeta?.venta ?: 0.0
             textDolarTarjeta.text = "$ $ventaTarjetaNoNulo ARS"
             val priceArg = priceDouble * ventaTarjetaNoNulo
@@ -294,6 +338,16 @@ class DetalleActivity : AppCompatActivity() {
             }
             else{
                 linearPrecioARG.removeView(linearDescuento)
+            }
+            when (gameDetail.type) {
+                "dlc" -> {
+                    buttonComprar.text = "Comprar dlc"
+                    buttonComprar.setBackgroundColor(Color.parseColor("#A454B0"))
+                }
+                "music" -> {
+                    buttonComprar.text = "Comprar Soundtrack"
+                    buttonComprar.setBackgroundColor(Color.parseColor("#B2555B"))
+                }
             }
         }
 
