@@ -85,6 +85,7 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var textPrecioUSD : TextView
     private lateinit var textPrecioARG : TextView
     private lateinit var textDolarTarjeta : TextView
+    private lateinit var textTitlePrecioUSD : TextView
     private lateinit var buttonComprar : Button
 
     private val tag = "LOG-DETAIL"
@@ -160,6 +161,7 @@ class DetalleActivity : AppCompatActivity() {
         textPrecioUSD = findViewById(R.id.textPrecioUSD)
         textPrecioARG = findViewById(R.id.textPrecioARG)
         textDolarTarjeta = findViewById(R.id.textDolarTarjeta)
+        textTitlePrecioUSD = findViewById(R.id.textTitlePrecioUSD)
         buttonComprar = findViewById(R.id.buttonComprar)
     }
 
@@ -265,23 +267,13 @@ class DetalleActivity : AppCompatActivity() {
             textFechaLanzamiento.text = gameDetail.release_date.date
         }
 
-        if(gameDetail.price_overview.discount_percent > 0)
-        {
-            textDescuento.text = "${gameDetail.price_overview.final_formatted}"
-        }
-        else{
-            linearPrecioARG.removeView(linearDescuento)
-        }
-
-        val priceOverview =  gameDetail.price_overview
-        if(gameDetail.is_free || gameDetail.release_date.coming_soon || priceOverview == null)
+        if(gameDetail.is_free || gameDetail.release_date.coming_soon || gameDetail.price_overview == null)
         {
             linearInformacion.removeView(linearPrecioARG)
             linearPrincipal.removeView(linearPrecioUSD)
         }
         else{
             Log.d(tag, "Log Price Overview - ID Game: ${gameDetail.steam_appid} - ${gameDetail.price_overview}")
-            val priceDolar = gameDetail.price_overview.final_formatted
             val pricePattern = """\$\s?([0-9]+(?:\.[0-9]+)?)\s?(?:USD)?""".toRegex()
             val priceDouble = pricePattern.find(gameDetail.price_overview.final_formatted)?.groups?.get(1)?.value?.toDoubleOrNull() ?: 0.0
             val dolartarjeta: Dolar? = dolarRepository.getDolarTarjeta()
@@ -291,9 +283,17 @@ class DetalleActivity : AppCompatActivity() {
             val priceArgFormatted = String.format("%.2f", priceArg)
             textPrecioARG.text = "$ $priceArgFormatted ARS"
             if (gameDetail.price_overview.initial_formatted.isEmpty()) {
-                textPrecioUSD.text = gameDetail.price_overview.final_formatted;
+                textPrecioUSD.text = gameDetail.price_overview.final_formatted
+                textTitlePrecioUSD.text = "Precio en USD:"
             } else {
-                textPrecioUSD.text = gameDetail.price_overview.initial_formatted;
+                textPrecioUSD.text = gameDetail.price_overview.initial_formatted
+            }
+            if(gameDetail.price_overview.discount_percent > 0)
+            {
+                textDescuento.text = gameDetail.price_overview.final_formatted
+            }
+            else{
+                linearPrecioARG.removeView(linearDescuento)
             }
         }
 

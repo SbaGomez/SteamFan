@@ -1,5 +1,6 @@
 package com.ar.sebastiangomez.steam.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -280,9 +281,15 @@ class BookmarkActivity : AppCompatActivity() {
         searchView.clearFocus() // Quita el foco del SearchView
     }
 
-    @Suppress("UNUSED_PARAMETER")
+    @SuppressLint("NotifyDataSetChanged")
     fun onReloadHomeClick(view: View) {
         searchView.setQuery("", false)
-        recreate()
+        onSearchCloseClick(view)
+
+        // Notify the adapter that the data set has changed
+        recyclerView.adapter?.notifyDataSetChanged()
+
+        // Fetch games again
+        getAll()
     }
 }
