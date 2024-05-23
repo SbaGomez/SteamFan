@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/gameslogo"
         android:supportsRtl="true"
-        android:theme="@style/Base.Theme.Steam.Dark"
+        android:theme="@style/Theme.GamesDB"
         tools:targetApi="31">
         <activity
             android:name="com.ar.sebastiangomez.steam.ui.BookmarkActivity"

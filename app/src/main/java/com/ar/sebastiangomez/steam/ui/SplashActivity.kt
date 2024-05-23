@@ -11,18 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ar.sebastiangomez.steam.R
-import com.ar.sebastiangomez.steam.utils.ThemeHelper
 
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
 
-    private lateinit var themeHelper: ThemeHelper
     private lateinit var logoSplash: ImageView
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        themeHelper = ThemeHelper(this)
-        themeHelper.applyTheme()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_splash)

@@ -1,11 +1,10 @@
 package com.ar.sebastiangomez.steam.ui
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -19,13 +18,13 @@ import android.widget.SearchView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
@@ -33,7 +32,6 @@ import com.ar.sebastiangomez.steam.data.GamesRepository
 import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.ui.adapter.GamesAdapter
 import com.ar.sebastiangomez.steam.utils.SearchHelper
-import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import kotlinx.coroutines.*
 import java.io.IOException
 
@@ -41,7 +39,6 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchHelper: SearchHelper
-    private lateinit var themeHelper: ThemeHelper
     private lateinit var progressBar : ProgressBar
     private lateinit var themeButton : ImageButton
     private lateinit var searchView : SearchView
@@ -67,30 +64,8 @@ class HomeActivity : AppCompatActivity() {
 
     private val gamesRepository: GamesRepository = GamesRepository()
 
-
-    private val themeChangeReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            // Recargar la actividad para aplicar el nuevo tema
-            recreate()
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-            themeChangeReceiver, IntentFilter("com.example.ACTION_THEME_CHANGED")
-        )
-    }
-
-    override fun onStop() {
-        super.onStop()
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(themeChangeReceiver)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         searchHelper = SearchHelper()
-        themeHelper = ThemeHelper(this)
-        themeHelper.applyTheme()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_home)
@@ -101,16 +76,12 @@ class HomeActivity : AppCompatActivity() {
         }
 
         bindViewObject()
-        getImageTheme()
+        setButtonImageBasedOnTheme()
+        themeButton.setOnClickListener {
+            toggleTheme()
+        }
         showButtonSearch() // Mostrar el boton buscar al abrir el search
         getGames()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        // Desregistrar el receptor del broadcast
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(themeChangeReceiver)
-        searchJob.cancel()
     }
 
     private fun bindViewObject() {
@@ -134,6 +105,22 @@ class HomeActivity : AppCompatActivity() {
 
         filteredGames.observe(this) { filteredGames ->
             (recyclerView.adapter as? GamesAdapter)?.updateItems(filteredGames)
+        }
+    }
+
+    private fun setButtonImageBasedOnTheme() {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val currentTheme = if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
+        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
+    }
+
+
+    private fun toggleTheme() {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
     }
 
@@ -285,16 +272,6 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun getImageTheme() {
-        // Registrar el receptor del broadcast
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-            themeChangeReceiver, IntentFilter("com.example.ACTION_THEME_CHANGED")
-        )
-        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") ?: "light" //  Get theme from shared preferences
-        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
-    }
-
     private fun hideKeyboard() {
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         currentFocus?.let {
@@ -309,16 +286,6 @@ class HomeActivity : AppCompatActivity() {
                 textErrorSearch.text = errorMessage
             }
         }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun onChangeThemeButtonClick(view: View) {
-        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") // Get theme from shared preferences
-        val newTheme = if (currentTheme == "light") "dark" else "light" // Change theme
-
-        Log.d(tag, "New Theme: $newTheme")
-        themeHelper.changeTheme(newTheme, this)
     }
 
     @Suppress("UNUSED_PARAMETER")

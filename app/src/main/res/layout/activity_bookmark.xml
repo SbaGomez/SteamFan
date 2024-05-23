@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/md_theme_onBackground"
     tools:context=".ui.BookmarkActivity"
     tools:ignore="VisualLintTextFieldSize">
 
@@ -24,7 +25,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/title_dark_background"
+        android:background="@color/Games_Details_background"
         android:minHeight="?attr/actionBarSize"
         android:textAlignment="center"
         android:theme="?attr/actionBarTheme"
@@ -57,7 +58,7 @@
             android:fontFamily="@font/montserrat_bold"
             android:gravity="center"
             android:text="@string/title_fav"
-            android:textColor="@color/title_dark_text"
+            android:textColor="@color/title_text"
             android:textSize="18sp"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="16dp"
@@ -91,7 +92,7 @@
                 android:layout_marginEnd="20dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                app:cardBackgroundColor="@color/md_theme_light_inverseSurface"
+                app:cardBackgroundColor="@color/md_theme_inverseSurface"
                 app:cardCornerRadius="12dp">
 
                 <SearchView
@@ -102,7 +103,7 @@
                     android:iconifiedByDefault="false"
                     android:queryBackground="@null"
                     android:queryHint="@string/placeholder_searchFav_input"
-                    android:theme="@style/Base.Theme.Steam.Dark" />
+                    android:theme="@style/Theme.GamesDB" />
 
             </androidx.cardview.widget.CardView>
 
@@ -129,7 +130,7 @@
                         android:backgroundTint="#43272E"
                         android:onClick="onSearchCloseClick"
                         android:text="@string/search_close_button"
-                        android:textColor="@color/md_theme_dark_inverseSurface"
+                        android:textColor="@color/text_color_claro"
                         app:cornerRadius="10dp"
                         app:icon="@android:drawable/ic_delete"
                         app:iconPadding="5dp"
@@ -142,10 +143,10 @@
                         android:layout_height="55dp"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
-                        android:backgroundTint="@color/md_theme_light_onTertiaryContainer"
+                        android:backgroundTint="@color/Games_Details_background"
                         android:onClick="onFilterGamesBySearchClick"
                         android:text="@string/search_button"
-                        android:textColor="@color/md_theme_dark_inverseSurface"
+                        android:textColor="@color/text_color_claro"
                         app:cornerRadius="10dp"
                         app:icon="@drawable/lupa"
                         app:iconGravity="start"
@@ -157,7 +158,7 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/md_theme_dark_tertiaryContainer"
+                        android:backgroundTint="#495d92"
                         app:cardCornerRadius="10dp">
 
                         <ImageButton
@@ -210,7 +211,7 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/Games_Details_dark_background"
+                    android:backgroundTint="@color/Games_Details_background"
                     app:cardCornerRadius="10dp">
 
                     <LinearLayout
@@ -226,7 +227,7 @@
                             android:gravity="center"
                             android:padding="10dp"
                             android:text="@string/games_count"
-                            android:textColor="@color/md_theme_dark_outline"
+                            android:textColor="@color/text_color_claro"
                             android:textSize="14sp" />
 
                         <TextView
@@ -282,7 +283,7 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_gravity="bottom"
-        android:background="@color/title_dark_background"
+        android:background="@color/Games_Details_background"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="@+id/linearContent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -334,10 +335,9 @@
             android:layout_height="wrap_content"
             android:background="#00FFFFFF"
             android:contentDescription="@string/theme_button"
-            android:onClick="onChangeThemeButtonClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/themedarktab"
+            android:src="@drawable/themelighttab"
             tools:ignore="VisualLintBounds" />
 
     </LinearLayout>

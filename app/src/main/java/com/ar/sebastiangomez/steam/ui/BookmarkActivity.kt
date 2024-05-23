@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -17,6 +18,7 @@ import android.widget.SearchView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -29,7 +31,6 @@ import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.ui.adapter.BookmarkAdapter
 import com.ar.sebastiangomez.steam.utils.GamesCache
 import com.ar.sebastiangomez.steam.utils.SearchHelper
-import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -42,7 +43,6 @@ class BookmarkActivity : AppCompatActivity() {
     private lateinit var searchHelper: SearchHelper
     private lateinit var gamesCache: GamesCache
     private lateinit var recyclerView: RecyclerView
-    private lateinit var themeHelper: ThemeHelper
     private lateinit var themeButton : ImageButton
     private lateinit var searchView : SearchView
     private lateinit var linearSearch : LinearLayout
@@ -63,8 +63,6 @@ class BookmarkActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         searchHelper = SearchHelper()
         gamesCache = GamesCache()
-        themeHelper = ThemeHelper(this)
-        themeHelper.applyTheme()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_bookmark)
@@ -75,6 +73,10 @@ class BookmarkActivity : AppCompatActivity() {
         }
 
         bindViewObject()
+        setButtonImageBasedOnTheme()
+        themeButton.setOnClickListener {
+            toggleTheme()
+        }
     }
 
     private fun bindViewObject() {
@@ -95,7 +97,6 @@ class BookmarkActivity : AppCompatActivity() {
         linearSearch.removeView(linearSearchButton) //Remove search buttons
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
 
-        getImageTheme()
         showButtonSearch() // Mostrar el boton buscar al abrir el search
         getAll()
 
@@ -103,6 +104,22 @@ class BookmarkActivity : AppCompatActivity() {
 
         filteredGames.observe(this) { filteredGames ->
             (recyclerView.adapter as? BookmarkAdapter)?.updateItems(filteredGames)
+        }
+    }
+
+    private fun setButtonImageBasedOnTheme() {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val currentTheme = if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
+        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
+    }
+
+
+    private fun toggleTheme() {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
     }
 
@@ -242,20 +259,6 @@ class BookmarkActivity : AppCompatActivity() {
             linearSearch.addView(linearErrorSearchButton)
             textErrorSearch.text = errorMessage
         }
-    }
-
-    private fun getImageTheme() {
-        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
-        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun onChangeThemeButtonClick(view: View) {
-        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
-        val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
-        themeHelper.changeTheme(newTheme, this)
     }
 
     @Suppress("UNUSED_PARAMETER")

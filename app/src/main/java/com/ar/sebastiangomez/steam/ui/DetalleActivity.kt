@@ -1,9 +1,9 @@
 package com.ar.sebastiangomez.steam.ui
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -19,6 +19,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -26,19 +27,16 @@ import androidx.lifecycle.lifecycleScope
 import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.data.DolarRepository
 import com.ar.sebastiangomez.steam.data.GamesRepository
-import com.ar.sebastiangomez.steam.model.Dolar
 import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.model.GameDetail
 import com.ar.sebastiangomez.steam.model.PcRequirement
 import com.ar.sebastiangomez.steam.model.PcRequirements
 import com.ar.sebastiangomez.steam.utils.GamesCache
-import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
 
 class DetalleActivity : AppCompatActivity() {
     private lateinit var gamesCache: GamesCache
-    private lateinit var themeHelper: ThemeHelper
     private lateinit var progressBar : ProgressBar
     private lateinit var titleTxt : TextView
     private lateinit var descripcionTxt : TextView
@@ -97,8 +95,6 @@ class DetalleActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         gamesCache = GamesCache()
-        themeHelper = ThemeHelper(this)
-        themeHelper.applyTheme()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_detalle)
@@ -109,7 +105,10 @@ class DetalleActivity : AppCompatActivity() {
         }
 
         bindViewObject()
-        getImageTheme() //Obtener valor del theme y cambiar el icono.
+        setButtonImageBasedOnTheme()
+        themeButton.setOnClickListener {
+            toggleTheme()
+        }
         val id = getId() //Obtener ID de HomeActivity por intent y hacer fetch de detalles.
         getDetails(id.toString()) //Fetch game details del ID.
     }
@@ -167,6 +166,22 @@ class DetalleActivity : AppCompatActivity() {
         textTitlePrecioUSD = findViewById(R.id.textTitlePrecioUSD)
         buttonComprar = findViewById(R.id.buttonComprar)
         buttonVer = findViewById(R.id.buttonVer)
+    }
+
+    private fun setButtonImageBasedOnTheme() {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val currentTheme = if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
+        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
+    }
+
+
+    private fun toggleTheme() {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
     }
 
     private fun getId(): Int {
@@ -488,20 +503,6 @@ class DetalleActivity : AppCompatActivity() {
             return PcRequirements(minimumRequirement, recommendedRequirement)
         }
         return null
-    }
-
-    private fun getImageTheme() {
-        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") ?: "light" // Obtén el tema actual
-        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun onChangeThemeButtonClick(view: View) {
-        val preferences = getSharedPreferences("ThemePrefs", Context.MODE_PRIVATE)
-        val currentTheme = preferences.getString("theme", "light") // Obtén el tema actual
-        val newTheme = if (currentTheme == "light") "dark" else "light" // Cambia el tema al opuesto del actual
-        themeHelper.changeTheme(newTheme, this)
     }
 
     @Suppress("UNUSED_PARAMETER")
