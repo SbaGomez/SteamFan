@@ -1,6 +1,9 @@
 <resources>
     <color name="background_card_gamelist">#CBCDDD</color>
     <color name="text_color_claro">#E4DFD7</color>
+    <color name="text_color_boton_search">#011D32</color>
+    <color name="customs_close_search">#551A29</color>
+    <color name="customs_search_lupa">#AAA9A9</color>
 
     <color name="title_games_background">#735471</color>
     <color name="title_background">#081D27</color>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="21dp"
+    android:height="20dp"
+    android:viewportWidth="21"
+    android:viewportHeight="20">
+
+    <path
+        android:pathData="M8.333,1.75C4.882,1.75 2.083,4.548 2.083,8C2.083,11.452 4.882,14.25 8.333,14.25C11.785,14.25 14.583,11.452 14.583,8C14.583,4.548 11.785,1.75 8.333,1.75ZM0.583,8C0.583,3.72 4.053,0.25 8.333,0.25C12.613,0.25 16.083,3.72 16.083,8C16.083,12.28 12.613,15.75 8.333,15.75C4.053,15.75 0.583,12.28 0.583,8Z"
+        android:fillColor="@color/customs_search_lupa"
+        android:fillType="evenOdd"/>
+    <path
+        android:pathData="M0.583,8C0.583,3.72 4.053,0.25 8.333,0.25C12.613,0.25 16.083,3.72 16.083,8C16.083,12.28 12.613,15.75 8.333,15.75C4.053,15.75 0.583,12.28 0.583,8ZM8.333,2.75C7.919,2.75 7.583,3.086 7.583,3.5C7.583,3.914 7.919,4.25 8.333,4.25C10.404,4.25 12.083,5.929 12.083,8C12.083,8.414 12.419,8.75 12.833,8.75C13.248,8.75 13.583,8.414 13.583,8C13.583,5.101 11.233,2.75 8.333,2.75Z"
+        android:fillColor="@color/customs_search_lupa"
+        android:fillType="evenOdd"/>
+    <path
+        android:pathData="M12.803,12.47C13.096,12.177 13.571,12.177 13.864,12.47L19.864,18.47C20.156,18.763 20.156,19.237 19.864,19.53C19.571,19.823 19.096,19.823 18.803,19.53L12.803,13.53C12.51,13.237 12.51,12.763 12.803,12.47Z"
+        android:fillColor="@color/customs_search_lupa"
+        android:fillType="evenOdd"/>
+</vector>

@@ -71,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:backgroundTint="@color/Games_Details_background"
-            android:drawableStart="@drawable/google32"
+            android:drawableStart="@drawable/google_icon"
             android:onClick="onLoginClick"
             android:text="@string/login_button"
             android:textColor="@color/text_color_claro"

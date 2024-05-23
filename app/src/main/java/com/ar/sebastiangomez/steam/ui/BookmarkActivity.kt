@@ -221,7 +221,7 @@ class BookmarkActivity : AppCompatActivity() {
                     progressBar.visibility = View.VISIBLE
 
                     val gamesList = gamesCache.getGamesFromCache(this@BookmarkActivity)
-                    val sortedFilteredGamesList = searchHelper.filterGamesByExactAndContainsTerm(gamesList, searchTerm)
+                    val sortedFilteredGamesList = searchHelper.filterExactMatchGames(gamesList, searchTerm)
 
                     if (sortedFilteredGamesList.isEmpty()) {
                         showError(getString(R.string.error1))
