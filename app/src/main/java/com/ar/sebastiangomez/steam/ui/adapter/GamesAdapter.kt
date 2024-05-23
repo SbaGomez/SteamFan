@@ -36,45 +36,49 @@ class GamesAdapter(private val context: Context,
 
     override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
         gamesCache = GamesCache()
-        val game = gamesList[position]
-        holder.bind(game)
-        updateBookmarkButton(holder, game)
 
-        holder.itemView.setOnClickListener {
-            onItemClick.invoke(position, game.id)
-            val selectID = game.id.toInt()
-            Log.d(tag, "ID Position: ${game.id} Select ID: $selectID")
+        if (position >= 0 && position < gamesList.size) {
+            val game = gamesList[position]
+            holder.bind(game)
+            updateBookmarkButton(holder, game)
 
-            val intent = Intent(holder.itemView.context, DetalleActivity::class.java)
-            intent.putExtra("ID", selectID)
-            holder.itemView.context.startActivity(intent)
-        }
+            holder.itemView.setOnClickListener {
+                onItemClick.invoke(position, game.id)
+                val selectID = game.id.toInt()
+                Log.d(tag, "ID Position: ${game.id} Select ID: $selectID")
 
-        holder.imageButton.setOnClickListener {
-            val isBookmarked = gamesCache.exists(context, game.id)
+                val intent = Intent(holder.itemView.context, DetalleActivity::class.java)
+                intent.putExtra("ID", selectID)
+                holder.itemView.context.startActivity(intent)
+            }
 
-            if (isBookmarked) {
-                gamesCache.removeGameToCache(context, game.id, "HomeActivity")
-                updateBookmarkButton(holder, game)
-            } else {
-                Log.d(tag, "Log Button Add Bookmark - ID Position: $position, Game ID: ${game.id}")
-                val gamesRepository = GamesRepository()
-                CoroutineScope(Dispatchers.Main).launch {
-                    val isSuccess = gamesRepository.isGameSuccess(game.id)
-                    if(isSuccess == true)
-                    {
-                        val imageUrl = gamesRepository.getImage(game.id)
-                        val cachedGame = GameCached(game.id, game.name, imageUrl.toString())
-                        gamesCache.addGameToCache(context, cachedGame)
-                        updateBookmarkButton(holder, game)
-                    }
-                    else{
-                        Toast.makeText(context, "El juego - ${game.name} - no tiene datos.", Toast.LENGTH_LONG).show()
+            holder.imageButton.setOnClickListener {
+                val isBookmarked = gamesCache.exists(context, game.id)
+
+                if (isBookmarked) {
+                    gamesCache.removeGameToCache(context, game.id, "HomeActivity")
+                    updateBookmarkButton(holder, game)
+                } else {
+                    Log.d(tag, "Log Button Add Bookmark - ID Position: $position, Game ID: ${game.id}")
+                    val gamesRepository = GamesRepository()
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val isSuccess = gamesRepository.isGameSuccess(game.id)
+                        if(isSuccess == true) {
+                            val imageUrl = gamesRepository.getImage(game.id)
+                            val cachedGame = GameCached(game.id, game.name, imageUrl.toString())
+                            gamesCache.addGameToCache(context, cachedGame)
+                            updateBookmarkButton(holder, game)
+                        } else {
+                            Toast.makeText(context, "El juego - ${game.name} - no tiene datos.", Toast.LENGTH_LONG).show()
+                        }
                     }
                 }
             }
+        } else {
+            Log.e(tag, "Invalid index: $position, Size: ${gamesList.size}")
         }
     }
+
 
     override fun getItemCount(): Int {
         return gamesList.size

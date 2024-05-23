@@ -127,11 +127,15 @@ class HomeActivity : AppCompatActivity() {
     private fun getGames()
     {
         val adapter = GamesAdapter(this@HomeActivity, displayedGamesList) { position, gameId ->
-            val gameName = displayedGamesList[position].name
-            Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
-            linearSearch.removeView(linearSearchButton) //Remove search buttons
-            linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
-            searchView.clearFocus() // Remove Focus from SearchView
+            val gameName = displayedGamesList.getOrNull(position)?.name
+            if (gameName != null) {
+                Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
+                linearSearch.removeView(linearSearchButton) //Remove search buttons
+                linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
+                searchView.clearFocus() // Remove Focus from SearchView
+            } else {
+                Log.e(tag, "Invalid position: $position")
+            }
         }
 
         recyclerView.adapter = adapter
@@ -182,6 +186,7 @@ class HomeActivity : AppCompatActivity() {
                 if (query != null) {
                     performFiltering(query)
                 }
+                hideKeyboard()
                 return true
             }
 
