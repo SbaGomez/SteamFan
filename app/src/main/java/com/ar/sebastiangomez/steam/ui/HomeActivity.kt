@@ -154,7 +154,6 @@ class HomeActivity : AppCompatActivity() {
                 allGamesList = withContext(Dispatchers.IO) {
                     gamesRepository.getGames()
                 }
-                gamesRepository.countGames()
                 loadMoreGames()
             } catch (e: IOException) {
                 e.printStackTrace()
