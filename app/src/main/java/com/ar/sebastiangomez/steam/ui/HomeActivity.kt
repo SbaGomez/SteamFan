@@ -186,7 +186,6 @@ class HomeActivity : AppCompatActivity() {
                 if (query != null) {
                     performFiltering(query)
                 }
-                hideKeyboard()
                 return true
             }
 
@@ -202,20 +201,32 @@ class HomeActivity : AppCompatActivity() {
     private fun debounceFilter(query: String) {
         filterJob?.cancel() // Cancela el trabajo anterior si existe
         filterJob = uiScope.launch {
-            delay(300) // Espera 300ms antes de ejecutar el filtro
+            delay(200) // Espera 300ms antes de ejecutar el filtro
             performFiltering(query)
         }
     }
 
     private fun performFiltering(query: String) {
-        uiScope.launch {
+        val currentFilterJob = filterJob // capture the current job
+        lifecycleScope.launch {
             try {
                 if (::allGamesList.isInitialized) {
                     val filteredList = withContext(Dispatchers.Default) {
-                        searchHelper.filterGamesBySearchTerm(allGamesList, query)
+                        if (query.isBlank()) {
+                            allGamesList // If search query is empty, return all games
+                        } else {
+                            searchHelper.filterGamesBySearchTerm(allGamesList, query)
+                        }
                     }
                     withContext(Dispatchers.Main) {
-                        (filteredGames as MutableLiveData).value = ArrayList(filteredList)
+                        if (currentFilterJob == filterJob) { // check if this is still the active job
+                            if (filteredList.isEmpty()) {
+                                showError(getString(R.string.error1))
+                            } else {
+                                clearError()
+                                (filteredGames as MutableLiveData).value = ArrayList(filteredList)
+                            }
+                        }
                     }
                 } else {
                     Log.e("HomeActivity", "allGamesList is not initialized yet.")
@@ -224,6 +235,11 @@ class HomeActivity : AppCompatActivity() {
                 Log.e("HomeActivity", "Error filtering games", e)
             }
         }
+    }
+
+    private fun clearError() {
+        linearSearch.removeView(linearErrorSearchButton)
+        textErrorSearch.text = ""
     }
 
     fun onFilterGamesBySearchClick(view: View) {
