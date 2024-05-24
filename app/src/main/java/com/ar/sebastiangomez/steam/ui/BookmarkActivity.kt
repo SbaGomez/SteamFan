@@ -283,16 +283,4 @@ class BookmarkActivity : AppCompatActivity() {
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
         searchView.clearFocus() // Quita el foco del SearchView
     }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun onReloadHomeClick(view: View) {
-        searchView.setQuery("", false)
-        onSearchCloseClick(view)
-
-        // Notify the adapter that the data set has changed
-        recyclerView.adapter?.notifyDataSetChanged()
-
-        // Fetch games again
-        getAll()
-    }
 }

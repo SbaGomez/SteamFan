@@ -196,6 +196,12 @@ class HomeActivity : AppCompatActivity() {
                 return true
             }
         })
+        searchView.setOnCloseListener {
+            // Aquí puedes realizar acciones cuando el usuario cierra la búsqueda
+            displayedGamesList.clear()
+            hideKeyboard() // Cerrar el teclado
+            false // Devuelve 'false' para permitir que el SearchView se cierre normalmente después de ejecutar tu acción personalizada
+        }
     }
 
     private fun debounceFilter(query: String) {
@@ -320,21 +326,5 @@ class HomeActivity : AppCompatActivity() {
         linearSearch.removeView(linearSearchButton) //Remove search buttons
         linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
         searchView.clearFocus() // Remove Focus from SearchView
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun onReloadHomeClick(view: View) {
-        searchView.setQuery("", false)
-        onSearchCloseClick(view)
-        // Reset pagination variables
-        currentPage = 0
-        isLoading = false
-        displayedGamesList.clear()
-
-        // Notify the adapter that the data set has changed
-        recyclerView.adapter?.notifyDataSetChanged()
-
-        // Fetch games again
-        getGames()
     }
 }

@@ -144,24 +144,6 @@
                         app:iconTint="#FFFFFF"
                         tools:ignore="ButtonStyle,TextSizeCheck" />
 
-                    <!--<androidx.cardview.widget.CardView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:backgroundTint="#495d92"
-                        app:cardCornerRadius="10dp">
-
-                        <ImageButton
-                            android:id="@+id/imageButton"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:backgroundTint="#00FFFFFF"
-                            android:contentDescription="@string/reload_home_button"
-                            android:onClick="onReloadHomeClick"
-                            android:scaleType="center"
-                            app:srcCompat="@android:drawable/stat_notify_sync"
-                            tools:ignore="TouchTargetSizeCheck" />
-                    </androidx.cardview.widget.CardView>-->
-
                 </LinearLayout>
 
             </LinearLayout>
