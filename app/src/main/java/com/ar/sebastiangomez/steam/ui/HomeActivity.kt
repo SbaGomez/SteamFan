@@ -95,8 +95,8 @@ class HomeActivity : AppCompatActivity() {
         linearErrorSearchButton = findViewById(R.id.linearErrorSearchButton)
         textErrorSearch = findViewById(R.id.textErrorSearch)
 
-        linearSearch.removeView(linearSearchButton) //Remove search buttons
-        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
+        linearSearchButton.let { linearSearch.removeView(it) } // Remove search buttons
+        linearErrorSearchButton.let { linearSearch.removeView(it) } // Remove error search
 
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -245,13 +245,17 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun clearError() {
-        linearSearch.removeView(linearErrorSearchButton)
+        linearErrorSearchButton.let {
+            linearSearch.removeView(it)
+        }
         textErrorSearch.text = ""
     }
 
     fun onFilterGamesBySearchClick(view: View) {
         hideKeyboard()
-        linearSearch.removeView(linearErrorSearchButton)
+        linearErrorSearchButton.let {
+            linearSearch.removeView(it)
+        }
 
         val searchTerm = searchView.query.toString().trim()
 
@@ -291,10 +295,9 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun showButtonSearch()
-    {
+    private fun showButtonSearch() {
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
+            if (hasFocus && linearSearchButton.parent == null) {
                 linearSearch.addView(linearSearchButton)
             }
         }
@@ -324,8 +327,8 @@ class HomeActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onSearchCloseClick(view: View) {
-        linearSearch.removeView(linearSearchButton) //Remove search buttons
-        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
+        linearSearchButton.let { linearSearch.removeView(it) } // Remove search buttons
+        linearErrorSearchButton.let { linearSearch.removeView(it) } // Remove error search
         searchView.clearFocus() // Remove Focus from SearchView
     }
 }
