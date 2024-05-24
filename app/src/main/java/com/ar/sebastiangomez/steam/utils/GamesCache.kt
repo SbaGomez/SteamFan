@@ -35,7 +35,7 @@ class GamesCache
     fun addGameToCache(context: Context, game: GameCached) {
         val games = getGamesFromCache(context)
         if (!games.any { it.id == game.id }) {
-            games.add(game)
+            games.add(0,game)
             saveGamesToCache(context, games)
         }
         Toast.makeText(context, "Agregaste - ${game.name} - a favoritos.", Toast.LENGTH_LONG).show()

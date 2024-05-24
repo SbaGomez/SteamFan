@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ImageButton
@@ -93,8 +94,8 @@ class BookmarkActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        linearSearch.removeView(linearSearchButton) //Remove search buttons
-        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
+        linearSearchButton.let { linearSearch.removeView(it) } // Remove search buttons
+        linearErrorSearchButton.let { linearSearch.removeView(it) } // Remove error search
 
         showButtonSearch() // Mostrar el boton buscar al abrir el search
         getAll()
@@ -173,9 +174,7 @@ class BookmarkActivity : AppCompatActivity() {
             try {
                 progressBar.visibility = View.VISIBLE
                 val gamesList = withContext(Dispatchers.IO) {
-                    gamesCache.getGamesFromCache(applicationContext).toMutableList().apply {
-                        reverse()
-                    }
+                    gamesCache.getGamesFromCache(applicationContext).toMutableList()
                 }
 
                 val adapter = BookmarkAdapter(this@BookmarkActivity, gamesList) { position, gameId ->
@@ -189,7 +188,10 @@ class BookmarkActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 e.printStackTrace()
                 // En caso de error, mostrar el mensaje de error adecuado
-                linearSearch.addView(linearErrorSearchButton)
+                linearErrorSearchButton.let {
+                    (it.parent as? ViewGroup)?.removeView(it)
+                    linearSearch.addView(it)
+                }
                 textErrorSearch.text = getString(R.string.error3)
             } finally {
                 // Asegurarse de ocultar el ProgressBar después de la carga, ya sea exitosa o no
@@ -202,14 +204,19 @@ class BookmarkActivity : AppCompatActivity() {
     {
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                linearSearch.addView(linearSearchButton)
+                linearSearchButton.let {
+                    (it.parent as? ViewGroup)?.removeView(it)
+                    linearSearch.addView(it)
+                }
             }
         }
     }
 
     fun onFilterGamesBySearchClick(view: View) {
         hideKeyboard(view)
-        linearSearch.removeView(linearErrorSearchButton) // Remove Error Search
+        linearErrorSearchButton.let {
+            linearSearch.removeView(it)
+        }
 
         val searchTerm = searchView.query.toString().trim()
 
@@ -255,7 +262,10 @@ class BookmarkActivity : AppCompatActivity() {
 
     private fun showError(errorMessage: String) {
         runOnUiThread {
-            linearSearch.addView(linearErrorSearchButton)
+            linearErrorSearchButton.let {
+                (it.parent as? ViewGroup)?.removeView(it)
+                linearSearch.addView(it)
+            }
             textErrorSearch.text = errorMessage
         }
     }
@@ -278,8 +288,8 @@ class BookmarkActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onSearchCloseClick(view: View) {
-        linearSearch.removeView(linearSearchButton) //Remove search buttons
-        linearSearch.removeView(linearErrorSearchButton) //Remove Error Search
+        linearSearchButton.let { linearSearch.removeView(it) } // Remove search buttons
+        linearErrorSearchButton.let { linearSearch.removeView(it) } // Remove error search
         searchView.clearFocus() // Quita el foco del SearchView
     }
 }

@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ImageButton
@@ -155,7 +156,10 @@ class HomeActivity : AppCompatActivity() {
                 loadMoreGames()
             } catch (e: IOException) {
                 e.printStackTrace()
-                linearSearch.addView(linearErrorSearchButton)
+                linearErrorSearchButton.let {
+                    (it.parent as? ViewGroup)?.removeView(it)
+                    linearSearch.addView(it)
+                }
                 textErrorSearch.text = getString(R.string.error3)
             } finally {
                 progressBar.visibility = View.INVISIBLE
@@ -270,12 +274,21 @@ class HomeActivity : AppCompatActivity() {
 
                     if (filteredGamesList.isEmpty()) {
                         showError(getString(R.string.error1))
+                        runOnUiThread {
+                            val adapter = GamesAdapter(this@HomeActivity, gamesList) { position, gameId ->
+                                val gameName = gamesList[position].name
+                                Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
+                                hideKeyboard()
+                                onSearchCloseClick(view)
+                            }
+                            recyclerView.visibility = View.VISIBLE
+                            recyclerView.adapter = adapter
+                        }
                     } else {
                         runOnUiThread {
                             val adapter = GamesAdapter(this@HomeActivity, filteredGamesList) { position, gameId ->
                                 val gameName = filteredGamesList[position].name
                                 Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
-                                // Aquí puedes enviar el ID a otra pantalla o realizar otras acciones relacionadas con el juego
                                 hideKeyboard()
                                 onSearchCloseClick(view)
                             }
@@ -313,7 +326,11 @@ class HomeActivity : AppCompatActivity() {
     private fun showError(errorMessage: String) {
         uiScope.launch {
             withContext(Dispatchers.Main) {
-                linearSearch.addView(linearErrorSearchButton)
+                linearErrorSearchButton.let {
+                    // Remover la vista del padre si ya tiene uno
+                    (it.parent as? ViewGroup)?.removeView(it)
+                    linearSearch.addView(it)
+                }
                 textErrorSearch.text = errorMessage
             }
         }
