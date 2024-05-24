@@ -196,7 +196,6 @@ class HomeActivity : AppCompatActivity() {
         searchView.setOnCloseListener {
             // Aquí puedes realizar acciones cuando el usuario cierra la búsqueda
             displayedGamesList.clear()
-            hideKeyboard() // Cerrar el teclado
             false // Devuelve 'false' para permitir que el SearchView se cierre normalmente después de ejecutar tu acción personalizada
         }
     }
@@ -204,8 +203,13 @@ class HomeActivity : AppCompatActivity() {
     private fun debounceFilter(query: String) {
         filterJob?.cancel() // Cancela el trabajo anterior si existe
         filterJob = uiScope.launch {
-            delay(200) // Espera 300ms antes de ejecutar el filtro
-            performFiltering(query)
+            try {
+                delay(200) // Espera 200ms antes de ejecutar el filtro
+                performFiltering(query)
+            } catch (e: CancellationException) {
+                // Maneja la cancelación si es necesaria
+                Log.d("HomeActivity", "Filtrado cancelado")
+            }
         }
     }
 
