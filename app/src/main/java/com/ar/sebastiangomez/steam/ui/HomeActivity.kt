@@ -1,13 +1,11 @@
 package com.ar.sebastiangomez.steam.ui
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -30,6 +28,7 @@ import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.ui.adapter.GamesAdapter
 import com.ar.sebastiangomez.steam.utils.SearchHelper
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
+import com.ar.sebastiangomez.steam.utils.Utils
 import kotlinx.coroutines.*
 import java.io.IOException
 
@@ -37,6 +36,7 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchHelper: SearchHelper
+    private lateinit var utils: Utils
     private lateinit var progressBar : ProgressBar
     private lateinit var themeButton : ImageButton
     private lateinit var searchView : SearchView
@@ -64,6 +64,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         searchHelper = SearchHelper()
+        utils = Utils()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_home)
@@ -192,7 +193,7 @@ class HomeActivity : AppCompatActivity() {
                 performFiltering(query)
             } catch (e: CancellationException) {
                 // Maneja la cancelación si es necesaria
-                Log.d("HomeActivity", "Filtrado cancelado")
+                Log.d(tag, "Filtrado cancelado")
             }
         }
     }
@@ -220,10 +221,10 @@ class HomeActivity : AppCompatActivity() {
                         }
                     }
                 } else {
-                    Log.e("HomeActivity", "allGamesList is not initialized yet.")
+                    Log.e(tag, "allGamesList is not initialized yet.")
                 }
             } catch (e: Exception) {
-                Log.e("HomeActivity", "Error filtering games", e)
+                Log.e(tag, "Error filtering games", e)
             }
         }
     }
@@ -236,7 +237,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     fun onFilterGamesBySearchClick(view: View) {
-        hideKeyboard()
+        utils.hideKeyboard(this@HomeActivity)
         linearErrorSearchButton.let {
             linearSearch.removeView(it)
         }
@@ -258,7 +259,7 @@ class HomeActivity : AppCompatActivity() {
                             val adapter = GamesAdapter(this@HomeActivity, gamesList) { position, gameId ->
                                 val gameName = gamesList[position].name
                                 Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
-                                hideKeyboard()
+                                utils.hideKeyboard(this@HomeActivity)
                                 onSearchCloseClick(view)
                             }
                             recyclerView.visibility = View.VISIBLE
@@ -269,7 +270,7 @@ class HomeActivity : AppCompatActivity() {
                             val adapter = GamesAdapter(this@HomeActivity, filteredGamesList) { position, gameId ->
                                 val gameName = filteredGamesList[position].name
                                 Log.d(tag, "Game ID: $gameId | Game Name: $gameName")
-                                hideKeyboard()
+                                utils.hideKeyboard(this@HomeActivity)
                                 onSearchCloseClick(view)
                             }
                             recyclerView.visibility = View.VISIBLE
@@ -293,13 +294,6 @@ class HomeActivity : AppCompatActivity() {
             if (hasFocus && linearSearchButton.parent == null) {
                 linearSearch.addView(linearSearchButton)
             }
-        }
-    }
-
-    private fun hideKeyboard() {
-        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        currentFocus?.let {
-            inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
         }
     }
 
