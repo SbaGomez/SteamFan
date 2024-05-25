@@ -3,7 +3,6 @@ package com.ar.sebastiangomez.steam.ui
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -19,7 +18,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -32,6 +30,7 @@ import com.ar.sebastiangomez.steam.model.GameDetail
 import com.ar.sebastiangomez.steam.model.PcRequirement
 import com.ar.sebastiangomez.steam.model.PcRequirements
 import com.ar.sebastiangomez.steam.utils.GamesCache
+import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
 
@@ -105,9 +104,9 @@ class DetalleActivity : AppCompatActivity() {
         }
 
         bindViewObject()
-        setButtonImageBasedOnTheme()
+        ThemeHelper.setButtonImageBasedOnTheme(themeButton, this)
         themeButton.setOnClickListener {
-            toggleTheme()
+            ThemeHelper.toggleTheme(this)
         }
         val id = getId() //Obtener ID de HomeActivity por intent y hacer fetch de detalles.
         getDetails(id.toString()) //Fetch game details del ID.
@@ -166,22 +165,6 @@ class DetalleActivity : AppCompatActivity() {
         textTitlePrecioUSD = findViewById(R.id.textTitlePrecioUSD)
         buttonComprar = findViewById(R.id.buttonComprar)
         buttonVer = findViewById(R.id.buttonVer)
-    }
-
-    private fun setButtonImageBasedOnTheme() {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        val currentTheme = if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
-        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
-    }
-
-
-    private fun toggleTheme() {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        }
     }
 
     private fun getId(): Int {

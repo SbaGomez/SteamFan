@@ -2,9 +2,6 @@ package com.ar.sebastiangomez.steam.ui
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
-import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -18,7 +15,6 @@ import android.widget.SearchView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -31,6 +27,7 @@ import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.ui.adapter.BookmarkAdapter
 import com.ar.sebastiangomez.steam.utils.GamesCache
 import com.ar.sebastiangomez.steam.utils.SearchHelper
+import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -73,9 +70,9 @@ class BookmarkActivity : AppCompatActivity() {
         }
 
         bindViewObject()
-        setButtonImageBasedOnTheme()
+        ThemeHelper.setButtonImageBasedOnTheme(themeButton, this)
         themeButton.setOnClickListener {
-            toggleTheme()
+            ThemeHelper.toggleTheme(this)
         }
     }
 
@@ -104,22 +101,6 @@ class BookmarkActivity : AppCompatActivity() {
 
         filteredGames.observe(this) { filteredGames ->
             (recyclerView.adapter as? BookmarkAdapter)?.updateItems(filteredGames)
-        }
-    }
-
-    private fun setButtonImageBasedOnTheme() {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        val currentTheme = if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
-        themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
-    }
-
-
-    private fun toggleTheme() {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
     }
 
