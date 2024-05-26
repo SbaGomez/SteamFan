@@ -1,10 +1,13 @@
 package com.ar.sebastiangomez.steam.model
 
+import androidx.room.Entity
+
+@Entity
 data class GameDetailResponse(
     val success: Boolean,
     val data: GameDetail
 )
-
+@Entity
 data class GameDetail(
     val type: String,
     val name: String,
@@ -22,11 +25,13 @@ data class GameDetail(
     val price_overview: PriceOverview?,
     val release_date: ReleaseDate
 )
+@Entity
 data class ReleaseDate(
     val coming_soon: Boolean,
     val date: String,
 )
 
+@Entity
 data class PriceOverview(
     val currency: String,
     val initial: Int,
@@ -36,11 +41,13 @@ data class PriceOverview(
     val final_formatted: String
 )
 
+@Entity
 data class PcRequirements(
     val minimum: PcRequirement?,
     val recommended: PcRequirement?
 )
 
+@Entity
 data class PcRequirement(
     val os: String,
     val processor: String,

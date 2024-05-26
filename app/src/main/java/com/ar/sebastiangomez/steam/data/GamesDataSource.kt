@@ -44,7 +44,7 @@ class GamesDataSource {
         suspend fun getDetails(gameId: String): GameDetail? {
             // Check cache first
             gameDetailsCache[gameId]?.let {
-                Log.d(tag, "Game details found in cache for ID: $gameId")
+                Log.d(tag, "Fetching Game details found in cache for ID: $gameId")
                 return it
             }
 
