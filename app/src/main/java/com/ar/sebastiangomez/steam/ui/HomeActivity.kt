@@ -251,8 +251,8 @@ class HomeActivity : AppCompatActivity() {
                     recyclerView.visibility = View.INVISIBLE
                     progressBar.visibility = View.VISIBLE
 
-                    val gamesList = gamesRepository.getGames()
-                    val filteredGamesList = searchHelper.filterExactMatchGames(gamesList, searchTerm)
+                    val gamesList = allGamesList
+                    val filteredGamesList = searchHelper.filterGamesByExactAndContainsTerm(gamesList, searchTerm)
 
                     if (filteredGamesList.isEmpty()) {
                         showError(getString(R.string.error1))
