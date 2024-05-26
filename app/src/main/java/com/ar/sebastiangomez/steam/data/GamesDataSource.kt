@@ -23,6 +23,8 @@ class GamesDataSource {
             .build()
             .create(SteamApiService::class.java)
 
+        private val gameDetailsCache = mutableMapOf<String, GameDetail?>()
+
         suspend fun getGames(): List<Game> {
             Log.d(tag, "Games DataSource Get")
 
@@ -40,6 +42,12 @@ class GamesDataSource {
         }
 
         suspend fun getDetails(gameId: String): GameDetail? {
+            // Check cache first
+            gameDetailsCache[gameId]?.let {
+                Log.d(tag, "Game details found in cache for ID: $gameId")
+                return it
+            }
+
             Log.d(tag, "Fetching details for game ID: $gameId")
 
             return try {
@@ -48,10 +56,9 @@ class GamesDataSource {
                 if (gameDetailResponse?.success == true) {
                     val gameDetail = gameDetailResponse.data
                     Log.d(tag, "Game details: $gameDetail")
-                    run {
-                        Log.d(tag, "Game details fetched successfully for ID: $gameId")
-                        gameDetail // Return the game detail
-                    }
+                    // Store in cache
+                    gameDetailsCache[gameId] = gameDetail
+                    gameDetail
                 } else {
                     Log.e(tag, "ERROR: Unsuccessful response or success flag is false")
                     null

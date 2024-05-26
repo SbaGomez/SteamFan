@@ -192,37 +192,42 @@ class DetalleActivity : AppCompatActivity() {
         }
     }
 
+    // Función para actualizar la interfaz de usuario según sea necesario
+    fun updateUI(isInFavorites: Boolean) {
+        val imageResource = if (isInFavorites) {
+            R.drawable.bookmarkadd
+        } else {
+            R.drawable.bookmarkdel
+        }
+        val imageTint = if (isInFavorites) {
+            Color.parseColor("#F9F4FB")
+        } else {
+            Color.parseColor("#914040")
+        }
+        imageButtonBookmark.setImageResource(imageResource)
+        imageButtonBookmark.imageTintList = ColorStateList.valueOf(imageTint)
+    }
+
     @SuppressLint("SetTextI18n", "DefaultLocale")
     private suspend fun setData(gameDetail : GameDetail){
         val pcRequirements = utils.parsePcRequirements(gameDetail.pc_requirements.toString())
-        val cachedGames = gamesCache.getGamesFromCache(this@DetalleActivity)
-        var indexID = cachedGames.indexOfFirst { it.id == gameDetail.steam_appid.toString() }
 
-        // Función para actualizar la interfaz de usuario según sea necesario
-        fun updateUI(isInFavorites: Boolean) {
-            if (isInFavorites) {
-                imageButtonBookmark.setImageResource(R.drawable.bookmarkadd)
-                imageButtonBookmark.imageTintList = ColorStateList.valueOf(Color.parseColor("#F9F4FB"))
-            } else {
-                imageButtonBookmark.setImageResource(R.drawable.bookmarkdel)
-                imageButtonBookmark.imageTintList = ColorStateList.valueOf(Color.parseColor("#914040"))
-            }
-        }
+        val exists = gamesCache.exists(this@DetalleActivity, gameDetail.steam_appid.toString())
 
         // Actualiza el UI inicial
-        updateUI(indexID == -1)
+        updateUI(!exists)
 
         // Listener de clic para agregar o eliminar de favoritos
         imageButtonBookmark.setOnClickListener {
+            val cachedGames = gamesCache.getGamesFromCache(this@DetalleActivity)
+            var indexID = cachedGames.indexOfFirst { it.id == gameDetail.steam_appid.toString() }
             try {
                 if (indexID != -1) { // Si el juego está en la lista de favoritos, eliminarlo
-                    cachedGames.removeAt(indexID)
-                    // Guardar la lista actualizada en la caché
-                    gamesCache.saveGamesToCache(this@DetalleActivity, cachedGames)
-                    // Actualizar el UI
-                    updateUI(true)
+                    gamesCache.removeGameToCache(this@DetalleActivity, gameDetail.steam_appid.toString(), null)
                     // Actualizar el índice
                     indexID = -1
+                    // Actualizar el UI
+                    updateUI(true)
                 } else { // Si el juego no está en la lista de favoritos, agregarlo
                     Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
                     val cachedGame = GameCached(
@@ -316,7 +321,7 @@ class DetalleActivity : AppCompatActivity() {
         }
         else{
             linearPrincipal.removeView(linearButtons)
-            Log.d(tag, "Log Price Overview - ID Game: ${gameDetail.steam_appid} - ${gameDetail.price_overview}")
+            //Log.d(tag, "Log Price Overview - ID Game: ${gameDetail.steam_appid} - ${gameDetail.price_overview}")
             val pricePattern = """\$\s?([0-9]+(?:\.[0-9]+)?)\s?(?:USD)?""".toRegex()
             val priceDouble = pricePattern.find(gameDetail.price_overview.final_formatted)?.groups?.get(1)?.value?.toDoubleOrNull() ?: 0.0
             val dolartarjeta = dolarRepository.getDolarTarjeta()

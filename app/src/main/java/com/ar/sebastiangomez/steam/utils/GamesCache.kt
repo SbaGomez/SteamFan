@@ -43,7 +43,7 @@ class GamesCache
         context.startActivity(intent)
     }
 
-    fun removeGameToCache(context: Context, id: String, activity: String) {
+    fun removeGameToCache(context: Context, id: String, activity: String? = null) {
         // Obtener la lista de juegos en caché
         val cachedGames = getGamesFromCache(context)
 
