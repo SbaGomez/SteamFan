@@ -181,6 +181,7 @@ class HomeActivity : AppCompatActivity() {
         searchView.setOnCloseListener {
             // Aquí puedes realizar acciones cuando el usuario cierra la búsqueda
             displayedGamesList.clear()
+            allGamesList
             false // Devuelve 'false' para permitir que el SearchView se cierre normalmente después de ejecutar tu acción personalizada
         }
     }

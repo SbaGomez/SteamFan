@@ -169,7 +169,7 @@
                                 android:backgroundTint="#00FFFFFF"
                                 android:contentDescription="@string/fav_button"
                                 android:scaleType="fitCenter"
-                                app:srcCompat="@drawable/tagdlc"
+                                app:srcCompat="@drawable/dlc"
                                 tools:ignore="TouchTargetSizeCheck,DuplicateSpeakableTextCheck" />
 
                             <View
@@ -187,7 +187,7 @@
                                 android:contentDescription="@string/fav_button"
                                 android:padding="8dp"
                                 android:scaleType="fitCenter"
-                                app:srcCompat="@drawable/bookmarkdetail"
+                                app:srcCompat="@drawable/bookmarkadd"
                                 tools:ignore="TouchTargetSizeCheck,DuplicateSpeakableTextCheck" />
 
                         </LinearLayout>
@@ -235,8 +235,9 @@
                                 android:fontFamily="@font/montserrat_bold"
                                 android:text="@string/comprar_juego_button"
                                 android:textColor="#000000"
+                                android:textSize="14sp"
                                 app:cornerRadius="0dp"
-                                app:icon="@drawable/hometab"
+                                app:icon="@drawable/hometabactive"
                                 app:iconPadding="4dp"
                                 app:iconSize="20dp"
                                 app:iconTint="#000000" />
@@ -262,8 +263,9 @@
                                 android:fontFamily="@font/montserrat_bold"
                                 android:text="@string/comprar_juego_button"
                                 android:textColor="#000000"
+                                android:textSize="12sp"
                                 app:cornerRadius="0dp"
-                                app:icon="@drawable/hometab"
+                                app:icon="@drawable/hometabactive"
                                 app:iconPadding="4dp"
                                 app:iconSize="20dp"
                                 app:iconTint="#000000" />
@@ -907,13 +909,12 @@
             android:id="@+id/fabButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
             android:background="#00FFFFFF"
             android:contentDescription="@string/fav_button"
             android:onClick="onBookmarkClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/tabbookmarkactive"
+            android:src="@drawable/tabbookmark"
             tools:ignore="VisualLintBounds" />
 
         <!-- Espacio para separar los botones -->
@@ -927,7 +928,7 @@
             android:id="@+id/homeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="10dp"
             android:background="#00FFFFFF"
             android:contentDescription="@string/steam_button"
             android:onClick="onHomeClick"

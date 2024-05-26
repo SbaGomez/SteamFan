@@ -201,10 +201,10 @@ class DetalleActivity : AppCompatActivity() {
         // Función para actualizar la interfaz de usuario según sea necesario
         fun updateUI(isInFavorites: Boolean) {
             if (isInFavorites) {
-                imageButtonBookmark.setImageResource(R.drawable.bookmarkdetail)
+                imageButtonBookmark.setImageResource(R.drawable.bookmarkadd)
                 imageButtonBookmark.imageTintList = ColorStateList.valueOf(Color.parseColor("#F9F4FB"))
             } else {
-                imageButtonBookmark.setImageResource(R.drawable.bookmarkdetailremove)
+                imageButtonBookmark.setImageResource(R.drawable.bookmarkdel)
                 imageButtonBookmark.imageTintList = ColorStateList.valueOf(Color.parseColor("#914040"))
             }
         }
@@ -251,16 +251,16 @@ class DetalleActivity : AppCompatActivity() {
         //Type Game/Dlc/Demo/Music
         when (gameDetail.type) {
             "dlc" -> {
-                imageType.setImageResource(R.drawable.tagdlc)
+                imageType.setImageResource(R.drawable.dlc)
             }
             "demo" -> {
-                imageType.setImageResource(R.drawable.tagdemo)
+                imageType.setImageResource(R.drawable.demo)
             }
             "game" -> {
-                imageType.setImageResource(R.drawable.taggame)
+                imageType.setImageResource(R.drawable.game)
             }
             "music" -> {
-                imageType.setImageResource(R.drawable.tagmusic)
+                imageType.setImageResource(R.drawable.music)
             }
         }
 

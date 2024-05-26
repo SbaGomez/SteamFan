@@ -218,13 +218,12 @@
             android:id="@+id/fabButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
             android:background="#00FFFFFF"
             android:contentDescription="@string/fav_button"
             android:onClick="onBookmarkClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/tabbookmarkactive"
+            android:src="@drawable/tabbookmark"
             tools:ignore="VisualLintBounds" />
 
         <!-- Espacio para separar los botones -->
@@ -238,12 +237,12 @@
             android:id="@+id/homeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="10dp"
             android:background="#00FFFFFF"
             android:contentDescription="@string/app_name"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/hometab"
+            android:src="@drawable/hometabactive"
             tools:ignore="DuplicateSpeakableTextCheck" />
 
         <!-- Espacio para separar los botones -->
