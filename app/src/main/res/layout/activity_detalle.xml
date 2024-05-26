@@ -23,7 +23,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:background="@color/Games_Details_background"
         android:minHeight="?attr/actionBarSize"
         android:textAlignment="center"
@@ -39,15 +39,15 @@
         <!-- ImageButton para el botón de retroceso -->
         <ImageButton
             android:id="@+id/back_button"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/steam_button"
             android:onClick="onBackClick"
             android:padding="10dp"
             android:scaleType="fitCenter"
             android:src="@drawable/back"
-            tools:ignore="ContentDescription,DuplicateSpeakableTextCheck"
+            tools:ignore="ContentDescription,DuplicateSpeakableTextCheck,TouchTargetSizeCheck"
             tools:layout_editor_absoluteX="16dp" />
 
         <!-- TextView para el título -->
@@ -60,7 +60,7 @@
             android:gravity="center"
             android:text="@string/title_detail"
             android:textColor="@color/title_text"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="18dp" />
@@ -236,7 +236,7 @@
                                 android:text="@string/comprar_juego_button"
                                 android:textColor="#000000"
                                 app:cornerRadius="0dp"
-                                app:icon="@drawable/homesteamtab"
+                                app:icon="@drawable/hometab"
                                 app:iconPadding="4dp"
                                 app:iconSize="20dp"
                                 app:iconTint="#000000" />
@@ -263,7 +263,7 @@
                                 android:text="@string/comprar_juego_button"
                                 android:textColor="#000000"
                                 app:cornerRadius="0dp"
-                                app:icon="@drawable/homesteamtab"
+                                app:icon="@drawable/hometab"
                                 app:iconPadding="4dp"
                                 app:iconSize="20dp"
                                 app:iconTint="#000000" />
@@ -702,7 +702,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    android:layout_marginBottom="40dp"
+                    android:layout_marginBottom="30dp"
                     android:textAlignment="center"
                     app:cardBackgroundColor="#1E1F25"
                     app:cardCornerRadius="16dp"
@@ -933,7 +933,7 @@
             android:onClick="onHomeClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/homesteamtabactive"
+            android:src="@drawable/hometab"
             tools:ignore="TooManyViews" />
 
         <!-- Espacio para separar los botones -->

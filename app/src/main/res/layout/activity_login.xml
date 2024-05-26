@@ -11,7 +11,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:background="@color/Games_Details_background"
         android:minHeight="?attr/actionBarSize"
         android:textAlignment="center"
@@ -32,7 +32,7 @@
             android:gravity="center"
             android:text="@string/title_login"
             android:textColor="@color/title_text"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="18dp" />
