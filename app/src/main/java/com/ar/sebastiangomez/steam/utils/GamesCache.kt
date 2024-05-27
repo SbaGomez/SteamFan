@@ -23,7 +23,7 @@ class GamesCache
     }
 
     // Función para guardar la lista de IDs en caché
-    fun saveGamesToCache(context: Context, games: MutableList<GameCached>) {
+    private fun saveGamesToCache(context: Context, games: MutableList<GameCached>) {
         val sharedPreferences: SharedPreferences = context.getSharedPreferences("bookmark_data", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         val json = Gson().toJson(games)
