@@ -193,7 +193,7 @@ class DetalleActivity : AppCompatActivity() {
     }
 
     // Función para actualizar la interfaz de usuario según sea necesario
-    fun updateUI(isInFavorites: Boolean) {
+    private fun updateUI(isInFavorites: Boolean) {
         val imageResource = if (isInFavorites) {
             R.drawable.bookmarkadd
         } else {
@@ -210,30 +210,25 @@ class DetalleActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n", "DefaultLocale")
     private suspend fun setData(gameDetail : GameDetail){
-        val pcRequirements = utils.parsePcRequirements(gameDetail.pc_requirements.toString())
-
-        val exists = gamesCache.exists(this@DetalleActivity, gameDetail.steam_appid.toString())
+        val pcRequirements = utils.parsePcRequirements(gameDetail.pcRequirements.toString())
+        val exists = gamesCache.exists(this@DetalleActivity, gameDetail.steamAppId.toString())
 
         // Actualiza el UI inicial
         updateUI(!exists)
 
         // Listener de clic para agregar o eliminar de favoritos
         imageButtonBookmark.setOnClickListener {
-            val cachedGames = gamesCache.getGamesFromCache(this@DetalleActivity)
-            var indexID = cachedGames.indexOfFirst { it.id == gameDetail.steam_appid.toString() }
             try {
-                if (indexID != -1) { // Si el juego está en la lista de favoritos, eliminarlo
-                    gamesCache.removeGameToCache(this@DetalleActivity, gameDetail.steam_appid.toString(), null)
-                    // Actualizar el índice
-                    indexID = -1
+                if (exists) { // Si el juego está en la lista de favoritos, eliminarlo
+                    gamesCache.removeGameToCache(this@DetalleActivity, gameDetail.steamAppId.toString(), null)
                     // Actualizar el UI
                     updateUI(true)
                 } else { // Si el juego no está en la lista de favoritos, agregarlo
-                    Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steam_appid}, Game Name: ${gameDetail.name}")
+                    Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steamAppId}, Game Name: ${gameDetail.name}")
                     val cachedGame = GameCached(
-                        gameDetail.steam_appid.toString(),
+                        gameDetail.steamAppId.toString(),
                         gameDetail.name,
-                        gameDetail.header_image
+                        gameDetail.headerImage
                     )
                     // Agregar el juego a la lista en caché
                     gamesCache.addGameToCache(this@DetalleActivity, cachedGame)
@@ -241,7 +236,6 @@ class DetalleActivity : AppCompatActivity() {
                     startActivity(intent)
                     finish()
                     // Después de agregar, actualiza el índice
-                    indexID = cachedGames.indexOfFirst { it.id == gameDetail.steam_appid.toString() }
                     // Actualizar el UI
                     updateUI(false)
                 }
@@ -269,14 +263,14 @@ class DetalleActivity : AppCompatActivity() {
             }
         }
 
-        if(gameDetail.release_date.date.isEmpty())
+        if(gameDetail.releaseDate.date.isEmpty())
         {
             linearInformacion.removeView(linearLanzamiento)
         }else {
-            textFechaLanzamiento.text = gameDetail.release_date.date
+            textFechaLanzamiento.text = gameDetail.releaseDate.date
         }
 
-        if(gameDetail.is_free)
+        if(gameDetail.isFree)
         {
             when (gameDetail.type) {
                 "dlc" -> {
@@ -298,7 +292,7 @@ class DetalleActivity : AppCompatActivity() {
             }
         }
 
-        if(gameDetail.release_date.coming_soon)
+        if(gameDetail.releaseDate.comingSoon)
         {
             if (gameDetail.type == "game")
             {
@@ -308,13 +302,13 @@ class DetalleActivity : AppCompatActivity() {
         }
 
         buttonVer.setOnClickListener {
-            val url = "https://store.steampowered.com/app/${gameDetail.steam_appid}"
+            val url = "https://store.steampowered.com/app/${gameDetail.steamAppId}"
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(url)
             startActivity(intent)
         }
 
-        if(gameDetail.is_free || gameDetail.release_date.coming_soon || gameDetail.price_overview == null)
+        if(gameDetail.isFree || gameDetail.releaseDate.comingSoon || gameDetail.priceOverview == null)
         {
             linearInformacion.removeView(linearPrecioARG)
             linearPrincipal.removeView(linearPrecioUSD)
@@ -323,22 +317,22 @@ class DetalleActivity : AppCompatActivity() {
             linearPrincipal.removeView(linearButtons)
             //Log.d(tag, "Log Price Overview - ID Game: ${gameDetail.steam_appid} - ${gameDetail.price_overview}")
             val pricePattern = """\$\s?([0-9]+(?:\.[0-9]+)?)\s?(?:USD)?""".toRegex()
-            val priceDouble = pricePattern.find(gameDetail.price_overview.final_formatted)?.groups?.get(1)?.value?.toDoubleOrNull() ?: 0.0
+            val priceDouble = pricePattern.find(gameDetail.priceOverview.finalFormatted)?.groups?.get(1)?.value?.toDoubleOrNull() ?: 0.0
             val dolartarjeta = dolarRepository.getDolarTarjeta()
             val ventaTarjetaNoNulo: Double = dolartarjeta?.venta ?: 0.0
             textDolarTarjeta.text = "$ $ventaTarjetaNoNulo ARS"
             val priceArg = priceDouble * ventaTarjetaNoNulo
             val priceArgFormatted = String.format("%.2f", priceArg)
             textPrecioARG.text = "$ $priceArgFormatted ARS"
-            if (gameDetail.price_overview.initial_formatted.isEmpty()) {
-                textPrecioUSD.text = gameDetail.price_overview.final_formatted
+            if (gameDetail.priceOverview.initialFormatted.isEmpty()) {
+                textPrecioUSD.text = gameDetail.priceOverview.finalFormatted
                 textTitlePrecioUSD.text = "Precio en USD:"
             } else {
-                textPrecioUSD.text = gameDetail.price_overview.initial_formatted
+                textPrecioUSD.text = gameDetail.priceOverview.initialFormatted
             }
-            if(gameDetail.price_overview.discount_percent > 0)
+            if(gameDetail.priceOverview.discountPercent > 0)
             {
-                textDescuento.text = gameDetail.price_overview.final_formatted
+                textDescuento.text = gameDetail.priceOverview.finalFormatted
             }
             else{
                 linearPrecioARG.removeView(linearDescuento)
@@ -356,7 +350,7 @@ class DetalleActivity : AppCompatActivity() {
         }
 
         buttonComprar.setOnClickListener {
-            val url = "https://store.steampowered.com/app/${gameDetail.steam_appid}"
+            val url = "https://store.steampowered.com/app/${gameDetail.steamAppId}"
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(url)
             startActivity(intent)
@@ -367,7 +361,7 @@ class DetalleActivity : AppCompatActivity() {
             // Verifica si la actividad aún es válida antes de cargar la imagen
             if (!isDestroyed && !isFinishing) {
                 Glide.with(this@DetalleActivity)
-                    .load(gameDetail.header_image) // URL de la imagen
+                    .load(gameDetail.headerImage) // URL de la imagen
                     .placeholder(R.drawable.progressbar) // Placeholder mientras se carga la imagen (opcional)
                     .error(R.drawable.error) // Imagen de error en caso de falla de carga (opcional)
                     .into(headerImg) // Establecer la imagen en el ImageView
@@ -375,11 +369,11 @@ class DetalleActivity : AppCompatActivity() {
         }
 
         // Descripcion
-        if(gameDetail.short_description.isEmpty())
+        if(gameDetail.shortDescription.isEmpty())
         {
             layoutDetalle.removeView(cardDescription)
         }
-        descripcionTxt.text = gameDetail.short_description.replace(Regex("<br />|&quot;"), "")
+        descripcionTxt.text = gameDetail.shortDescription.replace(Regex("<br />|&quot;"), "")
 
         // Requerimientos Minimos
         if(pcRequirements?.minimum != null)

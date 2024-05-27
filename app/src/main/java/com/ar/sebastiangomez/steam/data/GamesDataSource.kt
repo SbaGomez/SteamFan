@@ -91,7 +91,7 @@ class GamesDataSource {
                 val response = apiDetails.getGameDetails(gameId)
                 val gameDetailResponse = response[gameId]
                 if (gameDetailResponse?.success == true) {
-                    val headerImage = gameDetailResponse.data.header_image
+                    val headerImage = gameDetailResponse.data.headerImage
                     Log.d(tag, "Header image fetched successfully for game ID: $gameId")
                     headerImage // Return the header image URL
                 } else {
