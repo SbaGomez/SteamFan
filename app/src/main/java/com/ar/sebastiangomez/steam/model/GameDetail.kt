@@ -1,6 +1,7 @@
 package com.ar.sebastiangomez.steam.model
 
 import androidx.room.Entity
+import com.google.gson.annotations.SerializedName
 
 @Entity
 data class GameDetailResponse(
@@ -11,23 +12,24 @@ data class GameDetailResponse(
 data class GameDetail(
     val type: String,
     val name: String,
-    val steam_appid: Int,
-    val required_age: Int,
-    val is_free: Boolean,
+    @SerializedName("steam_appid") val steamAppId: Int,
+    @SerializedName("required_age") val requiredAge: Int,
+    @SerializedName("is_free") val isFree: Boolean,
     val dlc: List<Int>,
-    val detailed_description: String,
-    val about_the_game: String,
-    val short_description: String,
-    val header_image: String,
-    val capsule_image: String,
+    @SerializedName("detailed_description") val detailedDescription: String,
+    @SerializedName("about_the_game") val aboutTheGame: String,
+    @SerializedName("short_description") val shortDescription: String,
+    @SerializedName("header_image") val headerImage: String,
+    @SerializedName("capsule_image") val capsuleImage: String,
     val website: String?,
-    val pc_requirements: Any?,
-    val price_overview: PriceOverview?,
-    val release_date: ReleaseDate
+    @SerializedName("pc_requirements") val pcRequirements: Any?,
+    @SerializedName("price_overview") val priceOverview: PriceOverview?,
+    @SerializedName("release_date") val releaseDate: ReleaseDate
 )
+
 @Entity
 data class ReleaseDate(
-    val coming_soon: Boolean,
+    @SerializedName("coming_soon") val comingSoon: Boolean,
     val date: String,
 )
 
@@ -36,9 +38,9 @@ data class PriceOverview(
     val currency: String,
     val initial: Int,
     val final: Int,
-    val discount_percent: Int,
-    val initial_formatted: String,
-    val final_formatted: String
+    @SerializedName("discount_percent") val discountPercent: Int,
+    @SerializedName("initial_formatted") val initialFormatted: String,
+    @SerializedName("final_formatted") val finalFormatted: String
 )
 
 @Entity
