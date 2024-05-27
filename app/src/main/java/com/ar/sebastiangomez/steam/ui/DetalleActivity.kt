@@ -109,8 +109,7 @@ class DetalleActivity : AppCompatActivity() {
         themeButton.setOnClickListener {
             ThemeHelper.toggleTheme(this)
         }
-        val id = getId() //Obtener ID de HomeActivity por intent y hacer fetch de detalles.
-        getDetails(id.toString()) //Fetch game details del ID.
+        getDetails(getId().toString()) //Fetch game details del ID.
     }
 
     private fun bindViewObject() {
