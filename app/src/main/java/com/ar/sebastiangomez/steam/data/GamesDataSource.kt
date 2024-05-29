@@ -3,6 +3,7 @@ package com.ar.sebastiangomez.steam.data
 import android.util.Log
 import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.model.GameDetail
+import com.google.firebase.firestore.FirebaseFirestore
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

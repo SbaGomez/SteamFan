@@ -42,6 +42,7 @@
     <string name="precio_arg">$ 0 ARG</string>
     <string name="fecha">8 Feb, 2018</string>
 
+    <string name="default_web_client_id">YOUR_WEB_CLIENT_ID</string>
 
     <!-- Errores del buscador -->
     <string name="error1">No se encontro ningun juego con ese nombre.</string>

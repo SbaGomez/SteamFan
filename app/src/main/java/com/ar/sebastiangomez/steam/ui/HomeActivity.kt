@@ -29,6 +29,7 @@ import com.ar.sebastiangomez.steam.ui.adapter.GamesAdapter
 import com.ar.sebastiangomez.steam.utils.SearchHelper
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.ar.sebastiangomez.steam.utils.Utils
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
 import java.io.IOException
 
@@ -46,6 +47,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var linearSearchButton : LinearLayout
     private lateinit var linearErrorSearchButton : LinearLayout
     private lateinit var textErrorSearch : TextView
+    private lateinit var firebaseAuth: FirebaseAuth
 
     private val tag = "LOG-HOME"
 
@@ -74,6 +76,9 @@ class HomeActivity : AppCompatActivity() {
             insets
         }
 
+        firebaseAuth = FirebaseAuth.getInstance()
+        checkUser()
+
         bindViewObject()
         ThemeHelper.setButtonImageBasedOnTheme(themeButton, this)
         themeButton.setOnClickListener {
@@ -81,6 +86,15 @@ class HomeActivity : AppCompatActivity() {
         }
         showButtonSearch() // Mostrar el boton buscar al abrir el search
         getGames()
+    }
+
+    private fun checkUser(){
+        val firebaseUser = firebaseAuth.currentUser
+        if(firebaseUser == null){
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun bindViewObject() {

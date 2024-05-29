@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -49,6 +50,12 @@ dependencies {
     implementation(libs.glide)
     implementation (libs.androidx.room.runtime)
     implementation(libs.symbol.processing.gradle.plugin)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+    implementation(libs.play.services.auth)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore)
     annotationProcessor(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     // optional - RxJava2 support for Room
@@ -64,4 +71,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.firebase.bom)
 }
