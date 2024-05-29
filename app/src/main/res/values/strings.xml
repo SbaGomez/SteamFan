@@ -26,7 +26,7 @@
     <string name="Memoria">Memoria:</string>
     <string name="Graphic">Graficos:</string>
     <string name="Almacenamiento">Almacenamiento:</string>
-    <string name="error_detalles_empty">El juego no tiene detalles cargados.</string>
+    <string name="error_detalles_empty">El juego no tiene detalles cargados o no tenes conexion a internet.</string>
     <string name="boton_add_bookmark_detail">Boton AddBookmark</string>
     <string name="text_count">count</string>
     <string name="text_error">Texto de error.</string>

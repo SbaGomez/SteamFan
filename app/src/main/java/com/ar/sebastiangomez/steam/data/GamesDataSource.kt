@@ -104,13 +104,17 @@ class GamesDataSource {
             }
         }
 
-        suspend fun countGames() : Int{
+        suspend fun countGames(): Int {
             Log.d(tag, "Games DataSource Get Count")
 
-            val response = apiGames.getAppList()
-
-            Log.d(tag, "Total de juegos: ${response.appList.apps.size}")
-            return response.appList.apps.size
+            return try {
+                val response = apiGames.getAppList()
+                Log.d(tag, "Total de juegos: ${response.appList.apps.size}")
+                response.appList.apps.size
+            } catch (e: Exception) {
+                Log.e(tag, "ERROR: Failed to fetch game count: ${e.message}")
+                0
+            }
         }
     }
 }

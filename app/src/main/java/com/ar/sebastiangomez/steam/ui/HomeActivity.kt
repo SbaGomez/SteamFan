@@ -51,7 +51,7 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var allGamesList: List<Game>
     private val displayedGamesList = mutableListOf<Game>()
-    private val itemsPerPage = 10
+    private val itemsPerPage = 15
     private var currentPage = 0
     private var isLoading = false
 
@@ -130,18 +130,18 @@ class HomeActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                progressBar.visibility = View.VISIBLE
-                allGamesList = withContext(Dispatchers.IO) {
-                    gamesRepository.getGames()
+                if (utils.isNetworkAvailable(this@HomeActivity)) {
+                    progressBar.visibility = View.VISIBLE
+                    allGamesList = withContext(Dispatchers.IO) {
+                        gamesRepository.getGames()
+                    }
+                    loadMoreGames()
+                } else {
+                    showError(getString(R.string.error3))
                 }
-                loadMoreGames()
             } catch (e: IOException) {
                 e.printStackTrace()
-                linearErrorSearchButton.let {
-                    (it.parent as? ViewGroup)?.removeView(it)
-                    linearSearch.addView(it)
-                }
-                textErrorSearch.text = getString(R.string.error3)
+                showError(getString(R.string.error3))
             } finally {
                 progressBar.visibility = View.INVISIBLE
             }

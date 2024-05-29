@@ -2,6 +2,9 @@ package com.ar.sebastiangomez.steam.utils
 
 import android.app.Activity
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.view.inputmethod.InputMethodManager
 import com.ar.sebastiangomez.steam.model.PcRequirement
 import com.ar.sebastiangomez.steam.model.PcRequirements
@@ -11,6 +14,19 @@ class Utils {
         val inputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         activity.currentFocus?.let {
             inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
+        }
+    }
+
+    fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork ?: return false
+            val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+            networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        } else {
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting
         }
     }
 
