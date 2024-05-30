@@ -23,6 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.data.GamesRepository
 import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.ui.adapter.BookmarkAdapter
 import com.ar.sebastiangomez.steam.utils.GamesCache
@@ -56,6 +57,7 @@ class BookmarkActivity : AppCompatActivity() {
     private val uiScope = CoroutineScope(Dispatchers.Main + searchJob)
     private var filterJob: Job? = null
     private var filteredGames: MutableLiveData<List<GameCached>> = MutableLiveData<List<GameCached>>()
+    private val gamesRepository: GamesRepository = GamesRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         searchHelper = SearchHelper()
@@ -131,8 +133,9 @@ class BookmarkActivity : AppCompatActivity() {
     }
 
     private fun performFiltering(query: String) {
-        val gamesList = gamesCache.getGamesFromCache(this@BookmarkActivity)
+        //val gamesList = gamesCache.getGamesFromCache(this@BookmarkActivity)
         uiScope.launch {
+            val gamesList = gamesRepository.getUserGameCached()
             if (gamesList.isNotEmpty()) {
                 val filteredList = withContext(Dispatchers.Default) {
                     searchHelper.filterGamesByExactAndContainsTerm(gamesList, query)
@@ -149,13 +152,24 @@ class BookmarkActivity : AppCompatActivity() {
     private fun getAll()
     {
         //Obtener la cantidad de juegos favoritos
-        textCountGames.text = gamesCache.countAllGames(this).toString()
+        //textCountGames.text = gamesCache.countAllGames(this).toString()
+        lifecycleScope.launch {
+            try {
+                val countGames = withContext(Dispatchers.IO) {
+                    gamesRepository.countAllGames()
+                }
+                textCountGames.text = countGames.toString()
+            } catch (e: Exception) {
+                Log.e(tag, "Error counting games: ${e.message}")
+            }
+        }
 
         lifecycleScope.launch {
             try {
                 progressBar.visibility = View.VISIBLE
                 val gamesList = withContext(Dispatchers.IO) {
-                    gamesCache.getGamesFromCache(applicationContext).toMutableList()
+                    //gamesCache.getGamesFromCache(applicationContext).toMutableList()
+                    gamesRepository.getUserGameCached().toMutableList()
                 }
 
                 val adapter = BookmarkAdapter(this@BookmarkActivity, gamesList) { position, gameId ->
@@ -207,7 +221,7 @@ class BookmarkActivity : AppCompatActivity() {
                     recyclerView.visibility = View.INVISIBLE
                     progressBar.visibility = View.VISIBLE
 
-                    val gamesList = gamesCache.getGamesFromCache(this@BookmarkActivity)
+                    val gamesList = gamesRepository.getUserGameCached()
                     val sortedFilteredGamesList = searchHelper.filterExactMatchGames(gamesList, searchTerm)
 
                     if (sortedFilteredGamesList.isEmpty()) {

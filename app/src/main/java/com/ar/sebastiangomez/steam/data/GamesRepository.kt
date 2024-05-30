@@ -1,6 +1,8 @@
 package com.ar.sebastiangomez.steam.data
 
+import android.content.Context
 import com.ar.sebastiangomez.steam.model.Game
+import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.model.GameDetail
 
 class GamesRepository {
@@ -22,5 +24,25 @@ class GamesRepository {
 
     suspend fun countGames() : Int{
         return GamesDataSource.countGames()
+    }
+
+    suspend fun saveGameCached(context: Context, gameCached: GameCached): Boolean? {
+        return GamesDataSource.saveGameCached(context, gameCached)
+    }
+
+    suspend fun getUserGameCached(): List<GameCached> {
+        return GamesDataSource.getUserGameCached()
+    }
+
+    fun removeGameCached(context: Context, gameId: String, gameName: String, activity: String? = null): Boolean {
+        return GamesDataSource.removeGameCached(context, gameId, gameName, activity)
+    }
+
+    suspend fun exists(gameId: String): Boolean {
+        return GamesDataSource.exists(gameId)
+    }
+
+    suspend fun countAllGames(): Int {
+        return GamesDataSource.countAllGames()
     }
 }

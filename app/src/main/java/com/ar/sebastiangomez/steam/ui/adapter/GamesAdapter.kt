@@ -1,6 +1,5 @@
 package com.ar.sebastiangomez.steam.ui.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -17,16 +16,18 @@ import com.ar.sebastiangomez.steam.data.GamesRepository
 import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.ui.DetalleActivity
-import com.ar.sebastiangomez.steam.utils.GamesCache
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class GamesAdapter(private val context: Context,
-                   private var gamesList: List<Game>,
-                   private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<GamesAdapter.GameViewHolder>() {
+class GamesAdapter(
+    private val context: Context,
+    private var gamesList: List<Game>,
+    private val onItemClick: (position: Int, gameId: String) -> Unit
+) : RecyclerView.Adapter<GamesAdapter.GameViewHolder>() {
 
-    private lateinit var gamesCache: GamesCache
+    private val gamesRepository: GamesRepository = GamesRepository()
     private val tag = "LOG-GAMES-LIST"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
@@ -35,10 +36,8 @@ class GamesAdapter(private val context: Context,
     }
 
     override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
-        gamesCache = GamesCache()
-
-        if (position >= 0 && position < gamesList.size) {
-            val game = gamesList[position]
+        val game = gamesList.getOrNull(position)
+        if (game != null) {
             holder.bind(game)
             updateBookmarkButton(holder, game)
 
@@ -53,25 +52,22 @@ class GamesAdapter(private val context: Context,
             }
 
             holder.imageButton.setOnClickListener {
-                val isBookmarked = gamesCache.exists(context, game.id)
-
-                if (isBookmarked) {
-                    gamesCache.removeGameToCache(context, game.id, "HomeActivity")
-                    updateBookmarkButton(holder, game)
-                } else {
-                    Log.d(tag, "Log Button Add Bookmark - ID Position: $position, Game ID: ${game.id}")
-                    val gamesRepository = GamesRepository()
-                    CoroutineScope(Dispatchers.Main).launch {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val isBookmarked = gamesRepository.exists(game.id)
+                    if (isBookmarked) {
+                        gamesRepository.removeGameCached(context, game.id, game.name, "HomeActivity")
+                    } else {
+                        Log.d(tag, "Log Button Add Bookmark - ID Position: $position, Game ID: ${game.id}")
                         val isSuccess = gamesRepository.isGameSuccess(game.id)
-                        if(isSuccess == true) {
+                        if (isSuccess == true) {
                             val imageUrl = gamesRepository.getImage(game.id)
-                            val cachedGame = GameCached(game.id, game.name, imageUrl.toString())
-                            gamesCache.addGameToCache(context, cachedGame)
-                            updateBookmarkButton(holder, game)
+                            val cachedGame = GameCached(game.id, game.name, imageUrl.toString(), getCurrentUserId())
+                            gamesRepository.saveGameCached(context, cachedGame)
                         } else {
                             Toast.makeText(context, "El juego - ${game.name} - no tiene datos.", Toast.LENGTH_LONG).show()
                         }
                     }
+                    updateBookmarkButton(holder, game)
                 }
             }
         } else {
@@ -79,26 +75,38 @@ class GamesAdapter(private val context: Context,
         }
     }
 
+    override fun onViewRecycled(holder: GameViewHolder) {
+        super.onViewRecycled(holder)
+        // Restablecer el estado del botón cuando la vista se recicla
+        holder.imageButton.setImageResource(R.drawable.bookmarkadd)
+        holder.imageButton.setBackgroundColor(Color.parseColor("#495d92"))
+    }
 
     override fun getItemCount(): Int {
         return gamesList.size
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun updateItems(lista: List<Game>) {
         gamesList = lista
-        this.notifyDataSetChanged()
+        notifyDataSetChanged()
     }
 
     private fun updateBookmarkButton(holder: GameViewHolder, game: Game) {
-        val isBookmarked = gamesCache.exists(context, game.id)
-        if (isBookmarked) {
-            holder.imageButton.setImageResource(R.drawable.bookmarkdel)
-            holder.imageButton.setBackgroundColor(Color.parseColor("#9A4040"))
-        } else {
-            holder.imageButton.setImageResource(R.drawable.bookmarkadd)
-            holder.imageButton.setBackgroundColor(Color.parseColor("#495d92"))
+        CoroutineScope(Dispatchers.Main).launch {
+            val isBookmarked = gamesRepository.exists(game.id)
+            if (isBookmarked) {
+                holder.imageButton.setImageResource(R.drawable.bookmarkdel)
+                holder.imageButton.setBackgroundColor(Color.parseColor("#9A4040"))
+            } else {
+                holder.imageButton.setImageResource(R.drawable.bookmarkadd)
+                holder.imageButton.setBackgroundColor(Color.parseColor("#495d92"))
+            }
         }
+    }
+
+    private fun getCurrentUserId(): String {
+        val user = FirebaseAuth.getInstance().currentUser
+        return user?.uid ?: "default_user"
     }
 
     class GameViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

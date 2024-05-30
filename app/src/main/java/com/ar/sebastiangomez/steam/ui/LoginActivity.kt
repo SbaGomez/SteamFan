@@ -3,7 +3,6 @@ package com.ar.sebastiangomez.steam.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
@@ -27,87 +26,95 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
 
-    private val tag = "LOG-LOGIN"
+    companion object {
+        private const val TAG = "LOG-LOGIN"
+        private const val RC_SIGN_IN = 100
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
+
+        // Apply edge-to-edge window insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        bindViewObject()
+
+        bindViewObjects()
+        setupGoogleSignIn()
+        displayRandomImage()
     }
 
-    private fun bindViewObject()
-    {
+    private fun bindViewObjects() {
         logoSplash = findViewById(R.id.logoSplash)
         buttonLogin = findViewById(R.id.googleButton)
-
-        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build()
-        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
-        firebaseAuth = FirebaseAuth.getInstance()
-
-
-        // Array con los IDs de las imágenes en drawable
-        val imagenes = arrayOf(
-            R.drawable.gameslogo
-        )
-
-        // Generar un índice aleatorio
-        val randomIndex = imagenes.indices.random()
-
-        // Asignar la imagen aleatoria al logoSplash
-        logoSplash.setImageResource(imagenes[randomIndex])
+        buttonLogin.setOnClickListener { onLoginClick() }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun onLoginClick(view: View)
-    {
-        val intent = googleSignInClient.signInIntent
-        startActivityForResult(intent, 100)
+    private fun setupGoogleSignIn() {
+        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
+        firebaseAuth = FirebaseAuth.getInstance()
+    }
+
+    private fun displayRandomImage() {
+        val images = arrayOf(R.drawable.gameslogo)
+        val randomIndex = images.indices.random()
+        logoSplash.setImageResource(images[randomIndex])
+    }
+
+    private fun onLoginClick() {
+        googleSignInClient.signOut().addOnCompleteListener {
+            val signInIntent = googleSignInClient.signInIntent
+            startActivityForResult(signInIntent, RC_SIGN_IN)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == 100) {
-            val accountTask = GoogleSignIn.getSignedInAccountFromIntent(data)
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                val account = accountTask.getResult(ApiException::class.java)
-                firebaseAuthWithGoogleAccount(account)
-            }
-            catch (e: Exception) {
-                Log.e("DEMO-API", "onActivityResult: ${e.message}")
+                val account = task.getResult(ApiException::class.java)
+                account?.let { firebaseAuthWithGoogleAccount(it) }
+            } catch (e: ApiException) {
+                Log.e(TAG, "Google sign in failed", e)
+                showToast("Google sign in failed: ${e.message}")
             }
         }
     }
 
-    private fun firebaseAuthWithGoogleAccount(account: GoogleSignInAccount?) {
-        val credential = GoogleAuthProvider.getCredential(account!!.idToken, null)
+    private fun firebaseAuthWithGoogleAccount(account: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnSuccessListener { authResult ->
-                val firebaseUser = firebaseAuth.currentUser
-                val uid = firebaseUser!!.uid
-                val email = firebaseUser.email
-
-                if (authResult.additionalUserInfo!!.isNewUser) {
-                    // Crear Account
-                    Toast.makeText(this@LoginActivity, "Cuenta creada...", Toast.LENGTH_LONG).show()
+                val isNewUser = authResult.additionalUserInfo?.isNewUser ?: false
+                val message = if (isNewUser) {
+                    "Cuenta creada exitosamente..."
+                } else {
+                    "Bienvenido de nuevo ${firebaseAuth.currentUser?.email}"
                 }
-                else {
-                    Toast.makeText(this@LoginActivity, "Cuenta existente...", Toast.LENGTH_LONG).show()
-                }
+                showToast(message)
+                navigateToHome()
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Firebase authentication failed", exception)
+                showToast("Login fallido: ${exception.message}")
+            }
+    }
 
-                startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
-                finish()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this@LoginActivity, "Login fallido...", Toast.LENGTH_LONG).show()
-            }
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun navigateToHome() {
+        startActivity(Intent(this, HomeActivity::class.java))
+        finish()
     }
 }

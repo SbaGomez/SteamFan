@@ -31,6 +31,10 @@ import com.ar.sebastiangomez.steam.utils.GamesCache
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.ar.sebastiangomez.steam.utils.Utils
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 class DetalleActivity : AppCompatActivity() {
@@ -86,6 +90,7 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var textTitlePrecioUSD : TextView
     private lateinit var buttonComprar : Button
     private lateinit var buttonVer : Button
+    private var firebaseAuth = FirebaseAuth.getInstance()
 
     private val tag = "LOG-DETAIL"
 
@@ -210,36 +215,53 @@ class DetalleActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n", "DefaultLocale")
     private suspend fun setData(gameDetail : GameDetail){
         val pcRequirements = utils.parsePcRequirements(gameDetail.pcRequirements.toString())
-        val exists = gamesCache.exists(this@DetalleActivity, gameDetail.steamAppId.toString())
+        lifecycleScope.launch {
+            val exists = gamesRepository.exists(gameDetail.steamAppId.toString())
 
-        // Actualiza el UI inicial
-        updateUI(!exists)
+            // Actualiza el UI inicial
+            updateUI(!exists)
 
-        // Listener de clic para agregar o eliminar de favoritos
-        imageButtonBookmark.setOnClickListener {
-            try {
-                if (exists) { // Si el juego está en la lista de favoritos, eliminarlo
-                    gamesCache.removeGameToCache(this@DetalleActivity, gameDetail.steamAppId.toString(), null)
-                    // Actualizar el UI
-                    updateUI(true)
-                } else { // Si el juego no está en la lista de favoritos, agregarlo
-                    Log.d(tag, "Log Button Add Bookmark - ID Game Add: ${gameDetail.steamAppId}, Game Name: ${gameDetail.name}")
-                    val cachedGame = GameCached(
-                        gameDetail.steamAppId.toString(),
-                        gameDetail.name,
-                        gameDetail.headerImage
-                    )
-                    // Agregar el juego a la lista en caché
-                    gamesCache.addGameToCache(this@DetalleActivity, cachedGame)
-                    val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                    // Después de agregar, actualiza el índice
-                    // Actualizar el UI
-                    updateUI(false)
+            // Listener de clic para agregar o eliminar de favoritos
+            imageButtonBookmark.setOnClickListener {
+                lifecycleScope.launch {
+                    val existsGame = gamesRepository.exists(gameDetail.steamAppId.toString())
+                    try {
+                        if (existsGame) { // Si el juego está en la lista de favoritos, eliminarlo
+                            gamesRepository.removeGameCached(
+                                this@DetalleActivity,
+                                gameDetail.steamAppId.toString(),
+                                gameDetail.name,
+                                null
+                            )
+
+                            // Actualizar el UI
+                            updateUI(true)
+                        } else { // Si el juego no está en la lista de favoritos, agregarlo
+                            Log.d(
+                                tag,
+                                "Log Button Add Bookmark - ID Game Add: ${gameDetail.steamAppId}, Game Name: ${gameDetail.name}"
+                            )
+                            val userId = firebaseAuth.currentUser?.uid
+                            val cachedGame = userId?.let {
+                                GameCached(
+                                    gameDetail.steamAppId.toString(),
+                                    gameDetail.name,
+                                    gameDetail.headerImage,
+                                    it
+                                )
+                            }
+                            // Agregar el juego a la lista en caché
+                            if (cachedGame != null) {
+                                gamesRepository.saveGameCached(this@DetalleActivity, cachedGame)
+                            }
+                            // Después de agregar, actualiza el índice
+                            // Actualizar el UI
+                            updateUI(false)
+                        }
+                    } catch (e: Exception) {
+                        Log.e(tag, "Error al actualizar la lista de favoritos: ${e.message}")
+                    }
                 }
-            } catch (e: Exception) {
-                Log.e(tag, "Error al actualizar la lista de favoritos: ${e.message}")
             }
         }
 

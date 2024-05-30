@@ -15,6 +15,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.data.GamesRepository
 import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.ui.BookmarkActivity
 import com.ar.sebastiangomez.steam.ui.DetalleActivity
@@ -24,11 +25,15 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class BookmarkAdapter(private val context: Context,
                       private var gamesList: List<GameCached>,
                       private val onItemClick: (position: Int, gameId: String) -> Unit) : RecyclerView.Adapter<BookmarkAdapter.GameViewHolder>() {
 
+    private val gamesRepository: GamesRepository = GamesRepository()
     private lateinit var gamesCache: GamesCache
     private val tag = "LOG-BOOKMARK-LIST"
 
@@ -54,9 +59,11 @@ class BookmarkAdapter(private val context: Context,
         }
 
         holder.imageButton.setOnClickListener {
-            gamesCache.removeGameToCache(context, game.id, "BookmarkActivity")
-            holder.imageButton.setImageResource(R.drawable.bookmarkadd)
-            holder.imageButton.setBackgroundColor(Color.parseColor("#495d92"))
+            CoroutineScope(Dispatchers.Main).launch {
+                gamesRepository.removeGameCached(context, game.id, game.name, "BookmarkActivity")
+                holder.imageButton.setImageResource(R.drawable.bookmarkadd)
+                holder.imageButton.setBackgroundColor(Color.parseColor("#495d92"))
+            }
         }
     }
 

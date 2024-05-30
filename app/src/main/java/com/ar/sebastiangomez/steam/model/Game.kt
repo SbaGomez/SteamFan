@@ -12,9 +12,14 @@ data class Game(val id: String, override val name: String) : GameInterface {
     }
 }
 
-data class GameCached(val id: String, override val name: String, var image: String) : GameInterface {
+data class GameCached(
+    val id: String = "",
+    override val name: String = "",
+    var image: String = "",
+    val userId: String = ""
+) : GameInterface {
     override fun toString(): String {
-        return "GameCached(id=$id, name='$name', image='$image')"
+        return "GameCached(id=$id, name='$name', image='$image', userId='$userId')"
     }
 }
 

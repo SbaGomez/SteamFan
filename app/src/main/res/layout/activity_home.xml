@@ -24,7 +24,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="50dp"
         android:background="@color/Games_Details_background"
         android:minHeight="?attr/actionBarSize"
         android:textAlignment="center"
@@ -34,6 +34,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium">
+
+        <!-- ImageButton para el botón de retroceso -->
+        <ImageButton
+            android:id="@+id/logout_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/steam_button"
+            android:onClick="onLogoutClick"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logout_icon"
+            tools:ignore="ContentDescription,DuplicateSpeakableTextCheck,TouchTargetSizeCheck"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="5dp" />
 
         <!-- TextView para el título -->
         <TextView

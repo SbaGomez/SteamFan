@@ -31,7 +31,9 @@ import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.ar.sebastiangomez.steam.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
+import java.io.File
 import java.io.IOException
+
 
 class HomeActivity : AppCompatActivity() {
 
@@ -53,7 +55,7 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var allGamesList: List<Game>
     private val displayedGamesList = mutableListOf<Game>()
-    private val itemsPerPage = 15
+    private val itemsPerPage = 50
     private var currentPage = 0
     private var isLoading = false
 
@@ -336,5 +338,16 @@ class HomeActivity : AppCompatActivity() {
         linearSearchButton.let { linearSearch.removeView(it) } // Remove search buttons
         linearErrorSearchButton.let { linearSearch.removeView(it) } // Remove error search
         searchView.clearFocus() // Remove Focus from SearchView
+    }
+
+    fun onLogoutClick(view: View) {
+        // Cerrar sesión con Firebase
+        FirebaseAuth.getInstance().signOut()
+        // Crear el intent para la actividad de inicio de sesión
+        val intent = Intent(this, LoginActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
+        finish()
     }
 }
