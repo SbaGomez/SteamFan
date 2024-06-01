@@ -10,10 +10,10 @@ android {
 
     defaultConfig {
         applicationId = "com.ar.sebastiangomez.steam"
-        minSdk = 28
+        minSdk = 31
         targetSdk = 34
-        versionCode = 51
-        versionName = "51.0"
+        versionCode = 58
+        versionName = "58.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -71,6 +71,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation (libs.play.services.auth)
+    implementation (libs.firebase.auth)
     implementation(platform(libs.firebase.bom))
     implementation (libs.play.services.auth.v1920)
     implementation (libs.firebase.auth)
