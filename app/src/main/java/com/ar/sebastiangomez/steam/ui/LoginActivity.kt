@@ -6,6 +6,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -25,10 +27,10 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var buttonLogin: Button
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
 
     companion object {
         private const val TAG = "LOG-LOGIN"
-        private const val RC_SIGN_IN = 100
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,8 +45,15 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
+        if (isSessionActive()) {
+            navigateToHome()
+            return
+        }
+
         bindViewObjects()
         setupGoogleSignIn()
+        setupFirebaseAuth()
+        setupGoogleSignInLauncher()
         displayRandomImage()
     }
 
@@ -60,7 +69,28 @@ class LoginActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
+    }
+
+    private fun setupFirebaseAuth() {
         firebaseAuth = FirebaseAuth.getInstance()
+    }
+
+    private fun setupGoogleSignInLauncher() {
+        googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                try {
+                    val account = task.getResult(ApiException::class.java)
+                    account?.let { firebaseAuthWithGoogleAccount(it) }
+                } catch (e: ApiException) {
+                    Log.e(TAG, "Google sign in failed", e)
+                    showToast(getString(R.string.google_sign_in_failed, e.statusCode, e.message))
+                }
+            } else {
+                Log.e(TAG, "Google sign in failed: result code ${result.resultCode}")
+                showToast(getString(R.string.google_sign_in_failed_generic))
+            }
+        }
     }
 
     private fun displayRandomImage() {
@@ -72,41 +102,43 @@ class LoginActivity : AppCompatActivity() {
     private fun onLoginClick() {
         googleSignInClient.signOut().addOnCompleteListener {
             val signInIntent = googleSignInClient.signInIntent
-            startActivityForResult(signInIntent, RC_SIGN_IN)
+            googleSignInLauncher.launch(signInIntent)
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                account?.let { firebaseAuthWithGoogleAccount(it) }
-            } catch (e: ApiException) {
-                Log.e(TAG, "Google sign in failed", e)
-                showToast("Google sign in failed: ${e.message}")
-            }
-        }
+    private fun saveSession() {
+        val sharedPreferences = getSharedPreferences("session", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isLoggedIn", true)
+        editor.apply()
     }
 
     private fun firebaseAuthWithGoogleAccount(account: GoogleSignInAccount) {
+        Log.d(TAG, "firebaseAuthWithGoogleAccount: ${account.email}")
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnSuccessListener { authResult ->
                 val isNewUser = authResult.additionalUserInfo?.isNewUser ?: false
+                val email = account.email
                 val message = if (isNewUser) {
-                    "Cuenta creada exitosamente..."
+                    getString(R.string.account_created_successfully)
                 } else {
-                    "Bienvenido de nuevo ${firebaseAuth.currentUser?.email}"
+                    getString(R.string.welcome_back, email)
                 }
+                Log.d(TAG, message)
                 showToast(message)
+                saveSession()
                 navigateToHome()
             }
             .addOnFailureListener { exception ->
                 Log.e(TAG, "Firebase authentication failed", exception)
-                showToast("Login fallido: ${exception.message}")
+                showToast(getString(R.string.login_failed, exception.message))
             }
+    }
+
+    private fun isSessionActive(): Boolean {
+        val sharedPreferences = getSharedPreferences("session", MODE_PRIVATE)
+        return sharedPreferences.getBoolean("isLoggedIn", false)
     }
 
     private fun showToast(message: String) {

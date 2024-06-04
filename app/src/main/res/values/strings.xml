@@ -42,6 +42,13 @@
     <string name="precio_arg">$ 0 ARG</string>
     <string name="fecha">8 Feb, 2018</string>
 
+    <!-- Login Google -->
+    <string name="google_sign_in_failed">Google sign in failed: %1$d %2$s</string>
+    <string name="google_sign_in_failed_generic">Google sign in failed</string>
+    <string name="account_created_successfully">Cuenta creada exitosamente…</string>
+    <string name="welcome_back">Bienvenido de nuevo %1$s</string>
+    <string name="login_failed">Login fallido: %1$s</string>
+
     <!-- Errores del buscador -->
     <string name="error1">No se encontro ningun juego con ese nombre.</string>
     <string name="error2">El campo de busqueda esta vacio.</string>

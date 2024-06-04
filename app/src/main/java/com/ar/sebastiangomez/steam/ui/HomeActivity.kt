@@ -90,12 +90,20 @@ class HomeActivity : AppCompatActivity() {
         getGames()
     }
 
-    private fun checkUser(){
-        val firebaseUser = firebaseAuth.currentUser
-        if(firebaseUser == null){
+    private fun checkUser() {
+        val sharedPreferences = getSharedPreferences("session", MODE_PRIVATE)
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        if (!isLoggedIn) {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
+        } else {
+            val firebaseUser = firebaseAuth.currentUser
+            if (firebaseUser == null) {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         }
     }
 
@@ -343,6 +351,12 @@ class HomeActivity : AppCompatActivity() {
     fun onLogoutClick(view: View) {
         // Cerrar sesión con Firebase
         FirebaseAuth.getInstance().signOut()
+        // Actualizar SharedPreferences para reflejar que el usuario no está logueado
+        val sharedPreferences = getSharedPreferences("session", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isLoggedIn", false)
+        editor.apply()
+
         // Crear el intent para la actividad de inicio de sesión
         val intent = Intent(this, LoginActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)

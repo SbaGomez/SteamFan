@@ -10,10 +10,10 @@ android {
 
     defaultConfig {
         applicationId = "com.ar.sebastiangomez.steam"
-        minSdk = 31
+        minSdk = 28
         targetSdk = 34
-        versionCode = 58
-        versionName = "58.0"
+        versionCode = 61
+        versionName = "61.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
