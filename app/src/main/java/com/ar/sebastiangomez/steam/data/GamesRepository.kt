@@ -10,8 +10,8 @@ class GamesRepository {
         return GamesDataSource.getGames()
     }
 
-    suspend fun getDetails(gameId: String): GameDetail?{
-        return GamesDataSource.getDetails(gameId)
+    suspend fun getDetails(gameId: String, context: Context): GameDetail?{
+        return GamesDataSource.getDetails(gameId, context)
     }
 
     suspend fun isGameSuccess(gameId: String): Boolean? {

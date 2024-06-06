@@ -1,14 +1,11 @@
 package com.ar.sebastiangomez.steam.model
 
-import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
-
-@Entity
 data class GameDetailResponse(
     val success: Boolean,
     val data: GameDetail
 )
-@Entity
+
 data class GameDetail(
     val type: String,
     val name: String,
@@ -27,13 +24,11 @@ data class GameDetail(
     @SerializedName("release_date") val releaseDate: ReleaseDate
 )
 
-@Entity
 data class ReleaseDate(
     @SerializedName("coming_soon") val comingSoon: Boolean,
     val date: String,
 )
 
-@Entity
 data class PriceOverview(
     val currency: String,
     val initial: Int,
@@ -43,13 +38,11 @@ data class PriceOverview(
     @SerializedName("final_formatted") val finalFormatted: String
 )
 
-@Entity
 data class PcRequirements(
     val minimum: PcRequirement?,
     val recommended: PcRequirement?
 )
 
-@Entity
 data class PcRequirement(
     val os: String,
     val processor: String,

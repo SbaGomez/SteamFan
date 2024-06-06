@@ -182,7 +182,7 @@ class DetalleActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
         lifecycleScope.launch {
             progressBar.visibility = View.VISIBLE
-            val gameDetail = gamesRepository.getDetails(gameId)
+            val gameDetail = gamesRepository.getDetails(gameId, this@DetalleActivity)
             if (gameDetail != null) {
                 setData(gameDetail)
                 Handler(Looper.getMainLooper()).postDelayed({

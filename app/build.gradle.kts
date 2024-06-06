@@ -2,18 +2,28 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.gms.google-services")
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
     namespace = "com.ar.sebastiangomez.steam"
     compileSdk = 34
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("../steamdb-claves.jks")
+            storePassword = "steamdbfan123"
+            keyAlias = "SteamDBFan"
+            keyPassword = "steamdbfan123"
+        }
+    }
+
     defaultConfig {
         applicationId = "com.ar.sebastiangomez.steam"
-        minSdk = 28
+        minSdk = 30
         targetSdk = 34
-        versionCode = 61
-        versionName = "61.0"
+        versionCode = 65
+        versionName = "65.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -25,7 +35,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -38,6 +48,9 @@ android {
 }
 
 dependencies {
+    implementation(platform(libs.firebase.bom))
+
+    // Common dependencies
     implementation(libs.okhttp)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -48,32 +61,28 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.gson)
     implementation(libs.glide)
-    implementation (libs.androidx.room.runtime)
+    implementation(libs.androidx.room.runtime)
     implementation(libs.symbol.processing.gradle.plugin)
-    implementation(libs.androidx.credentials)
-    implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.googleid)
-    implementation(libs.play.services.auth)
-    implementation(libs.firebase.auth.ktx)
-    implementation(libs.firebase.firestore)
-    annotationProcessor(libs.androidx.room.compiler)
+
+    // Room
+    kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
-    // optional - RxJava2 support for Room
     implementation(libs.androidx.room.rxjava2)
-    // optional - RxJava3 support for Room
     implementation(libs.androidx.room.rxjava3)
-    // optional - Guava support for Room, including Optional and ListenableFuture
     implementation(libs.androidx.room.guava)
-    // optional - Test helpers
-    testImplementation(libs.androidx.room.testing)
-    // optional - Paging 3 Integration
     implementation(libs.androidx.room.paging)
+    testImplementation(libs.androidx.room.testing)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation (libs.play.services.auth)
-    implementation (libs.firebase.auth)
-    implementation(platform(libs.firebase.bom))
-    implementation (libs.play.services.auth.v1920)
-    implementation (libs.firebase.auth)
+
+    // Google Auth and Firebase Auth
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore)
+    implementation(libs.play.services.auth.v1920)
+    implementation(libs.firebase.auth)
 }

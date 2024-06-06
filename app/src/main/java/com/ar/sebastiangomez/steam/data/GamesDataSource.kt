@@ -5,6 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import com.ar.sebastiangomez.steam.data.dbLocal.AppDataBase
+import com.ar.sebastiangomez.steam.data.dbLocal.toGameDetail
+import com.ar.sebastiangomez.steam.data.dbLocal.toGameDetailLocal
 import com.ar.sebastiangomez.steam.model.Game
 import com.ar.sebastiangomez.steam.model.GameCached
 import com.ar.sebastiangomez.steam.model.GameDetail
@@ -36,8 +39,6 @@ class GamesDataSource {
             .build()
             .create(SteamApiService::class.java)
 
-        private val gameDetailsCache = mutableMapOf<String, GameDetail?>()
-
         suspend fun getGames(): List<Game> {
             Log.d(tag, "Games DataSource Get")
 
@@ -54,11 +55,15 @@ class GamesDataSource {
             }
         }
 
-        suspend fun getDetails(gameId: String): GameDetail? {
-            // Check cache first
-            gameDetailsCache[gameId]?.let {
-                Log.d(tag, "Fetching Game details found in cache for ID: $gameId")
-                return it
+        suspend fun getDetails(gameId: String, context: Context): GameDetail? {
+
+            // Recupero la informacion localmente (si existe)
+            val db = AppDataBase.getInstance(context)
+            val gameDetailLocal = db.gameDetailsDao().getByPK(gameId)
+
+            if (gameDetailLocal != null && gameDetailLocal.name?.isNotEmpty() == true) {
+                Log.d(tag, "Game details found in local database for ID: $gameId")
+                return gameDetailLocal.toGameDetail()
             }
 
             Log.d(tag, "Fetching details for game ID: $gameId")
@@ -69,8 +74,10 @@ class GamesDataSource {
                 if (gameDetailResponse?.success == true) {
                     val gameDetail = gameDetailResponse.data
                     Log.d(tag, "Game details: $gameDetail")
-                    // Store in cache
-                    gameDetailsCache[gameId] = gameDetail
+
+                    // Store in local database
+                    db.gameDetailsDao().insert(gameDetail.toGameDetailLocal())
+
                     gameDetail
                 } else {
                     Log.e(tag, "ERROR: Unsuccessful response or success flag is false")

@@ -6,17 +6,17 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ar.sebastiangomez.steam.R
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -26,8 +26,9 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var logoSplash: ImageView
     private lateinit var buttonLogin: Button
     private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var googleSignInClient: GoogleSignInClient
-    private lateinit var googleSignInLauncher: ActivityResultLauncher<Intent>
+    private lateinit var signInRequest: BeginSignInRequest
+    private lateinit var oneTapClient: SignInClient
+    private lateinit var googleSignInLauncher: ActivityResultLauncher<IntentSenderRequest>
 
     companion object {
         private const val TAG = "LOG-LOGIN"
@@ -38,16 +39,15 @@ class LoginActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
 
-        // Apply edge-to-edge window insets
+        if (isSessionActive()) {
+            navigateToHome()
+            return
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
-        }
-
-        if (isSessionActive()) {
-            navigateToHome()
-            return
         }
 
         bindViewObjects()
@@ -64,11 +64,15 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setupGoogleSignIn() {
-        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
+        signInRequest = BeginSignInRequest.builder()
+            .setGoogleIdTokenRequestOptions(
+                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                    .setSupported(true)
+                    .setServerClientId(getString(R.string.default_web_client_id))
+                    .setFilterByAuthorizedAccounts(false)
+                    .build()
+            )
             .build()
-        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
     }
 
     private fun setupFirebaseAuth() {
@@ -76,15 +80,32 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setupGoogleSignInLauncher() {
-        googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        googleSignInLauncher = registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) { result ->
             if (result.resultCode == RESULT_OK) {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 try {
-                    val account = task.getResult(ApiException::class.java)
-                    account?.let { firebaseAuthWithGoogleAccount(it) }
+                    val credential = oneTapClient.getSignInCredentialFromIntent(result.data)
+                    val idToken = credential.googleIdToken
+                    if (idToken != null) {
+                        val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+                        firebaseAuth.signInWithCredential(firebaseCredential)
+                            .addOnCompleteListener(this) { task ->
+                                if (task.isSuccessful) {
+                                    val user = firebaseAuth.currentUser
+                                    saveSession()
+                                    onLoginSuccess(user?.displayName ?: "")
+                                } else {
+                                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                                    val errorMessage = getString(R.string.login_failed, task.exception?.message)
+                                    showToast(errorMessage)
+                                }
+                            }
+                    }
                 } catch (e: ApiException) {
-                    Log.e(TAG, "Google sign in failed", e)
-                    showToast(getString(R.string.google_sign_in_failed, e.statusCode, e.message))
+                    Log.w(TAG, "Google sign in failed", e)
+                    val errorMessage = getString(R.string.google_sign_in_failed, e.statusCode, e.message)
+                    showToast(errorMessage)
                 }
             } else {
                 Log.e(TAG, "Google sign in failed: result code ${result.resultCode}")
@@ -100,10 +121,21 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun onLoginClick() {
-        googleSignInClient.signOut().addOnCompleteListener {
-            val signInIntent = googleSignInClient.signInIntent
-            googleSignInLauncher.launch(signInIntent)
-        }
+        oneTapClient = Identity.getSignInClient(this)
+        oneTapClient.beginSignIn(signInRequest)
+            .addOnSuccessListener(this) { result ->
+                try {
+                    val intentSenderRequest = IntentSenderRequest.Builder(result.pendingIntent).build()
+                    googleSignInLauncher.launch(intentSenderRequest)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error launching Google sign in intent: ${e.message}", e)
+                    showToast(getString(R.string.google_sign_in_failed_generic))
+                }
+            }
+            .addOnFailureListener(this) { e ->
+                Log.e(TAG, "Google sign in failed: ${e.message}", e)
+                showToast(getString(R.string.google_sign_in_failed_generic))
+            }
     }
 
     private fun saveSession() {
@@ -113,40 +145,24 @@ class LoginActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    private fun firebaseAuthWithGoogleAccount(account: GoogleSignInAccount) {
-        Log.d(TAG, "firebaseAuthWithGoogleAccount: ${account.email}")
-        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-        firebaseAuth.signInWithCredential(credential)
-            .addOnSuccessListener { authResult ->
-                val isNewUser = authResult.additionalUserInfo?.isNewUser ?: false
-                val email = account.email
-                val message = if (isNewUser) {
-                    getString(R.string.account_created_successfully)
-                } else {
-                    getString(R.string.welcome_back, email)
-                }
-                Log.d(TAG, message)
-                showToast(message)
-                saveSession()
-                navigateToHome()
-            }
-            .addOnFailureListener { exception ->
-                Log.e(TAG, "Firebase authentication failed", exception)
-                showToast(getString(R.string.login_failed, exception.message))
-            }
-    }
-
     private fun isSessionActive(): Boolean {
         val sharedPreferences = getSharedPreferences("session", MODE_PRIVATE)
         return sharedPreferences.getBoolean("isLoggedIn", false)
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-    }
-
     private fun navigateToHome() {
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
+    }
+
+    private fun onLoginSuccess(userName: String) {
+        val welcomeMessage = getString(R.string.welcome_back, userName)
+        showToast(welcomeMessage)
+        startActivity(Intent(this, HomeActivity::class.java))
+        finish()
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }
