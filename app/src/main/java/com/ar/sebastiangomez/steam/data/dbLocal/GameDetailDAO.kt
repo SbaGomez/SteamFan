@@ -8,7 +8,7 @@ import androidx.room.Query
 
 @Dao
 interface GameDetailDAO {
-    @Query("SELECT * FROM game_detail WHERE id = :id")
+    @Query("SELECT * FROM gameDetail WHERE id = :id")
     suspend fun getByPK(id: String): GameDetailLocal?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

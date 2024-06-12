@@ -3,6 +3,7 @@ package com.ar.sebastiangomez.steam.data
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.database.SQLException
 import android.util.Log
 import android.widget.Toast
 import com.ar.sebastiangomez.steam.data.dbLocal.AppDataBase
@@ -61,7 +62,8 @@ class GamesDataSource {
             val db = AppDataBase.getInstance(context)
             val gameDetailLocal = db.gameDetailsDao().getByPK(gameId)
 
-            if (gameDetailLocal != null && gameDetailLocal.name?.isNotEmpty() == true) {
+            if (gameDetailLocal != null) {
+                Log.d(tag, "Game details local: ${gameDetailLocal.toGameDetail()}")
                 Log.d(tag, "Game details found in local database for ID: $gameId")
                 return gameDetailLocal.toGameDetail()
             }
@@ -75,10 +77,18 @@ class GamesDataSource {
                     val gameDetail = gameDetailResponse.data
                     Log.d(tag, "Game details: $gameDetail")
 
-                    // Store in local database
-                    db.gameDetailsDao().insert(gameDetail.toGameDetailLocal())
-
-                    gameDetail
+                    try {
+                        db.gameDetailsDao().insert(gameDetail.toGameDetailLocal())
+                        // Si no se lanzó una excepción, la inserción fue exitosa
+                        Log.d(tag, "Game details inserted successfully")
+                    } catch (e: SQLException) {
+                        // Manejo de excepciones de SQL
+                        Log.e(tag, "ERROR: SQL Exception occurred: ${e.message}")
+                    } catch (e: Exception) {
+                        // Otro tipo de excepción
+                        Log.e(tag, "ERROR: Failed to insert game details into the local database: ${e.message}")
+                    }
+                    return gameDetail
                 } else {
                     Log.e(tag, "ERROR: Unsuccessful response or success flag is false")
                     null

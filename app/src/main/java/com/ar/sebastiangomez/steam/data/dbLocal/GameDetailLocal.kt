@@ -3,10 +3,10 @@ package com.ar.sebastiangomez.steam.data.dbLocal
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "game_detail")
+@Entity(tableName = "gameDetail")
 data class GameDetailLocal(
     val type: String,
-    val name: String?,
+    val name: String,
     @PrimaryKey val id: Int,
     val requiredAge: Int,
     val isFree: Boolean,
@@ -18,26 +18,11 @@ data class GameDetailLocal(
     val capsuleImage: String,
     val website: String?,
     //PcRequirement
-    val min_os: String,
-    val min_processor: String,
-    val min_memory: String,
-    val min_graphics: String,
-    val min_directx: String,
-    val min_soundcard: String,
-    val min_network: String,
-    val min_storage: String,
-    val req_os: String,
-    val req_processor: String,
-    val req_memory: String,
-    val req_graphics: String,
-    val req_directx: String,
-    val req_soundcard: String,
-    val req_network: String,
-    val req_storage: String,
+    val pcRequirements: String,
     //Price Overview
     val currency: String,
     val initial: Int,
-    val final: Int,
+    val finalPrice: Int,
     val discountPercent: Int,
     val initialFormatted: String,
     val finalFormatted: String,
