@@ -6,6 +6,7 @@ import androidx.room.TypeConverters
 
 @Entity(tableName = "gameDetail")
 data class GameDetailLocal(
+    val local: Boolean = true,
     val type: String,
     val name: String,
     @PrimaryKey val id: Int,

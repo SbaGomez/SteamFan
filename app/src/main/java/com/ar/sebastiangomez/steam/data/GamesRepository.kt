@@ -14,6 +14,10 @@ class GamesRepository {
         return GamesDataSource.getDetails(gameId, context)
     }
 
+    suspend fun deleteRoom(gameId: String, context: Context){
+        return GamesDataSource.deleteRoom(gameId, context)
+    }
+
     suspend fun isGameSuccess(gameId: String): Boolean? {
         return GamesDataSource.isSuccess(gameId)
     }

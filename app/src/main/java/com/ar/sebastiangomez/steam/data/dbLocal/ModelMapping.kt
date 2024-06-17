@@ -5,13 +5,14 @@ import com.ar.sebastiangomez.steam.model.PriceOverview
 import com.ar.sebastiangomez.steam.model.ReleaseDate
 
 fun GameDetailLocal.toGameDetail() = GameDetail(
+    local = true,
     type = type,
     name = name,
     steamAppId = id,
     requiredAge = requiredAge,
     isFree = isFree,
     dlc = dlc ?: emptyList(),
-    detailedDescription = "",
+    detailedDescription = detailedDescription,
     aboutTheGame = aboutTheGame,
     shortDescription = shortDescription,
     headerImage = headerImage,
@@ -23,6 +24,7 @@ fun GameDetailLocal.toGameDetail() = GameDetail(
 )
 
 fun GameDetail.toGameDetailLocal() = GameDetailLocal(
+    local = true,
     type = type,
     name = name,
     id = steamAppId,

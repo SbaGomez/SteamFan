@@ -32,9 +32,6 @@ import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.ar.sebastiangomez.steam.utils.Utils
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 class DetalleActivity : AppCompatActivity() {
@@ -75,6 +72,8 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var layoutRec : LinearLayout
     private lateinit var imageButtonBookmark : ImageButton
 
+    private lateinit var linearClearCache : LinearLayout
+    private lateinit var linearDetailParent : LinearLayout
     private lateinit var linearInformacion : LinearLayout
     private lateinit var linearPrincipal : LinearLayout
     private lateinit var linearButtons : LinearLayout
@@ -90,6 +89,7 @@ class DetalleActivity : AppCompatActivity() {
     private lateinit var textTitlePrecioUSD : TextView
     private lateinit var buttonComprar : Button
     private lateinit var buttonVer : Button
+    private lateinit var clearCache : Button
     private var firebaseAuth = FirebaseAuth.getInstance()
 
     private val tag = "LOG-DETAIL"
@@ -170,6 +170,9 @@ class DetalleActivity : AppCompatActivity() {
         textTitlePrecioUSD = findViewById(R.id.textTitlePrecioUSD)
         buttonComprar = findViewById(R.id.buttonComprar)
         buttonVer = findViewById(R.id.buttonVer)
+        clearCache = findViewById(R.id.clearCache)
+        linearDetailParent = findViewById(R.id.linearDetailParent)
+        linearClearCache = findViewById(R.id.linearClearCache)
     }
 
     private fun getId(): Int {
@@ -262,6 +265,21 @@ class DetalleActivity : AppCompatActivity() {
                         Log.e(tag, "Error al actualizar la lista de favoritos: ${e.message}")
                     }
                 }
+            }
+        }
+
+        if(!gameDetail.local)
+        {
+            layoutDetalle.removeView(linearClearCache)
+        }
+        else{
+            clearCache.visibility = View.VISIBLE
+        }
+
+        clearCache.setOnClickListener {
+            lifecycleScope.launch {
+                gamesRepository.deleteRoom(gameDetail.steamAppId.toString(), this@DetalleActivity)
+                recreate()
             }
         }
 

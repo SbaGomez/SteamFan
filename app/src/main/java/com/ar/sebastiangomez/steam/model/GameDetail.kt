@@ -7,6 +7,7 @@ data class GameDetailResponse(
 )
 
 data class GameDetail(
+    val local: Boolean = false,
     val type: String,
     val name: String,
     @SerializedName("steam_appid") val steamAppId: Int,
