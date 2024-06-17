@@ -56,6 +56,14 @@ class GamesDataSource {
             }
         }
 
+        suspend fun deleteRoom(gameId: String, context: Context) {
+            val db = AppDataBase.getInstance(context)
+            val gameDetailLocal = db.gameDetailsDao().getByPK(gameId)
+            if (gameDetailLocal != null) {
+                db.gameDetailsDao().delete(gameDetailLocal)
+            }
+        }
+
         suspend fun getDetails(gameId: String, context: Context): GameDetail? {
 
             // Recupero la informacion localmente (si existe)
@@ -149,17 +157,19 @@ class GamesDataSource {
 
         suspend fun saveGameCached(context: Context,gameCached: GameCached): Boolean {
             return try {
+                val userId = firebaseAuth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
                 val gameExists = exists(gameCached.id)
 
                 if (gameExists) {
                     Log.d(tag, "Game already exists: $gameCached")
                     false
                 } else {
-                    firestore.collection("games")
+                    firestore.collection("users")
+                        .document(userId)
+                        .collection("games")
                         .document(gameCached.id)
                         .set(gameCached)
                         .await()
-
                     Toast.makeText(context, "Agregaste - ${gameCached.name} - de favoritos.", Toast.LENGTH_LONG).show()
                     Log.d(tag, "Game cached saved successfully: $gameCached")
                     // Redirigir a HomeActivity
@@ -176,13 +186,14 @@ class GamesDataSource {
         suspend fun exists(gameId: String): Boolean {
             return try {
                 val userId = firebaseAuth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
-                val document = firestore.collection("games")
-                    .whereEqualTo("userId", userId)
-                    .whereEqualTo("id", gameId)
+                val document = firestore.collection("users")
+                    .document(userId)
+                    .collection("games")
+                    .document(gameId)
                     .get()
                     .await()
 
-                !document.isEmpty
+                document.exists()
             } catch (e: Exception) {
                 Log.e(tag, "ERROR: Failed to check document existence: ${e.message}")
                 false
@@ -190,15 +201,11 @@ class GamesDataSource {
         }
 
         suspend fun getUserGameCached(): List<GameCached> {
-            val userId = firebaseAuth.currentUser?.uid
-            if (userId == null) {
-                Log.e(tag, "ERROR: No user is authenticated")
-                return emptyList()
-            }
-
+            val userId = firebaseAuth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
             return try {
-                val snapshot = firestore.collection("games")
-                    .whereEqualTo("userId", userId)
+                val snapshot = firestore.collection("users")
+                    .document(userId)
+                    .collection("games")
                     .get()
                     .await()
 
@@ -212,21 +219,14 @@ class GamesDataSource {
         }
 
         fun removeGameCached(context: Context, gameId: String, gameName: String, activity: String? = null): Boolean {
-            val userId = firebaseAuth.currentUser?.uid
-            if (userId == null) {
-                Log.e(tag, "ERROR: No user is authenticated")
-                return false
-            }
-
+            val userId = firebaseAuth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
             return try {
-                firestore.collection("games")
-                    .whereEqualTo("userId", userId)
-                    .whereEqualTo("id", gameId)
-                    .get()
-                    .addOnSuccessListener { documents ->
-                        for (document in documents) {
-                            document.reference.delete()
-                        }
+                firestore.collection("users")
+                    .document(userId)
+                    .collection("games")
+                    .document(gameId)
+                    .delete()
+                    .addOnSuccessListener {
                         Toast.makeText(context, "Eliminaste - $gameName - de favoritos.", Toast.LENGTH_LONG).show()
                         Log.d(tag, "Game cached removed successfully for ID: $gameId")
                         if (activity == "BookmarkActivity") {
@@ -244,15 +244,11 @@ class GamesDataSource {
         }
 
         suspend fun countAllGames(): Int {
-            val userId = firebaseAuth.currentUser?.uid
-            if (userId == null) {
-                Log.e(tag, "ERROR: No user is authenticated")
-                return 0
-            }
-
+            val userId = firebaseAuth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
             return try {
-                val snapshot = firestore.collection("games")
-                    .whereEqualTo("userId", userId)
+                val snapshot = firestore.collection("users")
+                    .document(userId)
+                    .collection("games")
                     .get()
                     .await()
 
