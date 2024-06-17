@@ -12,7 +12,7 @@ data class GameDetail(
     @SerializedName("steam_appid") val steamAppId: Int,
     @SerializedName("required_age") val requiredAge: Int,
     @SerializedName("is_free") val isFree: Boolean,
-    val dlc: List<Int>,
+    val dlc: List<Int>?,
     @SerializedName("detailed_description") val detailedDescription: String,
     @SerializedName("about_the_game") val aboutTheGame: String,
     @SerializedName("short_description") val shortDescription: String,

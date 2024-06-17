@@ -2,6 +2,7 @@ package com.ar.sebastiangomez.steam.data.dbLocal
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 
 @Entity(tableName = "gameDetail")
 data class GameDetailLocal(
@@ -10,7 +11,8 @@ data class GameDetailLocal(
     @PrimaryKey val id: Int,
     val requiredAge: Int,
     val isFree: Boolean,
-    val dlc: Int,
+    @TypeConverters(Converters::class)
+    val dlc: List<Int>?,
     val detailedDescription: String,
     val aboutTheGame: String,
     val shortDescription: String,
