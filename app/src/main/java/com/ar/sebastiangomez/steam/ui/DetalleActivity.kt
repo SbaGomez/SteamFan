@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -279,7 +280,9 @@ class DetalleActivity : AppCompatActivity() {
         clearCache.setOnClickListener {
             lifecycleScope.launch {
                 gamesRepository.deleteRoom(gameDetail.steamAppId.toString(), this@DetalleActivity)
-                recreate()
+                Toast.makeText(this@DetalleActivity, "Eliminaste - ${gameDetail.name} - de la cache del celular.", Toast.LENGTH_LONG).show()
+                val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
+                startActivity(intent)
             }
         }
 
