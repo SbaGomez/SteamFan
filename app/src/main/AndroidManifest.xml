@@ -9,7 +9,6 @@
 
     <application
         android:allowBackup="true"
-        android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/gameslogo"
@@ -17,25 +16,30 @@
         android:roundIcon="@drawable/gameslogo"
         android:supportsRtl="true"
         android:theme="@style/Theme.GamesDB"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name="com.ar.sebastiangomez.steam.ui.BookmarkActivity"
+            android:name=".ui.ConfigActivity"
             android:exported="false" />
         <activity
-            android:name="com.ar.sebastiangomez.steam.ui.DetalleActivity"
+            android:name=".ui.BookmarkActivity"
             android:exported="false" />
         <activity
-            android:name="com.ar.sebastiangomez.steam.ui.HomeActivity"
+            android:name=".ui.DetalleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.HomeActivity"
             android:exported="false"
             android:launchMode="singleTop" />
         <activity
-            android:name="com.ar.sebastiangomez.steam.ui.LoginActivity"
-            android:exported="false"/>
+            android:name=".ui.LoginActivity"
+            android:exported="false" />
         <activity
-            android:name="com.ar.sebastiangomez.steam.ui.SplashActivity"
+            android:name=".ui.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
