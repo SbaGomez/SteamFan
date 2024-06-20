@@ -33,7 +33,6 @@
     <string name="games_count">Total de juegos:</string>
     <string name="ClearCache">Borrar Cache</string>
     <string name="title_config">Configuraciones</string>
-    <string name="item_label">Selecciona un Idioma</string>
 
     <string name="title_fecha_lanzamiento">Fecha de lanzamiento:</string>
     <string name="title_precio_descuento">Precio con descuento:</string>
@@ -57,4 +56,10 @@
     <string name="error2">El campo de busqueda esta vacio.</string>
     <string name="error3">Error de conexión. Por favor, verifica tu conexión a internet e intenta nuevamente.</string>
     <string name="theme_label">Template</string>
+    <string name="logout">Cerrar sesion</string>
+
+    <string name="select_language" translatable="false">Seleccionar Idioma</string>
+    <string name="english" translatable="false">English</string>
+    <string name="spanish" translatable="false">Spanish</string>
+    <string name="portuguese" translatable="false">Portugués</string>
 </resources>

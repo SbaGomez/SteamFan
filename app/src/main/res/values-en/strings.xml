@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">Games DB Fan</string>
+    <string name="title_login">Login</string>
+    <string name="title_home">Home</string>
+    <string name="title_detail">Detail</string>
+    <string name="title_fav">Favorites</string>
+    <string name="fav_button">Fav</string>
+    <string name="search_button">Exact search.</string>
+    <string name="reload_home_button">Reload games.</string>
+    <string name="search_close_button">Close</string>
+    <string name="placeholder_search_input">Search games...</string>
+    <string name="placeholder_searchFav_input">Search in your favorites...</string>
+    <string name="steam_button">Home</string>
+    <string name="theme_button">Theme</string>
+    <string name="login_button">Sign in with Google</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title">Title</string>
+    <string name="title_descripcion">Description</string>
+    <string name="title_informacion">Information</string>
+    <string name="title_requisitos_minimos">Minimum Requirements</string>
+    <string name="title_requisitos_recomendados">Recommended Requirements</string>
+    <string name="proximamente">Coming soon…</string>
+    <string name="contenido">Content…</string>
+    <string name="SO">Operating System:</string>
+    <string name="Procesador">Processor:</string>
+    <string name="Memoria">Memory:</string>
+    <string name="Graphic">Graphics:</string>
+    <string name="Almacenamiento">Storage:</string>
+    <string name="error_detalles_empty">The game has no details loaded or you don\'t have an internet connection.</string>
+    <string name="boton_add_bookmark_detail">AddBookmark Button</string>
+    <string name="text_count">count</string>
+    <string name="text_error">Error text.</string>
+    <string name="games_count">Total games:</string>
+    <string name="ClearCache">Clear Cache</string>
+    <string name="title_config">Configuration</string>
+
+    <string name="title_fecha_lanzamiento">Release Date:</string>
+    <string name="title_precio_descuento">Discount Price:</string>
+    <string name="title_precio_sin_descuento">Regular Price:</string>
+    <string name="title_precio_dolar_tarjeta">Card Dollar in Pesos:</string>
+    <string name="comprar_juego_button">Buy game</string>
+    <string name="descuento">85%</string>
+    <string name="precio_usd">$ 0 USD</string>
+    <string name="precio_arg">$ 0 ARG</string>
+    <string name="fecha">8 Feb, 2018</string>
+
+    <!-- Login Google -->
+    <string name="google_sign_in_failed">Google sign in failed: %1$d %2$s</string>
+    <string name="google_sign_in_failed_generic">Google sign in failed</string>
+    <string name="account_created_successfully">Account created successfully…</string>
+    <string name="welcome_back">Welcome back %1$s</string>
+    <string name="login_failed">Login failed: %1$s</string>
+
+    <!-- Search errors -->
+    <string name="error1">No game found with that name.</string>
+    <string name="error2">Search field is empty.</string>
+    <string name="error3">Connection error. Please, check your internet connection and try again.</string>
+    <string name="theme_label">Theme</string>
+    <string name="logout">Logout</string>
+
+    <string name="select_language" translatable="false">Select Language</string>
+    <string name="english" translatable="false">English</string>
+    <string name="spanish" translatable="false">Spanish</string>
+    <string name="portuguese" translatable="false">Portuguese</string>
+</resources>

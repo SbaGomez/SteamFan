@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">Games DB Fan</string>
+    <string name="title_login">Login</string>
+    <string name="title_home">Home</string>
+    <string name="title_detail">Detalhe</string>
+    <string name="title_fav">Favoritos</string>
+    <string name="fav_button">Favorito</string>
+    <string name="search_button">Pesquisa exata</string>
+    <string name="reload_home_button">Recarregar jogos</string>
+    <string name="search_close_button">Fechar</string>
+    <string name="placeholder_search_input">Buscar jogos...</string>
+    <string name="placeholder_searchFav_input">Pesquisar nos seus favoritos...</string>
+    <string name="steam_button">Início</string>
+    <string name="theme_button">Tema</string>
+    <string name="login_button">Entrar com o Google</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title">Título</string>
+    <string name="title_descripcion">Descrição</string>
+    <string name="title_informacion">Informação</string>
+    <string name="title_requisitos_minimos">Requisitos Mínimos</string>
+    <string name="title_requisitos_recomendados">Requisitos Recomendados</string>
+    <string name="proximamente">Em breve…</string>
+    <string name="contenido">Conteúdo…</string>
+    <string name="SO">Sistema Operacional:</string>
+    <string name="Procesador">Processador:</string>
+    <string name="Memoria">Memória:</string>
+    <string name="Graphic">Gráficos:</string>
+    <string name="Almacenamiento">Armazenamento:</string>
+    <string name="error_detalles_empty">O jogo não possui detalhes carregados ou você não tem conexão com a internet.</string>
+    <string name="boton_add_bookmark_detail">Botão Adicionar aos Favoritos</string>
+    <string name="text_count">contagem</string>
+    <string name="text_error">Texto de erro</string>
+    <string name="games_count">Total de jogos:</string>
+    <string name="ClearCache">Limpar Cache</string>
+    <string name="title_config">Configurações</string>
+
+    <string name="title_fecha_lanzamiento">Data de Lançamento:</string>
+    <string name="title_precio_descuento">Preço com desconto:</string>
+    <string name="title_precio_sin_descuento">Preço sem desconto:</string>
+    <string name="title_precio_dolar_tarjeta">Dólar no Cartão em Pesos:</string>
+    <string name="comprar_juego_button">Comprar jogo</string>
+    <string name="descuento">85%</string>
+    <string name="precio_usd">US$ 0</string>
+    <string name="precio_arg">ARS$ 0</string>
+    <string name="fecha">8 Fev, 2018</string>
+
+    <!-- Login Google -->
+    <string name="google_sign_in_failed">Falha no login do Google: %1$d %2$s</string>
+    <string name="google_sign_in_failed_generic">Falha no login do Google</string>
+    <string name="account_created_successfully">Conta criada com sucesso…</string>
+    <string name="welcome_back">Bem-vindo %1$s</string>
+    <string name="login_failed">Falha no login: %1$s</string>
+
+    <!-- Erros do buscador -->
+    <string name="error1">Nenhum jogo encontrado com esse nome.</string>
+    <string name="error2">O campo de pesquisa está vazio.</string>
+    <string name="error3">Erro de conexão. Por favor, verifique sua conexão com a internet e tente novamente.</string>
+    <string name="theme_label">Tema</string>
+    <string name="logout">Sair</string>
+
+    <string name="select_language" translatable="false">Selecione o Idioma</string>
+    <string name="english" translatable="false">Inglês</string>
+    <string name="spanish" translatable="false">Espanhol</string>
+    <string name="portuguese" translatable="false">Português</string>
+</resources>

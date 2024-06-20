@@ -54,44 +54,64 @@
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
-        android:id="@+id/LinearConfig"
-        android:layout_width="0dp"
+        android:id="@+id/linearPrincipal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:focusableInTouchMode="true"
+        android:layout_marginTop="113dp"
+        android:layout_marginBottom="281dp"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/appBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:textColorHint="@color/customs_search_lupa">
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center_horizontal"
+            android:text="@string/select_language" />
 
-            <AutoCompleteTextView
-                android:id="@+id/auto_complete"
-                android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/LinearIdioma"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp">
+
+            <RadioGroup
+                android:id="@+id/radioGroupLanguages"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/item_label"
-                android:inputType="none"
-                tools:ignore="SpeakableTextPresentCheck" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="horizontal">
 
-    </LinearLayout>
+                <RadioButton
+                    android:id="@+id/radioButtonEnglish"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/english" />
 
-    <LinearLayout
-        android:id="@+id/linearPrincipal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/LinearConfig">
+                <RadioButton
+                    android:id="@+id/radioButtonSpanish"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/spanish" />
+
+                <RadioButton
+                    android:id="@+id/radioButtonPortuguese"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/portuguese" />
+
+            </RadioGroup>
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/LinearCache"
@@ -161,6 +181,33 @@
                     android:layout_gravity="center" />
 
             </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LinearLogout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="25dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="50dp"
+            android:paddingEnd="50dp">
+
+            <Button
+                android:id="@+id/buttonLogout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/Games_Details_background"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="@string/logout"
+                android:textColor="@color/customs_search_lupa"
+                android:textSize="12sp"
+                app:cornerRadius="0dp"
+                app:icon="@drawable/logout_icon"
+                app:iconPadding="4dp"
+                app:iconSize="20dp"
+                app:iconTint="@color/customs_close_search" />
         </LinearLayout>
 
     </LinearLayout>
