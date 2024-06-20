@@ -283,6 +283,7 @@ class DetalleActivity : AppCompatActivity() {
                 Toast.makeText(this@DetalleActivity, "Eliminaste - ${gameDetail.name} - de la cache del celular.", Toast.LENGTH_LONG).show()
                 val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
                 startActivity(intent)
+                finish()
             }
         }
 

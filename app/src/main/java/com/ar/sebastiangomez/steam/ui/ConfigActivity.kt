@@ -1,6 +1,10 @@
 package com.ar.sebastiangomez.steam.ui
 
 import android.os.Bundle
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -17,5 +21,15 @@ class ConfigActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val items = listOf("Español", "Ingles")
+        val autoComplete: AutoCompleteTextView = findViewById(R.id.auto_complete)
+        val adapter = ArrayAdapter(this, R.layout.list_item, items)
+        autoComplete.setAdapter(adapter)
+        autoComplete.onItemClickListener =
+            AdapterView.OnItemClickListener { adapterView, view, i, l ->
+                val itemSelected = adapterView.getItemAtPosition(i)
+                Toast.makeText(this, "Idioma seleccionado: $itemSelected", Toast.LENGTH_SHORT).show()
+            }
     }
 }

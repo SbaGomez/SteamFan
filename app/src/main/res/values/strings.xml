@@ -31,8 +31,9 @@
     <string name="text_count">count</string>
     <string name="text_error">Texto de error.</string>
     <string name="games_count">Total de juegos:</string>
-    <string name="ClearCache">Clear Cache</string>
+    <string name="ClearCache">Borrar Cache</string>
     <string name="title_config">Configuraciones</string>
+    <string name="item_label">Selecciona un Idioma</string>
 
     <string name="title_fecha_lanzamiento">Fecha de lanzamiento:</string>
     <string name="title_precio_descuento">Precio con descuento:</string>
@@ -55,4 +56,5 @@
     <string name="error1">No se encontro ningun juego con ese nombre.</string>
     <string name="error2">El campo de busqueda esta vacio.</string>
     <string name="error3">Error de conexión. Por favor, verifica tu conexión a internet e intenta nuevamente.</string>
+    <string name="theme_label">Template</string>
 </resources>

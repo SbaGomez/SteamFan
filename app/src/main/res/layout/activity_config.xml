@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/md_theme_onBackground"
     tools:context=".ui.ConfigActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -54,14 +55,115 @@
 
     <LinearLayout
         android:id="@+id/LinearConfig"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:focusableInTouchMode="true"
         android:orientation="vertical"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/appBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:textColorHint="@color/customs_search_lupa">
+
+            <AutoCompleteTextView
+                android:id="@+id/auto_complete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/item_label"
+                android:inputType="none"
+                tools:ignore="SpeakableTextPresentCheck" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearPrincipal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/LinearConfig">
+
+        <LinearLayout
+            android:id="@+id/LinearCache"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp">
+
+            <TextView
+                android:id="@+id/cache"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="@string/ClearCache"
+                android:textAlignment="center"
+                android:textSize="12sp"
+                android:textStyle="normal" />
+
+            <Button
+                android:id="@+id/buttonClearCache"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/Games_Details_background"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="@string/ClearCache"
+                android:textColor="@color/customs_search_lupa"
+                android:textSize="12sp"
+                app:cornerRadius="0dp"
+                app:icon="@drawable/custom_clear_icon"
+                app:iconPadding="4dp"
+                app:iconSize="20dp"
+                app:iconTint="@color/customs_close_search" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LinearTheme"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp">
+
+            <TextView
+                android:id="@+id/theme"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="@string/theme_label"
+                android:textAlignment="center"
+                android:textSize="12sp"
+                android:textStyle="normal" />
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+
+            </FrameLayout>
+        </LinearLayout>
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/appBar"
