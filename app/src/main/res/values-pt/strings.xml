@@ -58,8 +58,14 @@
     <string name="theme_label">Tema</string>
     <string name="logout">Sair</string>
 
+    <!-- Configuraciones -->
     <string name="select_language" translatable="false">Selecione o Idioma</string>
     <string name="english" translatable="false">Inglês</string>
     <string name="spanish" translatable="false">Espanhol</string>
     <string name="portuguese" translatable="false">Português</string>
+    <string name="welcome_message">Bem-vindo %1$s às configurações do aplicativo.</string>
+    <string name="default_welcome_message">Bem-vindo às configurações do aplicativo.</string>
+    <string name="selected_language_toast">Selecionado: %1$s</string>
+    <string name="sign_in_failed">Falha no login</string>
+    <string name="no_profile_image">Nenhuma imagem de perfil encontrada</string>
 </resources>

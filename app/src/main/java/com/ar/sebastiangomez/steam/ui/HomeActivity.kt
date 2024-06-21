@@ -29,6 +29,8 @@ import com.ar.sebastiangomez.steam.ui.adapter.GamesAdapter
 import com.ar.sebastiangomez.steam.utils.SearchHelper
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.ar.sebastiangomez.steam.utils.Utils
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
 import java.io.IOException
@@ -350,18 +352,23 @@ class HomeActivity : AppCompatActivity() {
     fun onLogoutClick(view: View) {
         // Cerrar sesión con Firebase
         FirebaseAuth.getInstance().signOut()
-        // Actualizar SharedPreferences para reflejar que el usuario no está logueado
-        val sharedPreferences = getSharedPreferences("session", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putBoolean("isLoggedIn", false)
-        editor.apply()
 
-        // Crear el intent para la actividad de inicio de sesión
-        val intent = Intent(this, LoginActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        // Cerrar sesión con Google
+        val googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build())
+        googleSignInClient.signOut().addOnCompleteListener {
+            // Actualizar SharedPreferences para reflejar que el usuario no está logueado
+            val sharedPreferences = getSharedPreferences("session", MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putBoolean("isLoggedIn", false)
+            editor.apply()
+
+            // Crear el intent para la actividad de inicio de sesión
+            val intent = Intent(this, LoginActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            startActivity(intent)
+            finish()
         }
-        startActivity(intent)
-        finish()
     }
 
     @Suppress("UNUSED_PARAMETER")

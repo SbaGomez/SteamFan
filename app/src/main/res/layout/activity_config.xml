@@ -57,14 +57,41 @@
         android:id="@+id/linearPrincipal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="113dp"
-        android:layout_marginBottom="281dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/appBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <LinearLayout
+            android:id="@+id/LinearPerfil"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="40dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imagePerfil"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:background="#00FFFFFF"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/gameslogo" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textPerfil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center_horizontal"
+            android:paddingStart="60dp"
+            android:paddingEnd="60dp"
+            android:text="@string/default_welcome_message"
+            android:textSize="16sp" />
 
         <TextView
             android:layout_width="match_parent"

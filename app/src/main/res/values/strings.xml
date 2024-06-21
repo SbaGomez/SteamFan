@@ -12,7 +12,7 @@
     <string name="placeholder_searchFav_input">Buscar en tus favoritos...</string>
     <string name="steam_button">Home</string>
     <string name="theme_button">Theme</string>
-    <string name="login_button">Sign in with Google</string>
+    <string name="login_button">Iniciar sesión con Google</string>
     <string name="title_activity_login">Login</string>
     <string name="title">Titulo</string>
     <string name="title_descripcion">Descripcion</string>
@@ -45,8 +45,8 @@
     <string name="fecha">8 Feb, 2018</string>
 
     <!-- Login Google -->
-    <string name="google_sign_in_failed">Google sign in failed: %1$d %2$s</string>
-    <string name="google_sign_in_failed_generic">Google sign in failed</string>
+    <string name="google_sign_in_failed">Fallo en el inicio de sesión de Google: %1$d %2$s</string>
+    <string name="google_sign_in_failed_generic">Fallo en el inicio de sesión de Google</string>
     <string name="account_created_successfully">Cuenta creada exitosamente…</string>
     <string name="welcome_back">Bienvenido %1$s</string>
     <string name="login_failed">Login fallido: %1$s</string>
@@ -58,8 +58,14 @@
     <string name="theme_label">Template</string>
     <string name="logout">Cerrar sesion</string>
 
+    <!-- Configuraciones -->
     <string name="select_language" translatable="false">Seleccionar Idioma</string>
     <string name="english" translatable="false">English</string>
     <string name="spanish" translatable="false">Spanish</string>
     <string name="portuguese" translatable="false">Portugués</string>
+    <string name="welcome_message">Bienvenido %1$s a las configuraciones de la app.</string>
+    <string name="default_welcome_message">Bienvenido a las configuraciones de la app.</string>
+    <string name="selected_language_toast">Seleccionaste: %1$s</string>
+    <string name="sign_in_failed">Inicio de sesión fallido</string>
+    <string name="no_profile_image">No se encontró imagen de perfil</string>
 </resources>
