@@ -1,8 +1,10 @@
 package com.ar.sebastiangomez.steam.ui
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.View
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
@@ -11,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ar.sebastiangomez.steam.R
+import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 
 class ConfigActivity : AppCompatActivity() {
@@ -32,7 +35,7 @@ class ConfigActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
         val radioGroupLanguages = findViewById<RadioGroup>(R.id.radioGroupLanguages)
 
@@ -79,5 +82,45 @@ class ConfigActivity : AppCompatActivity() {
         val intent = intent
         finish()
         startActivity(intent)
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun onBookmarkClick(view: View) {
+        val intent = Intent(this, BookmarkActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun onHomeClick(view: View) {
+        val intent = Intent(
+            this,
+            HomeActivity::class.java
+        )
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+        finish()
+    }
+
+    fun onLogoutClick(view: View) {
+        // Cerrar sesión con Firebase
+        FirebaseAuth.getInstance().signOut()
+        // Actualizar SharedPreferences para reflejar que el usuario no está logueado
+        val sharedPreferences = getSharedPreferences("session", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isLoggedIn", false)
+        editor.apply()
+
+        // Crear el intent para la actividad de inicio de sesión
+        val intent = Intent(this, LoginActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
+        finish()
+    }
+
+    @Suppress("UNUSED_PARAMETER", "DEPRECATION")
+    fun onBackClick(view: View) {
+        super.onBackPressed()
     }
 }

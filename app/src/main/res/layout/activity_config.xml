@@ -24,11 +24,11 @@
 
         <!-- ImageButton para el botón de retroceso -->
         <ImageButton
-            android:id="@+id/logout_button"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/steam_button"
+            android:onClick="onBackClick"
             android:padding="10dp"
             android:scaleType="fitCenter"
             android:src="@drawable/back"
@@ -194,12 +194,13 @@
             android:paddingEnd="50dp">
 
             <Button
-                android:id="@+id/buttonLogout"
+                android:id="@+id/logout_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@color/Games_Details_background"
                 android:fontFamily="@font/montserrat_bold"
+                android:onClick="onLogoutClick"
                 android:text="@string/logout"
                 android:textColor="@color/customs_search_lupa"
                 android:textSize="12sp"
@@ -230,6 +231,7 @@
             android:layout_height="wrap_content"
             android:background="#00FFFFFF"
             android:contentDescription="@string/fav_button"
+            android:onClick="onBookmarkClick"
             android:padding="16dp"
             android:scaleType="centerInside"
             android:src="@drawable/tabbookmark" />
@@ -248,9 +250,10 @@
             android:layout_marginStart="10dp"
             android:background="#00FFFFFF"
             android:contentDescription="@string/app_name"
+            android:onClick="onHomeClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/hometabactive" />
+            android:src="@drawable/hometab" />
 
         <!-- Espacio para separar los botones -->
         <View
@@ -260,14 +263,14 @@
 
         <!-- Botón 3 -->
         <ImageButton
-            android:id="@+id/themeButton"
+            android:id="@+id/configButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#00881A1A"
             android:contentDescription="@string/theme_button"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/themelighttab" />
+            android:src="@drawable/configactive" />
 
     </LinearLayout>
 

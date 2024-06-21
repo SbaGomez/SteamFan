@@ -313,14 +313,15 @@
 
         <!-- Botón 3 -->
         <ImageButton
-            android:id="@+id/themeButton"
+            android:id="@+id/configButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#00FFFFFF"
             android:contentDescription="@string/theme_button"
+            android:onClick="onConfigClick"
             android:padding="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/themelighttab"
+            android:src="@drawable/config"
             tools:ignore="VisualLintBounds" />
 
     </LinearLayout>

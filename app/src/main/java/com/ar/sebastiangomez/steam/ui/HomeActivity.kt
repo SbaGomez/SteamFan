@@ -31,7 +31,6 @@ import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.ar.sebastiangomez.steam.utils.Utils
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
-import java.io.File
 import java.io.IOException
 
 
@@ -82,10 +81,10 @@ class HomeActivity : AppCompatActivity() {
         checkUser()
 
         bindViewObject()
-        ThemeHelper.setButtonImageBasedOnTheme(themeButton, this)
+        /*ThemeHelper.setButtonImageBasedOnTheme(themeButton, this)
         themeButton.setOnClickListener {
             ThemeHelper.toggleTheme(this)
-        }
+        }*/
         showButtonSearch() // Mostrar el boton buscar al abrir el search
         getGames()
     }
@@ -109,7 +108,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun bindViewObject() {
         progressBar = findViewById(R.id.progressBar)
-        themeButton = findViewById(R.id.themeButton)
+        themeButton = findViewById(R.id.configButton)
         searchView = findViewById(R.id.searchInput)
         linearSearch = findViewById(R.id.linearSearch)
         cardSearch = findViewById(R.id.cardSearch)
@@ -363,5 +362,11 @@ class HomeActivity : AppCompatActivity() {
         }
         startActivity(intent)
         finish()
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun onConfigClick(view: View) {
+        val intent = Intent(this, ConfigActivity::class.java)
+        startActivity(intent)
     }
 }

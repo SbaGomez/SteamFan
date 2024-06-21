@@ -111,10 +111,10 @@ class DetalleActivity : AppCompatActivity() {
         }
 
         bindViewObject()
-        ThemeHelper.setButtonImageBasedOnTheme(themeButton, this)
+        /*ThemeHelper.setButtonImageBasedOnTheme(themeButton, this)
         themeButton.setOnClickListener {
             ThemeHelper.toggleTheme(this)
-        }
+        }*/
         getDetails(getId().toString()) //Fetch game details del ID.
     }
 
@@ -126,7 +126,7 @@ class DetalleActivity : AppCompatActivity() {
         cardView = findViewById(R.id.cardError)
         headerImg = findViewById(R.id.imageDetalle)
         progressBar = findViewById(R.id.progressBarDetail)
-        themeButton = findViewById(R.id.themeButton)
+        themeButton = findViewById(R.id.configButton)
         textSO = findViewById(R.id.textSO)
         textProcesador = findViewById(R.id.textProcesador)
         textMemoria = findViewById(R.id.textMemoria)
@@ -453,6 +453,13 @@ class DetalleActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun onBookmarkClick(view: View) {
         val intent = Intent(this, BookmarkActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun onConfigClick(view: View) {
+        val intent = Intent(this, ConfigActivity::class.java)
         startActivity(intent)
         finish()
     }

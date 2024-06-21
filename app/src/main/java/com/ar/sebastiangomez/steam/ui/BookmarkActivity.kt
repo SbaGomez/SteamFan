@@ -72,16 +72,16 @@ class BookmarkActivity : AppCompatActivity() {
         }
 
         bindViewObject()
-        ThemeHelper.setButtonImageBasedOnTheme(themeButton, this)
+        /*ThemeHelper.setButtonImageBasedOnTheme(themeButton, this)
         themeButton.setOnClickListener {
             ThemeHelper.toggleTheme(this)
-        }
+        }*/
     }
 
     private fun bindViewObject() {
         progressBar = findViewById(R.id.progressBar)
         recyclerView = findViewById(R.id.recyclerView)
-        themeButton = findViewById(R.id.themeButton)
+        themeButton = findViewById(R.id.configButton)
         searchView = findViewById(R.id.searchInput)
         linearSearch = findViewById(R.id.linearSearch)
         cardSearch = findViewById(R.id.cardSearch)
@@ -286,5 +286,12 @@ class BookmarkActivity : AppCompatActivity() {
         linearSearchButton.let { linearSearch.removeView(it) } // Remove search buttons
         linearErrorSearchButton.let { linearSearch.removeView(it) } // Remove error search
         searchView.clearFocus() // Quita el foco del SearchView
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun onConfigClick(view: View) {
+        val intent = Intent(this, ConfigActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
