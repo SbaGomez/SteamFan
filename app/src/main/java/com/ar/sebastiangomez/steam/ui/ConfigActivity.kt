@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.RadioButton
@@ -32,6 +33,7 @@ class ConfigActivity : AppCompatActivity() {
         const val LANGUAGE_KEY = "Language"
         const val DEFAULT_LANGUAGE = "es" // Establece "es" como el valor predeterminado
         private const val RC_SIGN_IN = 9001
+        val tag = "LOG-CONFIG"
     }
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -47,8 +49,11 @@ class ConfigActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         imagePerfil = findViewById(R.id.imagePerfil)
         textPerfil = findViewById(R.id.textPerfil)
+        val radioGroupLanguages = findViewById<RadioGroup>(R.id.radioGroupLanguages)
 
         // Configura Google Sign-In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -68,39 +73,37 @@ class ConfigActivity : AppCompatActivity() {
             startActivityForResult(signInIntent, RC_SIGN_IN)
         }
 
-        sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-
-        val radioGroupLanguages = findViewById<RadioGroup>(R.id.radioGroupLanguages)
-
         // Obtener el idioma guardado en las SharedPreferences
         val currentLanguage = sharedPreferences.getString(LANGUAGE_KEY, DEFAULT_LANGUAGE)
 
-        // Marcar el RadioButton correspondiente al idioma guardado
-        when (currentLanguage) {
-            "en" -> radioGroupLanguages.check(R.id.radioButtonEnglish)
-            "es" -> radioGroupLanguages.check(R.id.radioButtonSpanish)
-            "pt" -> radioGroupLanguages.check(R.id.radioButtonPortuguese)
+        Log.d(tag, "$currentLanguage")
+
+        // Obtener el RadioButton correspondiente al idioma guardado
+        val selectedRadioButtonId = when (currentLanguage) {
+            "en" -> R.id.radioButtonEnglish
+            "es" -> R.id.radioButtonSpanish
+            "pt" -> R.id.radioButtonPortuguese
+            else -> R.id.radioButtonEnglish // Idioma predeterminado si no se encuentra ninguno
         }
 
+        // Marcar el RadioButton correspondiente al idioma guardado
+        radioGroupLanguages.check(selectedRadioButtonId)
+
         radioGroupLanguages.setOnCheckedChangeListener { group, checkedId ->
-            val radioButton = findViewById<RadioButton>(checkedId)
-            val selectedLanguage = radioButton.text.toString()
-
-            // Obtener el idioma actual de la configuración
-            val currentLocale = Locale.getDefault().language
-
-            if (currentLocale != selectedLanguage) {
-                when (selectedLanguage) {
-                    getString(R.string.english) -> setLocale("en")
-                    getString(R.string.spanish) -> setLocale("es")
-                    getString(R.string.portuguese) -> setLocale("pt")
-                }
-
-                // Guardar el idioma seleccionado en las SharedPreferences
-                sharedPreferences.edit().putString(LANGUAGE_KEY, selectedLanguage).apply()
-
-                Toast.makeText(this, getString(R.string.selected_language_toast, selectedLanguage), Toast.LENGTH_SHORT).show()
+            val selectedLanguage = when (checkedId) {
+                R.id.radioButtonEnglish -> "en"
+                R.id.radioButtonSpanish -> "es"
+                R.id.radioButtonPortuguese -> "pt"
+                else -> DEFAULT_LANGUAGE // En caso de que no se seleccione ninguno, se utiliza el idioma predeterminado
             }
+
+            setLocale(selectedLanguage)
+
+            // Guardar el idioma seleccionado en las SharedPreferences
+            sharedPreferences.edit().putString(LANGUAGE_KEY, selectedLanguage).apply()
+
+            Toast.makeText(this, getString(R.string.selected_language_toast, Locale.getDefault().language), Toast.LENGTH_SHORT).show()
+
         }
     }
 
