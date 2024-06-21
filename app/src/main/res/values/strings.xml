@@ -60,8 +60,8 @@
 
     <!-- Configuraciones -->
     <string name="select_language" translatable="false">Seleccionar Idioma</string>
-    <string name="english" translatable="false">English</string>
-    <string name="spanish" translatable="false">Spanish</string>
+    <string name="english" translatable="false">Ingles</string>
+    <string name="spanish" translatable="false">Español</string>
     <string name="portuguese" translatable="false">Portugués</string>
     <string name="welcome_message">Bienvenido %1$s a las configuraciones de la app.</string>
     <string name="default_welcome_message">Bienvenido a las configuraciones de la app.</string>

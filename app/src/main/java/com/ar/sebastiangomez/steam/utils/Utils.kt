@@ -2,12 +2,14 @@ package com.ar.sebastiangomez.steam.utils
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.view.inputmethod.InputMethodManager
 import com.ar.sebastiangomez.steam.model.PcRequirement
 import com.ar.sebastiangomez.steam.model.PcRequirements
+import java.util.Locale
 
 class Utils {
     fun hideKeyboard(activity: Activity) {
@@ -109,5 +111,13 @@ class Utils {
             return PcRequirements(minimumRequirement, recommendedRequirement)
         }
         return null
+    }
+
+    fun setLocale(context: Context, languageCode: String) {
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+        val config = Configuration()
+        config.setLocale(locale)
+        context.resources.updateConfiguration(config, context.resources.displayMetrics)
     }
 }

@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
-import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
@@ -33,7 +32,6 @@ class ConfigActivity : AppCompatActivity() {
         const val LANGUAGE_KEY = "Language"
         const val DEFAULT_LANGUAGE = "es" // Establece "es" como el valor predeterminado
         private const val RC_SIGN_IN = 9001
-        val tag = "LOG-CONFIG"
     }
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -76,8 +74,6 @@ class ConfigActivity : AppCompatActivity() {
         // Obtener el idioma guardado en las SharedPreferences
         val currentLanguage = sharedPreferences.getString(LANGUAGE_KEY, DEFAULT_LANGUAGE)
 
-        Log.d(tag, "$currentLanguage")
-
         // Obtener el RadioButton correspondiente al idioma guardado
         val selectedRadioButtonId = when (currentLanguage) {
             "en" -> R.id.radioButtonEnglish
@@ -102,8 +98,16 @@ class ConfigActivity : AppCompatActivity() {
             // Guardar el idioma seleccionado en las SharedPreferences
             sharedPreferences.edit().putString(LANGUAGE_KEY, selectedLanguage).apply()
 
-            Toast.makeText(this, getString(R.string.selected_language_toast, Locale.getDefault().language), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.selected_language_toast, getLanguageName(selectedLanguage)), Toast.LENGTH_SHORT).show()
+        }
+    }
 
+    private fun getLanguageName(languageCode: String): String {
+        return when (languageCode) {
+            "en" -> getString(R.string.english)
+            "es" -> getString(R.string.spanish)
+            "pt" -> getString(R.string.portuguese)
+            else -> "Unknown Language" // Otra opción para manejar códigos de idioma desconocidos
         }
     }
 

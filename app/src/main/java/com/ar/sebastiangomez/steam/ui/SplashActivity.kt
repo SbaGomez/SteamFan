@@ -2,6 +2,7 @@ package com.ar.sebastiangomez.steam.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,12 +12,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.utils.Utils
 
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
 
     private lateinit var logoSplash: ImageView
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var utils: Utils
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -25,6 +30,14 @@ class SplashActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        sharedPreferences = getSharedPreferences(ConfigActivity.PREFS_NAME, MODE_PRIVATE)
+        utils = Utils()
+        // Obtener el idioma guardado en las SharedPreferences
+        val currentLanguage = sharedPreferences.getString(ConfigActivity.LANGUAGE_KEY, ConfigActivity.DEFAULT_LANGUAGE)
+        if (currentLanguage != null) {
+            utils.setLocale(this, currentLanguage)
         }
 
         bindViewObject()
