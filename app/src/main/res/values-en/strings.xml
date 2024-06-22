@@ -63,9 +63,11 @@
     <string name="english" translatable="false">English</string>
     <string name="spanish" translatable="false">Spanish</string>
     <string name="portuguese" translatable="false">Portuguese</string>
+    <string name="unknown_language" translatable="false">Language not found</string>
     <string name="welcome_message">Welcome %1$s to the app settings.</string>
     <string name="default_welcome_message">Welcome to the app settings.</string>
     <string name="selected_language_toast">Selected: %1$s</string>
     <string name="sign_in_failed">Sign-in failed</string>
     <string name="no_profile_image">No profile image found</string>
+    <string name="cache_cleared">You cleared all the cache.</string>
 </resources>

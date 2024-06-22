@@ -1,12 +1,17 @@
 package com.ar.sebastiangomez.steam.ui
+
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
@@ -20,7 +25,10 @@ import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.data.GamesRepository
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -122,8 +130,7 @@ class ConfigActivity : AppCompatActivity() {
         buttonClearCache.setOnClickListener {
             lifecycleScope.launch {
                 gamesRepository.deleteAllRoom(this@ConfigActivity)
-                Toast.makeText(this@ConfigActivity, "Eliminaste toda la cache", Toast.LENGTH_LONG)
-                    .show()
+                Toast.makeText(this@ConfigActivity, getString(R.string.cache_cleared), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -138,7 +145,7 @@ class ConfigActivity : AppCompatActivity() {
             "en" -> getString(R.string.english)
             "es" -> getString(R.string.spanish)
             "pt" -> getString(R.string.portuguese)
-            else -> "Unknown Language" // Otra opción para manejar códigos de idioma desconocidos
+            else -> getString(R.string.unknown_language)
         }
     }
 
@@ -165,23 +172,47 @@ class ConfigActivity : AppCompatActivity() {
     }
 
     private fun loadProfileImage(account: GoogleSignInAccount) {
-        val personPhoto = account.photoUrl
-        val personName = account.displayName
-        if (personPhoto != null) {
-            // Usa Glide para cargar la imagen en el ImageView, omitiendo la caché
-            Glide.with(this)
-                .load(personPhoto)
-                .skipMemoryCache(true) // Omite la caché de memoria
-                .diskCacheStrategy(DiskCacheStrategy.NONE) // Omite la caché de disco
-                .into(imagePerfil)
-        } else {
-            Toast.makeText(this, getString(R.string.no_profile_image), Toast.LENGTH_SHORT).show()
-        }
-        if (personName != null) {
-            textPerfil.text = getString(R.string.welcome_message, personName)
-        } else {
-            textPerfil.text = getString(R.string.default_welcome_message)
-        }
+        val progressBar: ProgressBar = this.findViewById(R.id.progressBar)
+        progressBar.visibility = View.VISIBLE
+
+        account.photoUrl?.let { personPhoto ->
+            // Introduce a delay using Handler
+            Handler(Looper.getMainLooper()).postDelayed({
+                // Load the image using Glide with a listener to handle the visibility of the ProgressBar
+                Glide.with(this)
+                    .load(personPhoto)
+                    .centerCrop()
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            // Hide the ProgressBar if the image load fails
+                            progressBar.visibility = View.INVISIBLE
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable,
+                            model: Any,
+                            target: Target<Drawable>?,
+                            dataSource: DataSource,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            // Hide the ProgressBar when the image has been loaded
+                            progressBar.visibility = View.INVISIBLE
+                            return false
+                        }
+                    })
+                    .into(imagePerfil)
+            }, 2000) // 2000 milliseconds delay (2 seconds)
+        } ?: Toast.makeText(this, getString(R.string.no_profile_image), Toast.LENGTH_SHORT).show()
+
+        textPerfil.text = account.displayName?.let {
+            getString(R.string.welcome_message, it)
+        } ?: getString(R.string.default_welcome_message)
     }
 
     private fun setLocale(languageCode: String) {
