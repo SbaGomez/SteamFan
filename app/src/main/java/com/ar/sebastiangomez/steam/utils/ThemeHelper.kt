@@ -8,6 +8,10 @@ import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatDelegate
 
 object ThemeHelper {
+
+    private const val PREFS_NAME = "MyPrefsFile"
+    private const val IS_DARK_THEME_ENABLED = "isDarkThemeEnabled"
+
     fun setButtonImageBasedOnTheme(themeButton: ImageButton, context: Context) {
         val currentNightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         val currentTheme = if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
@@ -21,5 +25,26 @@ object ThemeHelper {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
+    }
+
+    fun applyTheme(context: Context) {
+        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val isDarkThemeEnabled = sharedPreferences.getBoolean(IS_DARK_THEME_ENABLED, false)
+
+        if (isDarkThemeEnabled) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+    }
+
+    fun saveThemeState(context: Context, isDarkThemeEnabled: Boolean) {
+        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        sharedPreferences.edit().putBoolean(IS_DARK_THEME_ENABLED, isDarkThemeEnabled).apply()
+    }
+
+    fun isDarkThemeEnabled(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean(IS_DARK_THEME_ENABLED, false)
     }
 }

@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.RadioGroup
@@ -12,9 +11,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -37,6 +38,7 @@ class ConfigActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var imagePerfil: ImageView
     private lateinit var textPerfil: TextView
+    private lateinit var switchTheme: SwitchCompat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +53,7 @@ class ConfigActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         imagePerfil = findViewById(R.id.imagePerfil)
         textPerfil = findViewById(R.id.textPerfil)
+        switchTheme = findViewById(R.id.switchTheme)
         val radioGroupLanguages = findViewById<RadioGroup>(R.id.radioGroupLanguages)
 
         // Configura Google Sign-In
@@ -85,7 +88,7 @@ class ConfigActivity : AppCompatActivity() {
         // Marcar el RadioButton correspondiente al idioma guardado
         radioGroupLanguages.check(selectedRadioButtonId)
 
-        radioGroupLanguages.setOnCheckedChangeListener { group, checkedId ->
+        radioGroupLanguages.setOnCheckedChangeListener { _, checkedId ->
             val selectedLanguage = when (checkedId) {
                 R.id.radioButtonEnglish -> "en"
                 R.id.radioButtonSpanish -> "es"
@@ -100,6 +103,18 @@ class ConfigActivity : AppCompatActivity() {
 
             Toast.makeText(this, getString(R.string.selected_language_toast, getLanguageName(selectedLanguage)), Toast.LENGTH_SHORT).show()
         }
+
+        switchTheme.isChecked = ThemeHelper.isDarkThemeEnabled(this)
+
+        switchTheme.setOnCheckedChangeListener { _, isChecked ->
+            ThemeHelper.saveThemeState(this, isChecked)
+            ThemeHelper.applyTheme(this)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ThemeHelper.applyTheme(this)
     }
 
     private fun getLanguageName(languageCode: String): String {

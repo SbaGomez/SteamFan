@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.ar.sebastiangomez.steam.utils.Utils
 
 
@@ -31,6 +32,8 @@ class SplashActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        ThemeHelper.applyTheme(this)
 
         sharedPreferences = getSharedPreferences(ConfigActivity.PREFS_NAME, MODE_PRIVATE)
         utils = Utils()
