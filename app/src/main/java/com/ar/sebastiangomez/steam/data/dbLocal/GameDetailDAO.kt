@@ -16,4 +16,7 @@ interface GameDetailDAO {
 
     @Delete
     suspend fun delete(vararg gameDetail: GameDetailLocal)
+
+    @Query("DELETE FROM gameDetail")
+    suspend fun deleteAll()
 }

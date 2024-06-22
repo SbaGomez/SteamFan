@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.RadioGroup
 import android.widget.TextView
@@ -14,7 +15,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.ar.sebastiangomez.steam.R
+import com.ar.sebastiangomez.steam.data.GamesRepository
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -24,6 +27,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 import java.util.*
 
 class ConfigActivity : AppCompatActivity() {
@@ -35,10 +39,12 @@ class ConfigActivity : AppCompatActivity() {
         private const val RC_SIGN_IN = 9001
     }
 
+    private val gamesRepository: GamesRepository = GamesRepository()
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var imagePerfil: ImageView
     private lateinit var textPerfil: TextView
     private lateinit var switchTheme: SwitchCompat
+    private lateinit var buttonClearCache: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +60,8 @@ class ConfigActivity : AppCompatActivity() {
         imagePerfil = findViewById(R.id.imagePerfil)
         textPerfil = findViewById(R.id.textPerfil)
         switchTheme = findViewById(R.id.switchTheme)
+        buttonClearCache = findViewById(R.id.buttonClearCache)
+
         val radioGroupLanguages = findViewById<RadioGroup>(R.id.radioGroupLanguages)
 
         // Configura Google Sign-In
@@ -109,6 +117,14 @@ class ConfigActivity : AppCompatActivity() {
         switchTheme.setOnCheckedChangeListener { _, isChecked ->
             ThemeHelper.saveThemeState(this, isChecked)
             ThemeHelper.applyTheme(this)
+        }
+
+        buttonClearCache.setOnClickListener {
+            lifecycleScope.launch {
+                gamesRepository.deleteAllRoom(this@ConfigActivity)
+                Toast.makeText(this@ConfigActivity, "Eliminaste toda la cache", Toast.LENGTH_LONG)
+                    .show()
+            }
         }
     }
 

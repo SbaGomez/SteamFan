@@ -64,6 +64,11 @@ class GamesDataSource {
             }
         }
 
+        suspend fun deleteAllRoom(context: Context) {
+            val db = AppDataBase.getInstance(context)
+            db.gameDetailsDao().deleteAll()
+        }
+
         suspend fun getDetails(gameId: String, context: Context): GameDetail? {
 
             // Recupero la informacion localmente (si existe)
