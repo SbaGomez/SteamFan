@@ -38,7 +38,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class ConfigActivity : AppCompatActivity() {
@@ -76,12 +78,14 @@ class ConfigActivity : AppCompatActivity() {
         buttonClearCache = findViewById(R.id.buttonClearCache)
 
         val radioGroupLanguages = findViewById<RadioGroup>(R.id.radioGroupLanguages)
-        radioGroupLanguages.visibility = View.GONE
 
         for (i in 0 until radioGroupLanguages.childCount) {
             val radioButton = radioGroupLanguages.getChildAt(i) as RadioButton
             val colorStateList = ContextCompat.getColorStateList(this, R.color.radio_button_selector)
             CompoundButtonCompat.setButtonTintList(radioButton, colorStateList)
+            Handler(Looper.getMainLooper()).postDelayed({
+                radioButton.isEnabled = true
+            }, 3000)
         }
 
         // Configura Google Sign-In
@@ -116,33 +120,28 @@ class ConfigActivity : AppCompatActivity() {
         // Marcar el RadioButton correspondiente al idioma guardado
         radioGroupLanguages.check(selectedRadioButtonId)
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            // Agregar el RadioGroup después de 5 segundos
-            radioGroupLanguages.visibility = View.VISIBLE
+        // Configurar el listener del RadioGroup
+        radioGroupLanguages.setOnCheckedChangeListener { _, checkedId ->
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - lastClickTime > debounceInterval) {
+                // Realiza la operación solo si ha pasado el tiempo de debounce
+                lastClickTime = currentTime
 
-            // Configurar el listener del RadioGroup
-            radioGroupLanguages.setOnCheckedChangeListener { _, checkedId ->
-                val currentTime = System.currentTimeMillis()
-                if (currentTime - lastClickTime > debounceInterval) {
-                    // Realiza la operación solo si ha pasado el tiempo de debounce
-                    lastClickTime = currentTime
-
-                    val selectedLanguage = when (checkedId) {
-                        R.id.radioButtonEnglish -> "en"
-                        R.id.radioButtonSpanish -> "es"
-                        R.id.radioButtonPortuguese -> "pt"
-                        else -> DEFAULT_LANGUAGE // En caso de que no se seleccione ninguno, se utiliza el idioma predeterminado
-                    }
-
-                    setLocale(selectedLanguage)
-
-                    // Guardar el idioma seleccionado en las SharedPreferences
-                    sharedPreferences.edit().putString(LANGUAGE_KEY, selectedLanguage).apply()
-
-                    Toast.makeText(this, getString(R.string.selected_language_toast, getLanguageName(selectedLanguage)), Toast.LENGTH_SHORT).show()
+                val selectedLanguage = when (checkedId) {
+                    R.id.radioButtonEnglish -> "en"
+                    R.id.radioButtonSpanish -> "es"
+                    R.id.radioButtonPortuguese -> "pt"
+                    else -> DEFAULT_LANGUAGE // En caso de que no se seleccione ninguno, se utiliza el idioma predeterminado
                 }
+
+                setLocale(selectedLanguage)
+
+                // Guardar el idioma seleccionado en las SharedPreferences
+                sharedPreferences.edit().putString(LANGUAGE_KEY, selectedLanguage).apply()
+
+                Toast.makeText(this, getString(R.string.selected_language_toast, getLanguageName(selectedLanguage)), Toast.LENGTH_SHORT).show()
             }
-        }, 3000) // Espera 3 segundos (3000 milisegundos) antes de mostrar el RadioGroup
+        }
 
         switchTheme.isChecked = ThemeHelper.isDarkThemeEnabled(this)
 
@@ -199,39 +198,46 @@ class ConfigActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
 
         account.photoUrl?.let { personPhoto ->
-            // Introduce a delay using Handler
-            Handler(Looper.getMainLooper()).postDelayed({
-                // Load the image using Glide with a listener to handle the visibility of the ProgressBar
-                Glide.with(this)
-                    .load(personPhoto)
-                    .centerCrop()
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable>,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            // Hide the ProgressBar if the image load fails
-                            progressBar.visibility = View.INVISIBLE
-                            return false
-                        }
+            // Lanzar una coroutine en el hilo principal
+            lifecycleScope.launch {
+                // Introducir un retraso de 2 segundos
+                withContext(Dispatchers.IO) {
+                    Thread.sleep(2000)
+                }
 
-                        override fun onResourceReady(
-                            resource: Drawable,
-                            model: Any,
-                            target: Target<Drawable>?,
-                            dataSource: DataSource,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            // Hide the ProgressBar when the image has been loaded
-                            progressBar.visibility = View.INVISIBLE
-                            return false
-                        }
-                    })
-                    .into(imagePerfil)
-                imagePerfil.visibility = View.VISIBLE
-            }, 2000) // 2000 milliseconds delay (2 seconds)
+                // Volver al hilo principal para cargar la imagen usando Glide
+                withContext(Dispatchers.Main) {
+                    Glide.with(this@ConfigActivity)
+                        .load(personPhoto)
+                        .centerCrop()
+                        .listener(object : RequestListener<Drawable> {
+                            override fun onLoadFailed(
+                                e: GlideException?,
+                                model: Any?,
+                                target: Target<Drawable>,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                // Ocultar el ProgressBar si la carga de la imagen falla
+                                progressBar.visibility = View.INVISIBLE
+                                return false
+                            }
+
+                            override fun onResourceReady(
+                                resource: Drawable,
+                                model: Any,
+                                target: Target<Drawable>?,
+                                dataSource: DataSource,
+                                isFirstResource: Boolean
+                            ): Boolean {
+                                // Ocultar el ProgressBar cuando la imagen se haya cargado
+                                progressBar.visibility = View.INVISIBLE
+                                return false
+                            }
+                        })
+                        .into(imagePerfil)
+                    imagePerfil.visibility = View.VISIBLE
+                }
+            }
         } ?: Toast.makeText(this, getString(R.string.no_profile_image), Toast.LENGTH_SHORT).show()
 
         textPerfil.text = account.displayName?.let {

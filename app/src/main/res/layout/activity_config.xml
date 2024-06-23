@@ -140,21 +140,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/english"
-                        style="@style/RadioButtonCustom" />
+                        style="@style/RadioButtonCustom"
+                        android:enabled="false"/>
 
                     <RadioButton
                         android:id="@+id/radioButtonSpanish"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/spanish"
-                        style="@style/RadioButtonCustom" />
+                        style="@style/RadioButtonCustom"
+                        android:enabled="false"/>
 
                     <RadioButton
                         android:id="@+id/radioButtonPortuguese"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/portuguese"
-                        style="@style/RadioButtonCustom" />
+                        style="@style/RadioButtonCustom"
+                        android:enabled="false"/>
 
                 </RadioGroup>
 
