@@ -6,6 +6,7 @@ import android.content.Intent
 import android.database.SQLException
 import android.util.Log
 import android.widget.Toast
+import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.data.dbLocal.AppDataBase
 import com.ar.sebastiangomez.steam.data.dbLocal.toGameDetail
 import com.ar.sebastiangomez.steam.data.dbLocal.toGameDetailLocal
@@ -66,7 +67,18 @@ class GamesDataSource {
 
         suspend fun deleteAllRoom(context: Context) {
             val db = AppDataBase.getInstance(context)
-            db.gameDetailsDao().deleteAll()
+            val gameDetailsDao = db.gameDetailsDao()
+            val count = gameDetailsDao.getCount() // Assuming you have a method to get the count of records
+
+            Log.d(tag,"$count")
+
+            if (count == 0) {
+                Toast.makeText(context, context.getString(R.string.no_cache_cleared), Toast.LENGTH_SHORT).show()
+                return
+            } else {
+                gameDetailsDao.deleteAll()
+                Toast.makeText(context, context.getString(R.string.cache_cleared), Toast.LENGTH_LONG).show()
+            }
         }
 
         suspend fun getDetails(gameId: String, context: Context): GameDetail? {
@@ -175,7 +187,8 @@ class GamesDataSource {
                         .document(gameCached.id)
                         .set(gameCached)
                         .await()
-                    Toast.makeText(context, "Agregaste - ${gameCached.name} - de favoritos.", Toast.LENGTH_LONG).show()
+                    val message = context.getString(R.string.favorite_added, gameCached.name)
+                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
                     Log.d(tag, "Game cached saved successfully: $gameCached")
                     // Redirigir a HomeActivity
                     val intent = Intent(context, BookmarkActivity::class.java)
@@ -232,7 +245,8 @@ class GamesDataSource {
                     .document(gameId)
                     .delete()
                     .addOnSuccessListener {
-                        Toast.makeText(context, "Eliminaste - $gameName - de favoritos.", Toast.LENGTH_LONG).show()
+                        val removeMessage = context.getString(R.string.favorite_removed, gameName)
+                        Toast.makeText(context, removeMessage, Toast.LENGTH_LONG).show()
                         Log.d(tag, "Game cached removed successfully for ID: $gameId")
                         if (activity == "BookmarkActivity") {
                             (context as BookmarkActivity).recreate()

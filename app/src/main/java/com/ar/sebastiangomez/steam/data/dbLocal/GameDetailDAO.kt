@@ -19,4 +19,7 @@ interface GameDetailDAO {
 
     @Query("DELETE FROM gameDetail")
     suspend fun deleteAll()
+
+    @Query("SELECT COUNT(*) FROM gameDetail") // Adjust table name if different
+    suspend fun getCount(): Int
 }

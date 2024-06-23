@@ -33,11 +33,18 @@
     <string name="games_count">Total de jogos:</string>
     <string name="ClearCache">Limpar Cache</string>
     <string name="title_config">Configurações</string>
+    <string name="button_view_game">Ver jogo</string>
+    <string name="button_view_dlc">Ver dlc</string>
+    <string name="button_view_soundtrack">Ver soundtrack</string>
+    <string name="button_view_demo">Ver demo</string>
+    <string name="buy_dlc">Comprar DLC</string>
+    <string name="buy_soundtrack">Comprar Soundtrack</string>
+    <string name="price_usd_title">Preço em USD:</string>
 
     <string name="title_fecha_lanzamiento">Data de Lançamento:</string>
     <string name="title_precio_descuento">Preço com desconto:</string>
     <string name="title_precio_sin_descuento">Preço sem desconto:</string>
-    <string name="title_precio_dolar_tarjeta">Dólar no Cartão em Pesos:</string>
+    <string name="title_precio_dolar_tarjeta">Dólar no Cartão em ARS:</string>
     <string name="comprar_juego_button">Comprar jogo</string>
     <string name="descuento">85%</string>
     <string name="precio_usd">US$ 0</string>
@@ -70,4 +77,11 @@
     <string name="sign_in_failed">Falha no login</string>
     <string name="no_profile_image">Nenhuma imagem de perfil encontrada</string>
     <string name="cache_cleared">Você limpou todo o cache.</string>
+    <string name="no_cache_cleared">Sem cache.</string>
+
+    <!-- Data Source -->
+    <string name="favorite_added">Adicionado - %1$s - aos favoritos.</string>
+    <string name="favorite_removed">Removido - %1$s - dos favoritos.</string>
+    <string name="no_game_data">O jogo - %1$s - não tem dados.</string>
+    <string name="cache_removed">Removido - %1$s - do cache do celular.</string>
 </resources>

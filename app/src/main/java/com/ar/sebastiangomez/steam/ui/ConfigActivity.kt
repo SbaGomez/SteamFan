@@ -12,14 +12,17 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.CompoundButtonCompat
 import androidx.lifecycle.lifecycleScope
 import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.data.GamesRepository
@@ -71,6 +74,12 @@ class ConfigActivity : AppCompatActivity() {
         buttonClearCache = findViewById(R.id.buttonClearCache)
 
         val radioGroupLanguages = findViewById<RadioGroup>(R.id.radioGroupLanguages)
+
+        for (i in 0 until radioGroupLanguages.childCount) {
+            val radioButton = radioGroupLanguages.getChildAt(i) as RadioButton
+            val colorStateList = ContextCompat.getColorStateList(this, R.color.radio_button_selector)
+            CompoundButtonCompat.setButtonTintList(radioButton, colorStateList)
+        }
 
         // Configura Google Sign-In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -130,7 +139,6 @@ class ConfigActivity : AppCompatActivity() {
         buttonClearCache.setOnClickListener {
             lifecycleScope.launch {
                 gamesRepository.deleteAllRoom(this@ConfigActivity)
-                Toast.makeText(this@ConfigActivity, getString(R.string.cache_cleared), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -207,6 +215,7 @@ class ConfigActivity : AppCompatActivity() {
                         }
                     })
                     .into(imagePerfil)
+                imagePerfil.visibility = View.VISIBLE
             }, 2000) // 2000 milliseconds delay (2 seconds)
         } ?: Toast.makeText(this, getString(R.string.no_profile_image), Toast.LENGTH_SHORT).show()
 
@@ -216,16 +225,16 @@ class ConfigActivity : AppCompatActivity() {
     }
 
     private fun setLocale(languageCode: String) {
-        val locale = Locale(languageCode)
-        Locale.setDefault(locale)
-        val config = Configuration()
-        config.setLocale(locale)
-        baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
+        lifecycleScope.launch {
+            val locale = Locale(languageCode)
+            Locale.setDefault(locale)
+            val config = Configuration()
+            config.setLocale(locale)
+            baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
 
-        // Reiniciar la actividad para aplicar el nuevo idioma
-        val intent = intent
-        finish()
-        startActivity(intent)
+            // Reiniciar la actividad para aplicar el nuevo idioma
+            recreate()
+        }
     }
 
     @Suppress("UNUSED_PARAMETER")

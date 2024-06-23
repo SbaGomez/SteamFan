@@ -82,7 +82,8 @@
                     android:layout_gravity="center"
                     android:background="#00FFFFFF"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/backperfil" />
+                    android:src="@drawable/backperfil"
+                    android:visibility="invisible" />
 
                 <ProgressBar
                     android:id="@+id/progressBar"
@@ -138,19 +139,22 @@
                         android:id="@+id/radioButtonEnglish"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/english" />
+                        android:text="@string/english"
+                        style="@style/RadioButtonCustom" />
 
                     <RadioButton
                         android:id="@+id/radioButtonSpanish"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/spanish" />
+                        android:text="@string/spanish"
+                        style="@style/RadioButtonCustom" />
 
                     <RadioButton
                         android:id="@+id/radioButtonPortuguese"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/portuguese" />
+                        android:text="@string/portuguese"
+                        style="@style/RadioButtonCustom" />
 
                 </RadioGroup>
 

@@ -4,6 +4,8 @@
     <color name="text_color_boton_search">#011D32</color>
     <color name="customs_close_search">#B6183F</color>
     <color name="customs_search_lupa">#CCC</color>
+    <color name="colorActive">#159517</color> <!-- Color cuando está activo -->
+    <color name="colorInactive">#FFFFFF</color> <!-- Color cuando está inactivo -->
 
     <color name="title_games_background">#735471</color>
     <color name="title_background">#2b122b</color>

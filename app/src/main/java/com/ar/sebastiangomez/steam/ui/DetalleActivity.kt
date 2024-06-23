@@ -280,7 +280,8 @@ class DetalleActivity : AppCompatActivity() {
         clearCache.setOnClickListener {
             lifecycleScope.launch {
                 gamesRepository.deleteRoom(gameDetail.steamAppId.toString(), this@DetalleActivity)
-                Toast.makeText(this@DetalleActivity, "Eliminaste - ${gameDetail.name} - de la cache del celular.", Toast.LENGTH_LONG).show()
+                val cacheRemovedMessage = getString(R.string.cache_removed, gameDetail.name)
+                Toast.makeText(this@DetalleActivity, cacheRemovedMessage, Toast.LENGTH_LONG).show()
                 val intent = Intent(this@DetalleActivity, BookmarkActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -317,19 +318,19 @@ class DetalleActivity : AppCompatActivity() {
         {
             when (gameDetail.type) {
                 "dlc" -> {
-                    buttonVer.text = "Ver dlc"
+                    buttonVer.text = getString(R.string.button_view_dlc)
                     buttonVer.setBackgroundColor(Color.parseColor("#A454B0"))
                 }
                 "demo" -> {
-                    buttonVer.text = "Ver demo"
+                    buttonVer.text = getString(R.string.button_view_demo)
                     buttonVer.setBackgroundColor(Color.parseColor("#55B269"))
                 }
                 "game" -> {
-                    buttonVer.text = "Ver juego"
+                    buttonVer.text = getString(R.string.button_view_game)
                     buttonVer.setBackgroundColor(Color.parseColor("#5B7DD3"))
                 }
                 "music" -> {
-                    buttonVer.text = "Ver Soundtrack"
+                    buttonVer.text = getString(R.string.button_view_soundtrack)
                     buttonVer.setBackgroundColor(Color.parseColor("#B2555B"))
                 }
             }
@@ -339,7 +340,7 @@ class DetalleActivity : AppCompatActivity() {
         {
             if (gameDetail.type == "game")
             {
-                buttonVer.text = "Ver juego"
+                buttonVer.text = getString(R.string.button_view_game)
                 buttonVer.setBackgroundColor(Color.parseColor("#5B7DD3"))
             }
         }
@@ -369,7 +370,7 @@ class DetalleActivity : AppCompatActivity() {
             textPrecioARG.text = "$ $priceArgFormatted ARS"
             if (gameDetail.priceOverview.initialFormatted.isEmpty()) {
                 textPrecioUSD.text = gameDetail.priceOverview.finalFormatted
-                textTitlePrecioUSD.text = "Precio en USD:"
+                textTitlePrecioUSD.text = getString(R.string.price_usd_title)
             } else {
                 textPrecioUSD.text = gameDetail.priceOverview.initialFormatted
             }
@@ -382,11 +383,11 @@ class DetalleActivity : AppCompatActivity() {
             }
             when (gameDetail.type) {
                 "dlc" -> {
-                    buttonComprar.text = "Comprar dlc"
+                    buttonComprar.text = getString(R.string.buy_dlc)
                     buttonComprar.setBackgroundColor(Color.parseColor("#A454B0"))
                 }
                 "music" -> {
-                    buttonComprar.text = "Comprar Soundtrack"
+                    buttonComprar.text = getString(R.string.buy_soundtrack)
                     buttonComprar.setBackgroundColor(Color.parseColor("#B2555B"))
                 }
             }

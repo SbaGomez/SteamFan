@@ -33,6 +33,13 @@
     <string name="games_count">Total de juegos:</string>
     <string name="ClearCache">Borrar Cache</string>
     <string name="title_config">Configuraciones</string>
+    <string name="button_view_game">Ver juego</string>
+    <string name="button_view_dlc">Ver dlc</string>
+    <string name="button_view_soundtrack">Ver soundtrack</string>
+    <string name="button_view_demo">Ver demo</string>
+    <string name="buy_dlc">Comprar DLC</string>
+    <string name="buy_soundtrack">Comprar Soundtrack</string>
+    <string name="price_usd_title">Precio en USD:</string>
 
     <string name="title_fecha_lanzamiento">Fecha de lanzamiento:</string>
     <string name="title_precio_descuento">Precio con descuento:</string>
@@ -70,4 +77,11 @@
     <string name="sign_in_failed">Inicio de sesión fallido</string>
     <string name="no_profile_image">No se encontró imagen de perfil</string>
     <string name="cache_cleared">Eliminaste toda la cache.</string>
+    <string name="no_cache_cleared">No hay cache.</string>
+
+    <!-- Data Source -->
+    <string name="favorite_added">Agregaste - %1$s - de favoritos.</string>
+    <string name="favorite_removed">Eliminaste - %1$s - de favoritos.</string>
+    <string name="no_game_data">El juego - %1$s - no tiene datos.</string>
+    <string name="cache_removed">Eliminaste - %1$s - de la caché del celular.</string>
 </resources>

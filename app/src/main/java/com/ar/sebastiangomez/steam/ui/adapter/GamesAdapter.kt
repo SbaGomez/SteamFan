@@ -64,7 +64,8 @@ class GamesAdapter(
                             val cachedGame = GameCached(game.id, game.name, imageUrl.toString(), getCurrentUserId())
                             gamesRepository.saveGameCached(context, cachedGame)
                         } else {
-                            Toast.makeText(context, "El juego - ${game.name} - no tiene datos.", Toast.LENGTH_LONG).show()
+                            val noDataMessage = context.getString(R.string.no_game_data, game.name)
+                            Toast.makeText(context, noDataMessage, Toast.LENGTH_LONG).show()
                         }
                     }
                     updateBookmarkButton(holder, game)
