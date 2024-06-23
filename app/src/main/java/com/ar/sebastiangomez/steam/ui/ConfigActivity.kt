@@ -48,6 +48,8 @@ class ConfigActivity : AppCompatActivity() {
         const val LANGUAGE_KEY = "Language"
         const val DEFAULT_LANGUAGE = "es" // Establece "es" como el valor predeterminado
         private const val RC_SIGN_IN = 9001
+        private var lastClickTime = 0L
+        private val debounceInterval = 300L
     }
 
     private val gamesRepository: GamesRepository = GamesRepository()
@@ -74,6 +76,7 @@ class ConfigActivity : AppCompatActivity() {
         buttonClearCache = findViewById(R.id.buttonClearCache)
 
         val radioGroupLanguages = findViewById<RadioGroup>(R.id.radioGroupLanguages)
+        radioGroupLanguages.visibility = View.GONE
 
         for (i in 0 until radioGroupLanguages.childCount) {
             val radioButton = radioGroupLanguages.getChildAt(i) as RadioButton
@@ -113,21 +116,33 @@ class ConfigActivity : AppCompatActivity() {
         // Marcar el RadioButton correspondiente al idioma guardado
         radioGroupLanguages.check(selectedRadioButtonId)
 
-        radioGroupLanguages.setOnCheckedChangeListener { _, checkedId ->
-            val selectedLanguage = when (checkedId) {
-                R.id.radioButtonEnglish -> "en"
-                R.id.radioButtonSpanish -> "es"
-                R.id.radioButtonPortuguese -> "pt"
-                else -> DEFAULT_LANGUAGE // En caso de que no se seleccione ninguno, se utiliza el idioma predeterminado
+        Handler(Looper.getMainLooper()).postDelayed({
+            // Agregar el RadioGroup después de 5 segundos
+            radioGroupLanguages.visibility = View.VISIBLE
+
+            // Configurar el listener del RadioGroup
+            radioGroupLanguages.setOnCheckedChangeListener { _, checkedId ->
+                val currentTime = System.currentTimeMillis()
+                if (currentTime - lastClickTime > debounceInterval) {
+                    // Realiza la operación solo si ha pasado el tiempo de debounce
+                    lastClickTime = currentTime
+
+                    val selectedLanguage = when (checkedId) {
+                        R.id.radioButtonEnglish -> "en"
+                        R.id.radioButtonSpanish -> "es"
+                        R.id.radioButtonPortuguese -> "pt"
+                        else -> DEFAULT_LANGUAGE // En caso de que no se seleccione ninguno, se utiliza el idioma predeterminado
+                    }
+
+                    setLocale(selectedLanguage)
+
+                    // Guardar el idioma seleccionado en las SharedPreferences
+                    sharedPreferences.edit().putString(LANGUAGE_KEY, selectedLanguage).apply()
+
+                    Toast.makeText(this, getString(R.string.selected_language_toast, getLanguageName(selectedLanguage)), Toast.LENGTH_SHORT).show()
+                }
             }
-
-            setLocale(selectedLanguage)
-
-            // Guardar el idioma seleccionado en las SharedPreferences
-            sharedPreferences.edit().putString(LANGUAGE_KEY, selectedLanguage).apply()
-
-            Toast.makeText(this, getString(R.string.selected_language_toast, getLanguageName(selectedLanguage)), Toast.LENGTH_SHORT).show()
-        }
+        }, 3000) // Espera 3 segundos (3000 milisegundos) antes de mostrar el RadioGroup
 
         switchTheme.isChecked = ThemeHelper.isDarkThemeEnabled(this)
 
