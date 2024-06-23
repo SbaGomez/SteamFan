@@ -27,6 +27,7 @@ import androidx.lifecycle.lifecycleScope
 import com.ar.sebastiangomez.steam.R
 import com.ar.sebastiangomez.steam.data.GamesRepository
 import com.ar.sebastiangomez.steam.utils.ThemeHelper
+import com.ar.sebastiangomez.steam.utils.Utils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -50,8 +51,6 @@ class ConfigActivity : AppCompatActivity() {
         const val LANGUAGE_KEY = "Language"
         const val DEFAULT_LANGUAGE = "es" // Establece "es" como el valor predeterminado
         private const val RC_SIGN_IN = 9001
-        private var lastClickTime = 0L
-        private val debounceInterval = 300L
     }
 
     private val gamesRepository: GamesRepository = GamesRepository()
@@ -60,10 +59,13 @@ class ConfigActivity : AppCompatActivity() {
     private lateinit var textPerfil: TextView
     private lateinit var switchTheme: SwitchCompat
     private lateinit var buttonClearCache: Button
+    private lateinit var radioGroupLanguages: RadioGroup
+    private lateinit var utils: Utils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        utils = Utils()
         setContentView(R.layout.activity_config)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -71,13 +73,9 @@ class ConfigActivity : AppCompatActivity() {
             insets
         }
 
-        sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        imagePerfil = findViewById(R.id.imagePerfil)
-        textPerfil = findViewById(R.id.textPerfil)
-        switchTheme = findViewById(R.id.switchTheme)
-        buttonClearCache = findViewById(R.id.buttonClearCache)
-
-        val radioGroupLanguages = findViewById<RadioGroup>(R.id.radioGroupLanguages)
+        init()
+        val currentLanguage = sharedPreferences.getString(LANGUAGE_KEY, DEFAULT_LANGUAGE) // Obtener el idioma guardado en las SharedPreferences
+        googleConfigLogin()
 
         for (i in 0 until radioGroupLanguages.childCount) {
             val radioButton = radioGroupLanguages.getChildAt(i) as RadioButton
@@ -87,27 +85,6 @@ class ConfigActivity : AppCompatActivity() {
                 radioButton.isEnabled = true
             }, 3000)
         }
-
-        // Configura Google Sign-In
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build()
-
-        val googleSignInClient = GoogleSignIn.getClient(this, gso)
-
-        // Verifica si el usuario ya está logueado
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        if (account != null) {
-            // Usuario ya logueado, obtén la URL de la foto de perfil
-            loadProfileImage(account)
-        } else {
-            // Usuario no logueado, inicia el proceso de inicio de sesión
-            val signInIntent = googleSignInClient.signInIntent
-            startActivityForResult(signInIntent, RC_SIGN_IN)
-        }
-
-        // Obtener el idioma guardado en las SharedPreferences
-        val currentLanguage = sharedPreferences.getString(LANGUAGE_KEY, DEFAULT_LANGUAGE)
 
         // Obtener el RadioButton correspondiente al idioma guardado
         val selectedRadioButtonId = when (currentLanguage) {
@@ -122,25 +99,16 @@ class ConfigActivity : AppCompatActivity() {
 
         // Configurar el listener del RadioGroup
         radioGroupLanguages.setOnCheckedChangeListener { _, checkedId ->
-            val currentTime = System.currentTimeMillis()
-            if (currentTime - lastClickTime > debounceInterval) {
-                // Realiza la operación solo si ha pasado el tiempo de debounce
-                lastClickTime = currentTime
-
-                val selectedLanguage = when (checkedId) {
-                    R.id.radioButtonEnglish -> "en"
-                    R.id.radioButtonSpanish -> "es"
-                    R.id.radioButtonPortuguese -> "pt"
-                    else -> DEFAULT_LANGUAGE // En caso de que no se seleccione ninguno, se utiliza el idioma predeterminado
-                }
-
-                setLocale(selectedLanguage)
-
-                // Guardar el idioma seleccionado en las SharedPreferences
-                sharedPreferences.edit().putString(LANGUAGE_KEY, selectedLanguage).apply()
-
-                Toast.makeText(this, getString(R.string.selected_language_toast, getLanguageName(selectedLanguage)), Toast.LENGTH_SHORT).show()
+            val selectedLanguage = when (checkedId) {
+                R.id.radioButtonEnglish -> "en"
+                R.id.radioButtonSpanish -> "es"
+                R.id.radioButtonPortuguese -> "pt"
+                else -> DEFAULT_LANGUAGE // En caso de que no se seleccione ninguno, se utiliza el idioma predeterminado
             }
+
+            setLocale(selectedLanguage)
+
+            Toast.makeText(this, getString(R.string.selected_language_toast, getLanguageName(selectedLanguage)), Toast.LENGTH_SHORT).show()
         }
 
         switchTheme.isChecked = ThemeHelper.isDarkThemeEnabled(this)
@@ -162,34 +130,22 @@ class ConfigActivity : AppCompatActivity() {
         ThemeHelper.applyTheme(this)
     }
 
+    private fun init()
+    {
+        sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        imagePerfil = findViewById(R.id.imagePerfil)
+        textPerfil = findViewById(R.id.textPerfil)
+        switchTheme = findViewById(R.id.switchTheme)
+        buttonClearCache = findViewById(R.id.buttonClearCache)
+        radioGroupLanguages = findViewById(R.id.radioGroupLanguages)
+    }
+
     private fun getLanguageName(languageCode: String): String {
         return when (languageCode) {
             "en" -> getString(R.string.english)
             "es" -> getString(R.string.spanish)
             "pt" -> getString(R.string.portuguese)
             else -> getString(R.string.unknown_language)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            handleSignInResult(task)
-        }
-    }
-
-    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
-        try {
-            val account = completedTask.getResult(ApiException::class.java)
-            // Inicio de sesión exitoso, obtén la URL de la foto de perfil
-            if (account != null) {
-                loadProfileImage(account)
-            }
-        } catch (e: ApiException) {
-            // El inicio de sesión falló, maneja el error
-            e.printStackTrace()
-            Toast.makeText(this, getString(R.string.sign_in_failed), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -253,8 +209,54 @@ class ConfigActivity : AppCompatActivity() {
             config.setLocale(locale)
             baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
 
+            // Guardar el idioma seleccionado en las SharedPreferences
+            sharedPreferences.edit().putString(LANGUAGE_KEY, languageCode).apply()
+
             // Reiniciar la actividad para aplicar el nuevo idioma
             recreate()
+        }
+    }
+
+    private fun googleConfigLogin()
+    {
+        // Configura Google Sign-In
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .build()
+
+        val googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        // Verifica si el usuario ya está logueado
+        val account = GoogleSignIn.getLastSignedInAccount(this)
+        if (account != null) {
+            // Usuario ya logueado, obtén la URL de la foto de perfil
+            loadProfileImage(account)
+        } else {
+            // Usuario no logueado, inicia el proceso de inicio de sesión
+            val signInIntent = googleSignInClient.signInIntent
+            startActivityForResult(signInIntent, RC_SIGN_IN)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleSignInResult(task)
+        }
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            // Inicio de sesión exitoso, obtén la URL de la foto de perfil
+            if (account != null) {
+                loadProfileImage(account)
+            }
+        } catch (e: ApiException) {
+            // El inicio de sesión falló, maneja el error
+            e.printStackTrace()
+            Toast.makeText(this, getString(R.string.sign_in_failed), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -276,6 +278,7 @@ class ConfigActivity : AppCompatActivity() {
         finish()
     }
 
+    @Suppress("UNUSED_PARAMETER", "DEPRECATION")
     fun onLogoutClick(view: View) {
         // Cerrar sesión con Firebase
         FirebaseAuth.getInstance().signOut()
