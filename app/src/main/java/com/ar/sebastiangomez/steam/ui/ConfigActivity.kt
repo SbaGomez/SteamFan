@@ -30,8 +30,10 @@ import com.ar.sebastiangomez.steam.utils.ThemeHelper
 import com.ar.sebastiangomez.steam.utils.Utils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -39,9 +41,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 
 class ConfigActivity : AppCompatActivity() {
@@ -159,45 +159,48 @@ class ConfigActivity : AppCompatActivity() {
 
         progressBar.visibility = View.VISIBLE
 
-        if (photoUrlToLoad != null) {
-            Glide.with(this@ConfigActivity)
-                .load(photoUrlToLoad)
-                .centerCrop()
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<Drawable>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        progressBar.visibility = View.INVISIBLE
-                        return false
+        val requestOptions = RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // Utilizar la estrategia de caché predeterminada
+            .skipMemoryCache(false) // Permitir la caché en memoria
+            .override(Target.SIZE_ORIGINAL) // Tamaño original de la imagen
+            .placeholder(R.drawable.defaultperfil) // Imagen de carga por defecto
+            .error(R.drawable.defaultperfil) // Imagen de error por defecto
+
+        Glide.with(this@ConfigActivity)
+            .load(photoUrlToLoad)
+            .apply(requestOptions)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    progressBar.visibility = View.INVISIBLE
+                    imagePerfil.visibility = View.VISIBLE
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    progressBar.visibility = View.INVISIBLE
+                    imagePerfil.visibility = View.VISIBLE
+
+                    // Guardar la URL de la imagen en SharedPreferences si no estaba guardada
+                    if (savedPhotoUrl != personPhoto) {
+                        sharedPreferences.edit().putString(savedPhotoUrlKey, personPhoto)
+                            .apply()
                     }
 
-                    override fun onResourceReady(
-                        resource: Drawable,
-                        model: Any,
-                        target: Target<Drawable>?,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        progressBar.visibility = View.INVISIBLE
-
-                        // Guardar la URL de la imagen en SharedPreferences si no estaba guardada
-                        if (savedPhotoUrl == null && personPhoto != null) {
-                            sharedPreferences.edit().putString(savedPhotoUrlKey, personPhoto)
-                                .apply()
-                        }
-
-                        return false
-                    }
-                })
-                .into(imagePerfil)
-        } else {
-            imagePerfil.setImageResource(R.drawable.defaultperfil)
-            progressBar.visibility = View.INVISIBLE
-        }
-        imagePerfil.visibility = View.VISIBLE
+                    return false
+                }
+            })
+            .into(imagePerfil)
 
         textPerfil.text = account.displayName?.let {
             getString(R.string.welcome_message, it)
