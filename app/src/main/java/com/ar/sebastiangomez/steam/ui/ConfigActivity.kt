@@ -150,51 +150,54 @@ class ConfigActivity : AppCompatActivity() {
     }
 
     private fun loadProfileImage(account: GoogleSignInAccount) {
-        val progressBar: ProgressBar = this.findViewById(R.id.progressBar)
+        val progressBar: ProgressBar = findViewById(R.id.progressBar)
+        val savedPhotoUrlKey = "profilePhotoUrl_${account.id}" // Utiliza el ID único de la cuenta para diferenciar las URLs de las fotos
+        val savedPhotoUrl = sharedPreferences.getString(savedPhotoUrlKey, null)
+
+        val personPhoto = account.photoUrl?.toString()
+        val photoUrlToLoad = savedPhotoUrl ?: personPhoto
+
         progressBar.visibility = View.VISIBLE
 
-        account.photoUrl?.let { personPhoto ->
-            // Lanzar una coroutine en el hilo principal
-            lifecycleScope.launch {
-                // Introducir un retraso de 2 segundos
-                withContext(Dispatchers.IO) {
-                    Thread.sleep(2000)
-                }
+        if (photoUrlToLoad != null) {
+            Glide.with(this@ConfigActivity)
+                .load(photoUrlToLoad)
+                .centerCrop()
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        progressBar.visibility = View.INVISIBLE
+                        return false
+                    }
 
-                // Volver al hilo principal para cargar la imagen usando Glide
-                withContext(Dispatchers.Main) {
-                    Glide.with(this@ConfigActivity)
-                        .load(personPhoto)
-                        .centerCrop()
-                        .listener(object : RequestListener<Drawable> {
-                            override fun onLoadFailed(
-                                e: GlideException?,
-                                model: Any?,
-                                target: Target<Drawable>,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                // Ocultar el ProgressBar si la carga de la imagen falla
-                                progressBar.visibility = View.INVISIBLE
-                                return false
-                            }
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        model: Any,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        progressBar.visibility = View.INVISIBLE
 
-                            override fun onResourceReady(
-                                resource: Drawable,
-                                model: Any,
-                                target: Target<Drawable>?,
-                                dataSource: DataSource,
-                                isFirstResource: Boolean
-                            ): Boolean {
-                                // Ocultar el ProgressBar cuando la imagen se haya cargado
-                                progressBar.visibility = View.INVISIBLE
-                                return false
-                            }
-                        })
-                        .into(imagePerfil)
-                    imagePerfil.visibility = View.VISIBLE
-                }
-            }
-        } ?: Toast.makeText(this, getString(R.string.no_profile_image), Toast.LENGTH_SHORT).show()
+                        // Guardar la URL de la imagen en SharedPreferences si no estaba guardada
+                        if (savedPhotoUrl == null && personPhoto != null) {
+                            sharedPreferences.edit().putString(savedPhotoUrlKey, personPhoto)
+                                .apply()
+                        }
+
+                        return false
+                    }
+                })
+                .into(imagePerfil)
+        } else {
+            imagePerfil.setImageResource(R.drawable.defaultperfil)
+            progressBar.visibility = View.INVISIBLE
+        }
+        imagePerfil.visibility = View.VISIBLE
 
         textPerfil.text = account.displayName?.let {
             getString(R.string.welcome_message, it)
