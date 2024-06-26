@@ -12,7 +12,7 @@ object ThemeHelper {
     private const val PREFS_NAME = "MyPrefsFile"
     private const val IS_DARK_THEME_ENABLED = "isDarkThemeEnabled"
 
-    fun setButtonImageBasedOnTheme(themeButton: ImageButton, context: Context) {
+    /*fun setButtonImageBasedOnTheme(themeButton: ImageButton, context: Context) {
         val currentNightMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         val currentTheme = if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) "dark" else "light"
         themeButton.setImageTintList(ColorStateList.valueOf(Color.parseColor(if (currentTheme == "dark") "#914040" else "#EAC69C")))
@@ -25,11 +25,10 @@ object ThemeHelper {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
-    }
+    }*/
 
     fun applyTheme(context: Context) {
-        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val isDarkThemeEnabled = sharedPreferences.getBoolean(IS_DARK_THEME_ENABLED, false)
+        val isDarkThemeEnabled = isDarkThemeEnabled(context)
 
         if (isDarkThemeEnabled) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

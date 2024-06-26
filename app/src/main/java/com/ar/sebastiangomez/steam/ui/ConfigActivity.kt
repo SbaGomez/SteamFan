@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -51,6 +52,7 @@ class ConfigActivity : AppCompatActivity() {
         const val LANGUAGE_KEY = "Language"
         const val DEFAULT_LANGUAGE = "es" // Establece "es" como el valor predeterminado
         private const val RC_SIGN_IN = 9001
+        private const val tag = "LOG-CONFIG"
     }
 
     private val gamesRepository: GamesRepository = GamesRepository()
@@ -65,7 +67,6 @@ class ConfigActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        utils = Utils()
         setContentView(R.layout.activity_config)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -75,6 +76,7 @@ class ConfigActivity : AppCompatActivity() {
 
         init()
         val currentLanguage = sharedPreferences.getString(LANGUAGE_KEY, DEFAULT_LANGUAGE) // Obtener el idioma guardado en las SharedPreferences
+        //Log.d(tag, "currentLanguage: $currentLanguage")
         googleConfigLogin()
 
         for (i in 0 until radioGroupLanguages.childCount) {
@@ -83,7 +85,7 @@ class ConfigActivity : AppCompatActivity() {
             CompoundButtonCompat.setButtonTintList(radioButton, colorStateList)
             Handler(Looper.getMainLooper()).postDelayed({
                 radioButton.isEnabled = true
-            }, 3000)
+            }, 2000)
         }
 
         // Obtener el RadioButton correspondiente al idioma guardado
@@ -114,14 +116,38 @@ class ConfigActivity : AppCompatActivity() {
         switchTheme.isChecked = ThemeHelper.isDarkThemeEnabled(this)
 
         switchTheme.setOnCheckedChangeListener { _, isChecked ->
-            ThemeHelper.saveThemeState(this, isChecked)
-            ThemeHelper.applyTheme(this)
+            lifecycleScope.launch {
+                val language = sharedPreferences.getString(LANGUAGE_KEY, DEFAULT_LANGUAGE)
+                //Log.d(tag, "Language: $language")
+                sharedPreferences.edit().putString(LANGUAGE_KEY, language).apply()
+                ThemeHelper.saveThemeState(this@ConfigActivity, isChecked)
+                ThemeHelper.applyTheme(this@ConfigActivity)
+                if (language != null) {
+                    setLocale(language)
+                }
+            }
         }
 
         buttonClearCache.setOnClickListener {
             lifecycleScope.launch {
                 gamesRepository.deleteAllRoom(this@ConfigActivity)
             }
+        }
+    }
+
+    private fun setLocale(languageCode: String) {
+        lifecycleScope.launch {
+            val locale = Locale(languageCode)
+            Locale.setDefault(locale)
+            val config = Configuration()
+            config.setLocale(locale)
+            baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
+
+            // Guardar el idioma seleccionado en las SharedPreferences
+            sharedPreferences.edit().putString(LANGUAGE_KEY, languageCode).apply()
+
+            // Reiniciar la actividad para aplicar el nuevo idioma
+            recreate()
         }
     }
 
@@ -132,12 +158,17 @@ class ConfigActivity : AppCompatActivity() {
 
     private fun init()
     {
+        utils = Utils()
         sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         imagePerfil = findViewById(R.id.imagePerfil)
         textPerfil = findViewById(R.id.textPerfil)
         switchTheme = findViewById(R.id.switchTheme)
         buttonClearCache = findViewById(R.id.buttonClearCache)
         radioGroupLanguages = findViewById(R.id.radioGroupLanguages)
+        val allEntries: Map<String, *> = sharedPreferences.all
+        for ((key, value) in allEntries) {
+            Log.d(tag,"SharedPreferences $key: $value")
+        }
     }
 
     private fun getLanguageName(languageCode: String): String {
@@ -207,22 +238,6 @@ class ConfigActivity : AppCompatActivity() {
         } ?: getString(R.string.default_welcome_message)
     }
 
-    private fun setLocale(languageCode: String) {
-        lifecycleScope.launch {
-            val locale = Locale(languageCode)
-            Locale.setDefault(locale)
-            val config = Configuration()
-            config.setLocale(locale)
-            baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
-
-            // Guardar el idioma seleccionado en las SharedPreferences
-            sharedPreferences.edit().putString(LANGUAGE_KEY, languageCode).apply()
-
-            // Reiniciar la actividad para aplicar el nuevo idioma
-            recreate()
-        }
-    }
-
     private fun googleConfigLogin()
     {
         // Configura Google Sign-In
@@ -255,12 +270,10 @@ class ConfigActivity : AppCompatActivity() {
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
-            // Inicio de sesión exitoso, obtén la URL de la foto de perfil
             if (account != null) {
                 loadProfileImage(account)
             }
         } catch (e: ApiException) {
-            // El inicio de sesión falló, maneja el error
             e.printStackTrace()
             Toast.makeText(this, getString(R.string.sign_in_failed), Toast.LENGTH_SHORT).show()
         }
