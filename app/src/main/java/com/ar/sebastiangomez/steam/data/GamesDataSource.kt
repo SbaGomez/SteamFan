@@ -57,30 +57,6 @@ class GamesDataSource {
             }
         }
 
-        suspend fun deleteRoom(gameId: String, context: Context) {
-            val db = AppDataBase.getInstance(context)
-            val gameDetailLocal = db.gameDetailsDao().getByPK(gameId)
-            if (gameDetailLocal != null) {
-                db.gameDetailsDao().delete(gameDetailLocal)
-            }
-        }
-
-        suspend fun deleteAllRoom(context: Context) {
-            val db = AppDataBase.getInstance(context)
-            val gameDetailsDao = db.gameDetailsDao()
-            val count = gameDetailsDao.getCount() // Assuming you have a method to get the count of records
-
-            Log.d(tag,"$count")
-
-            if (count == 0) {
-                Toast.makeText(context, context.getString(R.string.no_cache_cleared), Toast.LENGTH_SHORT).show()
-                return
-            } else {
-                gameDetailsDao.deleteAll()
-                Toast.makeText(context, context.getString(R.string.cache_cleared), Toast.LENGTH_LONG).show()
-            }
-        }
-
         suspend fun getDetails(gameId: String, context: Context): GameDetail? {
 
             // Recupero la informacion localmente (si existe)
@@ -172,10 +148,10 @@ class GamesDataSource {
             }
         }
 
-        suspend fun saveGameCached(context: Context,gameCached: GameCached): Boolean {
+        suspend fun saveGameFirestore(context: Context,gameCached: GameCached): Boolean {
             return try {
                 val userId = firebaseAuth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
-                val gameExists = exists(gameCached.id)
+                val gameExists = existsGameFirestore(gameCached.id)
 
                 if (gameExists) {
                     Log.d(tag, "Game already exists: $gameCached")
@@ -190,9 +166,6 @@ class GamesDataSource {
                     val message = context.getString(R.string.favorite_added, gameCached.name)
                     Toast.makeText(context, message, Toast.LENGTH_LONG).show()
                     Log.d(tag, "Game cached saved successfully: $gameCached")
-                    // Redirigir a HomeActivity
-                    val intent = Intent(context, BookmarkActivity::class.java)
-                    context.startActivity(intent)
                     true
                 }
             } catch (e: Exception) {
@@ -201,7 +174,7 @@ class GamesDataSource {
             }
         }
 
-        suspend fun exists(gameId: String): Boolean {
+        suspend fun existsGameFirestore(gameId: String): Boolean {
             return try {
                 val userId = firebaseAuth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
                 val document = firestore.collection("users")
@@ -218,7 +191,7 @@ class GamesDataSource {
             }
         }
 
-        suspend fun getUserGameCached(): List<GameCached> {
+        suspend fun getGamesFirestore(): List<GameCached> {
             val userId = firebaseAuth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
             return try {
                 val snapshot = firestore.collection("users")
@@ -236,7 +209,7 @@ class GamesDataSource {
             }
         }
 
-        fun removeGameCached(context: Context, gameId: String, gameName: String, activity: String? = null): Boolean {
+        fun removeGameFirestore(context: Context, gameId: String, gameName: String, activity: String? = null): Boolean {
             val userId = firebaseAuth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
             return try {
                 firestore.collection("users")
@@ -262,7 +235,7 @@ class GamesDataSource {
             }
         }
 
-        suspend fun countAllGames(): Int {
+        suspend fun countAllGamesFirestore(): Int {
             val userId = firebaseAuth.currentUser?.uid ?: throw IllegalStateException("User not logged in")
             return try {
                 val snapshot = firestore.collection("users")
@@ -277,6 +250,30 @@ class GamesDataSource {
             } catch (e: Exception) {
                 Log.e(tag, "ERROR: Failed to fetch game count: ${e.message}")
                 0
+            }
+        }
+
+        suspend fun deleteRoom(gameId: String, context: Context) {
+            val db = AppDataBase.getInstance(context)
+            val gameDetailLocal = db.gameDetailsDao().getByPK(gameId)
+            if (gameDetailLocal != null) {
+                db.gameDetailsDao().delete(gameDetailLocal)
+            }
+        }
+
+        suspend fun deleteAllRoom(context: Context) {
+            val db = AppDataBase.getInstance(context)
+            val gameDetailsDao = db.gameDetailsDao()
+            val count = gameDetailsDao.getCount() // Assuming you have a method to get the count of records
+
+            Log.d(tag,"$count")
+
+            if (count == 0) {
+                Toast.makeText(context, context.getString(R.string.no_cache_cleared), Toast.LENGTH_SHORT).show()
+                return
+            } else {
+                gameDetailsDao.deleteAll()
+                Toast.makeText(context, context.getString(R.string.cache_cleared), Toast.LENGTH_LONG).show()
             }
         }
 

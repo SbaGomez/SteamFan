@@ -220,7 +220,7 @@ class DetalleActivity : AppCompatActivity() {
     private suspend fun setData(gameDetail : GameDetail){
         val pcRequirements = utils.parsePcRequirements(gameDetail.pcRequirements.toString())
         lifecycleScope.launch {
-            val exists = gamesRepository.exists(gameDetail.steamAppId.toString())
+            val exists = gamesRepository.existsGameFirestore(gameDetail.steamAppId.toString())
 
             // Actualiza el UI inicial
             updateUI(!exists)
@@ -228,10 +228,10 @@ class DetalleActivity : AppCompatActivity() {
             // Listener de clic para agregar o eliminar de favoritos
             imageButtonBookmark.setOnClickListener {
                 lifecycleScope.launch {
-                    val existsGame = gamesRepository.exists(gameDetail.steamAppId.toString())
+                    val existsGame = gamesRepository.existsGameFirestore(gameDetail.steamAppId.toString())
                     try {
                         if (existsGame) { // Si el juego está en la lista de favoritos, eliminarlo
-                            gamesRepository.removeGameCached(
+                            gamesRepository.removeGameFirestore(
                                 this@DetalleActivity,
                                 gameDetail.steamAppId.toString(),
                                 gameDetail.name,
@@ -256,7 +256,7 @@ class DetalleActivity : AppCompatActivity() {
                             }
                             // Agregar el juego a la lista en caché
                             if (cachedGame != null) {
-                                gamesRepository.saveGameCached(this@DetalleActivity, cachedGame)
+                                gamesRepository.saveGameFirestore(this@DetalleActivity, cachedGame)
                             }
                             // Después de agregar, actualiza el índice
                             // Actualizar el UI

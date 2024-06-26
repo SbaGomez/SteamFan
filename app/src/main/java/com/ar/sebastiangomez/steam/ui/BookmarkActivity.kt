@@ -135,7 +135,7 @@ class BookmarkActivity : AppCompatActivity() {
     private fun performFiltering(query: String) {
         //val gamesList = gamesCache.getGamesFromCache(this@BookmarkActivity)
         uiScope.launch {
-            val gamesList = gamesRepository.getUserGameCached()
+            val gamesList = gamesRepository.getGamesFirestore()
             if (gamesList.isNotEmpty()) {
                 val filteredList = withContext(Dispatchers.Default) {
                     searchHelper.filterGamesByExactAndContainsTerm(gamesList, query)
@@ -156,7 +156,7 @@ class BookmarkActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val countGames = withContext(Dispatchers.IO) {
-                    gamesRepository.countAllGames()
+                    gamesRepository.countAllGamesFirestore()
                 }
                 textCountGames.text = countGames.toString()
             } catch (e: Exception) {
@@ -169,7 +169,7 @@ class BookmarkActivity : AppCompatActivity() {
                 progressBar.visibility = View.VISIBLE
                 val gamesList = withContext(Dispatchers.IO) {
                     //gamesCache.getGamesFromCache(applicationContext).toMutableList()
-                    gamesRepository.getUserGameCached().toMutableList()
+                    gamesRepository.getGamesFirestore().toMutableList()
                 }
 
                 val adapter = BookmarkAdapter(this@BookmarkActivity, gamesList) { position, gameId ->
@@ -221,7 +221,7 @@ class BookmarkActivity : AppCompatActivity() {
                     recyclerView.visibility = View.INVISIBLE
                     progressBar.visibility = View.VISIBLE
 
-                    val gamesList = gamesRepository.getUserGameCached()
+                    val gamesList = gamesRepository.getGamesFirestore()
                     val sortedFilteredGamesList = searchHelper.filterExactMatchGames(gamesList, searchTerm)
 
                     if (sortedFilteredGamesList.isEmpty()) {

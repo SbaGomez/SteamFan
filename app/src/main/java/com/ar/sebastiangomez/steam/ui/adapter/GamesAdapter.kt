@@ -53,16 +53,16 @@ class GamesAdapter(
 
             holder.imageButton.setOnClickListener {
                 CoroutineScope(Dispatchers.Main).launch {
-                    val isBookmarked = gamesRepository.exists(game.id)
+                    val isBookmarked = gamesRepository.existsGameFirestore(game.id)
                     if (isBookmarked) {
-                        gamesRepository.removeGameCached(context, game.id, game.name, "HomeActivity")
+                        gamesRepository.removeGameFirestore(context, game.id, game.name, "HomeActivity")
                     } else {
                         Log.d(tag, "Log Button Add Bookmark - ID Position: $position, Game ID: ${game.id}")
                         val isSuccess = gamesRepository.isGameSuccess(game.id)
                         if (isSuccess == true) {
                             val imageUrl = gamesRepository.getImage(game.id)
                             val cachedGame = GameCached(game.id, game.name, imageUrl.toString(), getCurrentUserId())
-                            gamesRepository.saveGameCached(context, cachedGame)
+                            gamesRepository.saveGameFirestore(context, cachedGame)
                         } else {
                             val noDataMessage = context.getString(R.string.no_game_data, game.name)
                             Toast.makeText(context, noDataMessage, Toast.LENGTH_LONG).show()
@@ -94,7 +94,7 @@ class GamesAdapter(
 
     private fun updateBookmarkButton(holder: GameViewHolder, game: Game) {
         CoroutineScope(Dispatchers.Main).launch {
-            val isBookmarked = gamesRepository.exists(game.id)
+            val isBookmarked = gamesRepository.existsGameFirestore(game.id)
             if (isBookmarked) {
                 holder.imageButton.setImageResource(R.drawable.bookmarkdel)
                 holder.imageButton.setBackgroundColor(Color.parseColor("#9A4040"))

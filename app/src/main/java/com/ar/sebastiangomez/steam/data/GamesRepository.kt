@@ -34,23 +34,23 @@ class GamesRepository {
         return GamesDataSource.countGames()
     }
 
-    suspend fun saveGameCached(context: Context, gameCached: GameCached): Boolean? {
-        return GamesDataSource.saveGameCached(context, gameCached)
+    suspend fun saveGameFirestore(context: Context, gameCached: GameCached): Boolean? {
+        return GamesDataSource.saveGameFirestore(context, gameCached)
     }
 
-    suspend fun getUserGameCached(): List<GameCached> {
-        return GamesDataSource.getUserGameCached()
+    suspend fun getGamesFirestore(): List<GameCached> {
+        return GamesDataSource.getGamesFirestore()
     }
 
-    fun removeGameCached(context: Context, gameId: String, gameName: String, activity: String? = null): Boolean {
-        return GamesDataSource.removeGameCached(context, gameId, gameName, activity)
+    fun removeGameFirestore(context: Context, gameId: String, gameName: String, activity: String? = null): Boolean {
+        return GamesDataSource.removeGameFirestore(context, gameId, gameName, activity)
     }
 
-    suspend fun exists(gameId: String): Boolean {
-        return GamesDataSource.exists(gameId)
+    suspend fun existsGameFirestore(gameId: String): Boolean {
+        return GamesDataSource.existsGameFirestore(gameId)
     }
 
-    suspend fun countAllGames(): Int {
-        return GamesDataSource.countAllGames()
+    suspend fun countAllGamesFirestore(): Int {
+        return GamesDataSource.countAllGamesFirestore()
     }
 }

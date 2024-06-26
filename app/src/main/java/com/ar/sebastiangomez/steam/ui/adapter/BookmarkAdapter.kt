@@ -60,7 +60,7 @@ class BookmarkAdapter(private val context: Context,
 
         holder.imageButton.setOnClickListener {
             CoroutineScope(Dispatchers.Main).launch {
-                gamesRepository.removeGameCached(context, game.id, game.name, "BookmarkActivity")
+                gamesRepository.removeGameFirestore(context, game.id, game.name, "BookmarkActivity")
                 holder.imageButton.setImageResource(R.drawable.bookmarkadd)
                 holder.imageButton.setBackgroundColor(Color.parseColor("#495d92"))
             }
